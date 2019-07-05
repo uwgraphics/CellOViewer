@@ -1,4 +1,4 @@
-# cellnetworkviewer
+# Cell Network Viewer
 
 ## Project setup
 ```
