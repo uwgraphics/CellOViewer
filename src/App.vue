@@ -15,12 +15,12 @@
         </v-layout>
         <v-layout row wrap align-center>
           <v-flex md12>
-            <Graph />
+            <Graph :cellData="loadedData" />
           </v-flex>
         </v-layout>
         <v-layout row wrap align-center>
           <v-flex md5>
-            <List />
+            <List :cellData="loadedData" />
           </v-flex>
           <v-flex md7>
             <Details />
@@ -37,6 +37,8 @@ import Header from "./components/Header.vue";
 import Graph from "./components/Graph.vue";
 import List from "./components/List.vue";
 
+import * as d3 from "d3";
+
 export default {
   name: "app",
   components: {
@@ -45,16 +47,26 @@ export default {
     Graph,
     List
   },
+  mounted() {
+    this.fetchData();
+  },
+  data: function() {
+    return {
+      goDark: true,
+      loadedData: [],
+      search: ""
+    };
+  },
+  methods: {
+    async fetchData() {
+      let data = await d3.json("./cell_type_graph.json");
+      this.loadedData = data;
+    }
+  },
   computed: {
     selectedTheme: function() {
       return this.goDark ? "Dark Theme" : "Light Theme";
     }
-  },
-  data: function() {
-    return {
-      goDark: false,
-      search: ""
-    };
   }
 };
 </script>

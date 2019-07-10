@@ -1,10 +1,33 @@
 <template>
   <v-layout row wrap align-center>
     <v-flex md12>
-      <v-card height="500">
+      <v-card height="600">
         <v-card-text>
           <h2>The list shall go here</h2>
         </v-card-text>
+        <v-layout row wrap>
+          <v-flex md12 ma-3>
+            <v-text-field
+              v-model="search"
+              label="search the cell"
+              single-line
+              hide-details
+              hide-no-data
+            ></v-text-field>
+          </v-flex>
+        </v-layout>
+        <v-layout row wrap>
+          <v-flex md12 v-if="loaded">
+            <v-list v-for="(neighborList, index) in cellData" :key="index" id="index">
+              <v-layout>
+                <v-flex md2 offset-md1 v-if="index&&neighborList">{{index}}:</v-flex>
+                <v-flex md8 offset-md1 v-if="neighborList">
+                  <v-list v-for="(neighbor, index) in neighborList" :key="index">{{neighbor}}</v-list>
+                </v-flex>
+              </v-layout>
+            </v-list>
+          </v-flex>
+        </v-layout>
       </v-card>
     </v-flex>
   </v-layout>
@@ -13,15 +36,27 @@
 <script>
 export default {
   name: "cell-list",
-  props: [],
+  props: ["cellData"],
   mounted() {},
   data() {
-    return {};
+    return {
+      loaded: false,
+      search: ""
+    };
   },
   methods: {},
-  computed: {}
+  computed: {},
+  watch: {
+    cellData() {
+      this.loaded = true;
+    }
+  }
 };
 </script>
 
-<style>
+<style scoped>
+#index {
+  color: #42b983;
+  font-weight: bold;
+}
 </style>

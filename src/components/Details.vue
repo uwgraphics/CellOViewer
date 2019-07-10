@@ -1,7 +1,7 @@
 <template>
   <v-layout row wrap align-center>
     <v-flex md12>
-      <v-card height="500">
+      <v-card height="600">
         <v-card-text>
           <h2>The cell details shall go here</h2>
         </v-card-text>
