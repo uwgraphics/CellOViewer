@@ -10,7 +10,20 @@
         </v-layout>
         <v-layout row wrap align-center>
           <v-flex>
-            <HelloWorld msg="Boilerplate for Cell Netowrk Viewer" />
+            <Header msg="Boilerplate for Cell Netowrk Viewer" />
+          </v-flex>
+        </v-layout>
+        <v-layout row wrap align-center>
+          <v-flex md12>
+            <Graph />
+          </v-flex>
+        </v-layout>
+        <v-layout row wrap align-center>
+          <v-flex md5>
+            <List />
+          </v-flex>
+          <v-flex md7>
+            <Details />
           </v-flex>
         </v-layout>
       </v-container>
@@ -19,12 +32,18 @@
 </template>
 
 <script>
-import HelloWorld from "./components/HelloWorld.vue";
+import Details from "./components/Details.vue";
+import Header from "./components/Header.vue";
+import Graph from "./components/Graph.vue";
+import List from "./components/List.vue";
 
 export default {
   name: "app",
   components: {
-    HelloWorld
+    Details,
+    Header,
+    Graph,
+    List
   },
   computed: {
     selectedTheme: function() {
@@ -46,5 +65,16 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
+}
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+li {
+  display: inline-block;
+  margin: 0 10px;
+}
+a {
+  color: #42b983;
 }
 </style>
