@@ -1,12 +1,13 @@
 import Vue from "vue";
 import App from "./App.vue";
 import Vuetify from "vuetify";
+import VueVirtualScroller from 'vue-virtual-scroller'
 import Vuex from "vuex";
 
 import "vuetify/dist/vuetify.min.css";
 
 Vue.config.productionTip = false;
-Vue.use(Vuex);
+Vue.use(VueVirtualScroller);
 Vue.use(Vuetify, {
   iconfont: "md",
   theme: {
@@ -16,6 +17,7 @@ Vue.use(Vuetify, {
     error: "#b71c1c"
   }
 });
+Vue.use(Vuex);
 
 new Vue({
   render: h => h(App)
