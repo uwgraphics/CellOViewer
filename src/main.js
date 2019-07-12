@@ -2,7 +2,7 @@ import Vue from "vue";
 import App from "./App.vue";
 import Vuetify from "vuetify";
 import VueVirtualScroller from 'vue-virtual-scroller'
-import Vuex from "vuex";
+import store from "./store.js";
 
 import "vuetify/dist/vuetify.min.css";
 
@@ -17,8 +17,8 @@ Vue.use(Vuetify, {
     error: "#b71c1c"
   }
 });
-Vue.use(Vuex);
 
 new Vue({
-  render: h => h(App)
+  render: h => h(App),
+  store
 }).$mount("#app");

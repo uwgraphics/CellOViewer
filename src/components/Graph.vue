@@ -33,8 +33,7 @@ export default {
   mounted() {},
   data() {
     return {
-      loaded: false,
-      search: ""
+      loaded: false
     };
   },
   methods: {
@@ -44,7 +43,8 @@ export default {
       let formatData = d3Dag.dagStratify(this.cellData);
       let dag = d3Dag.dagHierarchy(formatData);
 
-      let svg = d3.select(this.$refs.graph)
+      let svg = d3
+        .select(this.$refs.graph)
         .append(svg)
         .attr("preserveAspectRatio", "xMinYMin meet")
         .attr("viewBox", `0 0 ${width} ${height}`);
@@ -53,7 +53,16 @@ export default {
       // Continue to load the svg graph into the graph component
     }
   },
-  computed: {},
+  computed: {
+    search: {
+      get() {
+        return this.$store.getters.getSearch;
+      },
+      set(value) {
+        return this.$store.dispatch("changeSearch", value);
+      }
+    }
+  },
   watch: {
     cellData() {
       this.loaded = true;

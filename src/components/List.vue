@@ -2,7 +2,7 @@
   <v-layout row wrap align-center>
     <v-flex md12>
       <v-card height="600">
-        <v-card-title>
+        <v-card-title class="justify-center">
           <h2>The list shall go here</h2>
         </v-card-title>
         <v-card-text>
@@ -46,11 +46,20 @@ export default {
   data() {
     return {
       loaded: false,
-      search: ""
+      localDataCopy: [],
     };
   },
   methods: {},
-  computed: {},
+  computed: {
+    search: {
+      get() {
+        return this.$store.getters.getSearch;
+      },
+      set(value) {
+        return this.$store.dispatch("changeSearch", value);
+      }
+    }
+  },
   watch: {
     cellData() {
       this.loaded = true;
@@ -67,5 +76,8 @@ export default {
 #list {
   max-height: 400px;
   overflow-y: auto;
+}
+v-card-title {
+  margin: 100px;
 }
 </style>
