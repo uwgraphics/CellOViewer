@@ -7,19 +7,29 @@
         </v-card-title>
         <v-card-text>
           <v-layout row wrap>
-            <v-flex md12 ma-3>
+            <v-flex md8>
               <v-text-field
                 v-model="search"
+                append-icon="search"
                 label="search the cell"
                 single-line
                 hide-details
                 hide-no-data
               ></v-text-field>
             </v-flex>
+            <v-spacer></v-spacer>
+            <v-flex md3>
+              <v-select
+                v-model="this.$store.getters.getOption"
+                :items="sortOptions"
+                @input="sortBasedOnOption"
+                label="sort"
+              ></v-select>
+            </v-flex>
           </v-layout>
           <v-layout row wrap id="list">
             <v-flex md12 v-if="loaded">
-              <v-list v-for="(neighborList, index) in cellData" :key="index" id="index">
+              <v-list v-for="(neighborList, index) in filteredData" :key="index" id="index">
                 <v-layout>
                   <v-flex md2 offset-md1 v-if="index&&neighborList">{{ index }}:</v-flex>
                   <v-flex md8 offset-md1 v-if="neighborList">
@@ -47,9 +57,20 @@ export default {
     return {
       loaded: false,
       localDataCopy: [],
+      sortOptions: ["default", "alphabetical"]
     };
   },
-  methods: {},
+  methods: {
+    sortBasedOnOption(option) {
+      this.$store.dispatch("changeOption", option);
+      this.localDataCopy = Object.assign({}, this.$store.getters.getList);
+      switch(option) {
+        case "alphabetical":
+          this.localDataCopy.sort((a, b) => (a[0] > b[0] ? 1 : -1));
+          break;
+      }
+    }
+  },
   computed: {
     search: {
       get() {
@@ -58,6 +79,9 @@ export default {
       set(value) {
         return this.$store.dispatch("changeSearch", value);
       }
+    },
+    filteredData() {
+      return this.$store.getters.getList;
     }
   },
   watch: {
