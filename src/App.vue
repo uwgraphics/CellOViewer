@@ -15,12 +15,12 @@
         </v-layout>
         <v-layout row wrap align-center>
           <v-flex md12>
-            <Graph :cellData="this.$store.getters.getList" />
+            <Graph :cellData="this.loadedData" />
           </v-flex>
         </v-layout>
         <v-layout row wrap align-center>
           <v-flex md5>
-            <List :cellData="this.$store.getters.getList" />
+            <List :cellData="this.loadedData" />
           </v-flex>
           <v-flex md7>
             <Details />
@@ -52,6 +52,7 @@ export default {
   },
   data: function() {
     return {
+      loadedData: [],
       goDark: true,
       search: ""
     };
@@ -59,7 +60,7 @@ export default {
   methods: {
     async fetchData() {
       let data = await d3.json("./cell_type_graph.json");
-      this.$store.dispatch("changeList", data);
+      this.loadedData = Object.assign({}, data);
     }
   },
   computed: {

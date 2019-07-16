@@ -20,7 +20,7 @@
             <v-spacer></v-spacer>
             <v-flex md3>
               <v-select
-                v-model="this.$store.getters.getOption"
+                v-model="option"
                 :items="sortOptions"
                 @input="sortBasedOnOption"
                 label="sort"
@@ -28,13 +28,13 @@
             </v-flex>
           </v-layout>
           <v-layout row wrap id="list">
-            <v-flex md12 v-if="loaded">
-              <v-list v-for="(neighborList, index) in filteredData" :key="index" id="index">
+            <v-flex md12 v-if="loaded&&listLocalCopy">
+              <v-list v-for="(keyValuePair, index) in listLocalCopy" :key="index" id="index">
                 <v-layout>
-                  <v-flex md2 offset-md1 v-if="index&&neighborList">{{ index }}:</v-flex>
-                  <v-flex md8 offset-md1 v-if="neighborList">
-                    <v-list v-for="(neighbor, index) in neighborList" :key="index" dense>
-                      <span v-if="index===(neighborList.length - 1)">{{ neighbor }}</span>
+                  <v-flex md2 offset-md1 v-if="keyValuePair[0]&&keyValuePair[1]">{{ keyValuePair[0] }}:</v-flex>
+                  <v-flex md8 offset-md1 v-if="keyValuePair[1]">
+                    <v-list v-for="(neighbor, index) in keyValuePair[1]" :key="index" dense>
+                      <span v-if="index===(keyValuePair[1].length - 1)">{{ neighbor }}</span>
                       <span v-else>{{ neighbor }},</span>
                     </v-list>
                   </v-flex>
@@ -55,20 +55,23 @@ export default {
   mounted() {},
   data() {
     return {
+      listLocalCopy: [],
       loaded: false,
-      localDataCopy: [],
-      sortOptions: ["default", "alphabetical"]
+      sortOptions: ["default", "neighbors"]
     };
   },
   methods: {
     sortBasedOnOption(option) {
-      this.$store.dispatch("changeOption", option);
-      this.localDataCopy = Object.assign({}, this.$store.getters.getList);
-      switch(option) {
-        case "alphabetical":
-          this.localDataCopy.sort((a, b) => (a[0] > b[0] ? 1 : -1));
+      this.$store.dispatch("changeOption", String(option));
+      this.listLocalCopy = this.generateDefaultList();
+      switch (option) {
+        case "neighbors":
+          this.listLocalCopy = this.listLocalCopy.sort((a, b) => (a[1].length < b[1].length ? 1 : -1));
           break;
       }
+    },
+    generateDefaultList() {
+      return Object.entries(Object.assign({}, this.cellData));
     }
   },
   computed: {
@@ -76,17 +79,27 @@ export default {
       get() {
         return this.$store.getters.getSearch;
       },
-      set(value) {
-        return this.$store.dispatch("changeSearch", value);
+      set(keyValuePair) {
+        return this.$store.dispatch("changeSearch", keyValuePair);
       }
     },
-    filteredData() {
-      return this.$store.getters.getList;
+    option: {
+      get() {
+        return this.$store.getters.getOption;
+      },
+      set(keyValuePair) {
+        return this.$store.dispatch("changeOption", keyValuePair);
+      }
     }
   },
   watch: {
     cellData() {
       this.loaded = true;
+      this.listLocalCopy = this.generateDefaultList();
+      console.log(this.listLocalCopy);
+    },
+    option() {
+
     }
   }
 };

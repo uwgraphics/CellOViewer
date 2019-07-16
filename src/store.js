@@ -4,7 +4,6 @@ import Vuex from "vuex";
 Vue.use(Vuex);
 
 const state = {
-  cellDataList: [],
   optionSelected: "default",
   search: ""
 };
@@ -16,9 +15,6 @@ const mutations = {
   CHANGE_OPTION(state, payload) {
     state.optionSelected = payload;
   },
-  CHANGE_LIST(state, payload) {
-    state.cellDataList = payload;
-  }
 };
 
 const actions = {
@@ -28,9 +24,6 @@ const actions = {
   changeOption(context, option) {
     context.commit("CHANGE_OPTION", option);
   },
-  changeList(context, list) {
-    context.commit("CHANGE_LIST", list);
-  }
 };
 
 const getters = {
@@ -40,9 +33,6 @@ const getters = {
   getOption(state) {
     return state.optionSelected;
   },
-  getList(state) {
-    return state.cellDataList;
-  }
 };
 
 export default new Vuex.Store({
