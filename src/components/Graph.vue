@@ -1,7 +1,7 @@
 <template>
   <v-layout row wrap align-center>
     <v-flex md12>
-      <v-card height="600">
+      <v-card>
         <v-layout row wrap align-center>
           <v-spacer></v-spacer>
           <v-flex md3 mr-3>
@@ -16,7 +16,7 @@
           </v-flex>
           <v-card-text>
             <h2>The graph shall go here</h2>
-            <div ref="graph"></div>
+            <div ref="graph" id="graph"></div>
           </v-card-text>
         </v-layout>
       </v-card>
@@ -25,9 +25,9 @@
 </template>
 
 <script>
-import { formatWithOptions } from "util";
 import * as d3 from "d3";
 import * as d3Dag from "d3-dag";
+import layout from "./../assets/main";
 
 export default {
   name: "cell-graph",
@@ -40,8 +40,8 @@ export default {
   },
   methods: {
     showDag() {
-      let width = 600;
-      let height = 600;
+      let width = 2000;
+      let height = 2000;
       // Change our dataset to a node links structure(for dag structure conversion)
       let links = [];
       Object.keys(this.cellData).forEach(node => {
@@ -50,9 +50,12 @@ export default {
           links.push([node, child]);
         });
       });
-
+      // Turn into DAG format data
       let transformedData = d3Dag.dagConnect()(links);
-      let layout = d3Dag.sugiyama().coord(d3Dag.coordCenter())(transformedData);
+      let layout = d3Dag.sugiyama().decross(d3Dag.decrossTwoLayer())(
+        transformedData
+      );
+      console.log(layout);
       console.log("LINKS", layout.links());
       console.log("NODES", layout.descendants());
       let svg = d3
@@ -67,7 +70,7 @@ export default {
         .x(d => d.x * width)
         .y(d => d.y * height);
 
-      const g = svg.append("g").attr("transform", `translate(${50},${50})`);
+      const g = svg.append("g").attr("transform", `translate(${0},${0})`);
 
       g.append("g")
         .selectAll("path")
@@ -138,5 +141,11 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
+#graph {
+  max-height: 800px;
+  overflow-y: auto;
+  max-width: 800px;
+  overflow-x: auto;
+}
 </style>

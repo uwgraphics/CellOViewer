@@ -2,10 +2,7 @@
 // @ts-check
 
 import { Graph, strifyNodes } from "./graph.js";
-
-let D3;
-// @ts-ignore
-D3 = d3;
+import d3 from "d3";
 
 /**
  * 
@@ -25,7 +22,7 @@ export function drawGraph(graph,selector="body",params={}) {
 
     let linkType = "paths";
 
-    let svg = D3.select(selector).append("svg")
+    let svg = d3.select(selector).append("svg")
         .attr("width", width)
         .attr("height", height);
 
