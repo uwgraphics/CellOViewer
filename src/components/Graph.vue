@@ -115,7 +115,7 @@ export default {
         .text(d => d.id)
         .attr("text-anchor", "middle")
         .attr("alignment-baseline", "middle")
-        .style("font-size", "10px");
+        .style("font-size", "2px");
       // yield svgNode;
     }
   },
