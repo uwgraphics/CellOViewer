@@ -29,9 +29,13 @@
           </v-layout>
           <v-layout row wrap id="list">
             <v-flex md12 v-if="loaded&&listLocalCopy">
-              <v-list v-for="(keyValuePair, index) in listLocalCopy" :key="index" id="index">
+              <v-list v-for="(keyValuePair, index) in filteredData" :key="index" id="index">
                 <v-layout>
-                  <v-flex md2 offset-md1 v-if="keyValuePair[0]&&keyValuePair[1]">{{ keyValuePair[0] }}:</v-flex>
+                  <v-flex
+                    md2
+                    offset-md1
+                    v-if="keyValuePair[0]&&keyValuePair[1]"
+                  >{{ keyValuePair[0] }}:</v-flex>
                   <v-flex md8 offset-md1 v-if="keyValuePair[1]">
                     <v-list v-for="(neighbor, index) in keyValuePair[1]" :key="index" dense>
                       <span v-if="index===(keyValuePair[1].length - 1)">{{ neighbor }}</span>
@@ -61,45 +65,56 @@ export default {
     };
   },
   methods: {
+    generateListCopy(originalList) {
+      return Object.entries(_.cloneDeep(originalList));
+    },
     sortBasedOnOption(option) {
       this.$store.dispatch("changeOption", String(option));
-      this.listLocalCopy = this.generateDefaultList();
+      this.listLocalCopy = this.generateListCopy(this.cellData);
       switch (option) {
         case "neighbors":
-          this.listLocalCopy = this.listLocalCopy.sort((a, b) => (a[1].length < b[1].length ? 1 : -1));
+          this.listLocalCopy = this.listLocalCopy.sort((a, b) =>
+            a[1].length < b[1].length ? 1 : -1
+          );
           break;
       }
-    },
-    generateDefaultList() {
-      return Object.entries(Object.assign({}, this.cellData));
     }
   },
   computed: {
-    search: {
-      get() {
-        return this.$store.getters.getSearch;
-      },
-      set(keyValuePair) {
-        return this.$store.dispatch("changeSearch", keyValuePair);
+    filteredData() {
+      if (this.$store.getters.getSearch === "") {
+        return this.listLocalCopy;
+      } else {
+        const regex = new RegExp(this.search, "i");
+        return this.listLocalCopy.filter(cell => {
+          return regex.test(cell[0]) || regex.test(cell[1]);
+        });
       }
     },
     option: {
       get() {
         return this.$store.getters.getOption;
       },
-      set(keyValuePair) {
-        return this.$store.dispatch("changeOption", keyValuePair);
+      set(option) {
+        this.$store.dispatch("changeOption", option);
+      }
+    },
+    search: {
+      get() {
+        return this.$store.getters.getSearch;
+      },
+      set(input) {
+        this.$store.dispatch("changeSearch", input);
       }
     }
   },
   watch: {
     cellData() {
       this.loaded = true;
-      this.listLocalCopy = this.generateDefaultList();
-      console.log(this.listLocalCopy);
+      this.listLocalCopy = this.generateListCopy(this.cellData);
     },
-    option() {
-
+    search() {
+      console.log(this.search);
     }
   }
 };

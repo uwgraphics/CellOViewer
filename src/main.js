@@ -1,11 +1,16 @@
-import "material-design-icons-iconfont/dist/material-design-icons.css";
-import "vuetify/dist/vuetify.min.css";
-import Vue from "vue";
-import App from "./App.vue";
-import Vuetify from "vuetify";
-import store from "./store.js";
+import "material-design-icons-iconfont/dist/material-design-icons.css"
+import "vuetify/dist/vuetify.min.css"
 
-Vue.config.productionTip = false;
+import Vue from "vue"
+import App from "./App.vue"
+import VueLodash from 'vue-lodash'
+import Vuetify from "vuetify"
+import store from "./store.js"
+
+Vue.config.productionTip = false
+
+const options = { name: 'lodash' } // customize the way you want to call it
+Vue.use(VueLodash, options)
 
 Vue.use(Vuetify, {
   iconfont: "md",
@@ -20,4 +25,4 @@ Vue.use(Vuetify, {
 new Vue({
   render: h => h(App),
   store
-}).$mount("#app");
+}).$mount("#app")
