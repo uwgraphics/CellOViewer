@@ -27,11 +27,23 @@
 <script>
 import * as d3 from "d3";
 import * as d3Dag from "d3-dag";
-import layout from "./../assets/main";
+
+import { analyzeGraph } from "./../assets/graph.js";
+import {
+  average,
+  countCrossingsGraph,
+  simpleSorter
+} from "./../assets/utils.js";
+import { drawGraph } from "./../assets/draw.js";
+import { jsonToGraph } from "./../assets/data.js";
+import { primaryParent } from "./../assets/tangler.js";
+import { treeLayout } from "./../assets/layout.js";
 
 export default {
   name: "cell-graph",
-  props: ["cellData"],
+  props: {
+    cellData: Object
+  },
   mounted() {},
   data() {
     return {
@@ -39,6 +51,7 @@ export default {
     };
   },
   methods: {
+    // This is the D3-DAG version of the cell network graph
     showDag() {
       let width = 2000;
       let height = 2000;
@@ -62,7 +75,7 @@ export default {
         .select(this.$refs.graph)
         .append("svg")
         .attr("preserveAspectRatio", "xMinYMin meet")
-        .attr("viewBox", `0 0 ${width} ${height}`);
+        .attr("viewBox", `0 0 ${width+200} ${height+200}`);
 
       const line = d3
         .line()
@@ -120,6 +133,30 @@ export default {
         .attr("alignment-baseline", "middle")
         .style("font-size", "2px");
       // yield svgNode;
+    },
+    // This is the lab version of the cell network graph
+    showDag2() {
+      let graph = jsonToGraph(this.cellData);
+      console.log(graph);
+      analyzeGraph(graph);
+      console.log(graph);
+      primaryParent(graph);
+      console.log(graph);
+
+      console.log(`crossings at start: ${countCrossingsGraph(graph)}`);
+
+      for (let i = 0; i < 20; i++) {
+        simpleSorter(graph, 3, i);
+        console.log(`crossings after ${i + 1}: ${countCrossingsGraph(graph)}`);
+      }
+
+      graph.links.forEach(
+        link =>
+          (link.color =
+            link.target.primaryParent == link.source ? "#42b983" : "#b0bec5")
+      );
+      treeLayout(graph);
+      drawGraph(graph, this.$refs.graph);
     }
   },
   computed: {
@@ -136,6 +173,7 @@ export default {
     cellData() {
       this.loaded = true;
       this.showDag();
+      this.showDag2();
     }
   }
 };

@@ -32,10 +32,10 @@
 </template>
 
 <script>
-import Details from "./components/Details.vue";
-import Header from "./components/Header.vue";
-import Graph from "./components/Graph.vue";
-import List from "./components/List.vue";
+import Details from "./components/CellDetails.vue";
+import Header from "./components/TheHeader.vue";
+import Graph from "./components/CellGraph.vue";
+import List from "./components/CellList.vue";
 
 import * as d3 from "d3";
 
@@ -52,7 +52,7 @@ export default {
   },
   data: function() {
     return {
-      loadedData: [],
+      loadedData: {},
       goDark: true,
       search: ""
     };

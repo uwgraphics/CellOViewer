@@ -75,13 +75,6 @@ export function layout(graph) {
         let rightLeaf = width;
 
         // 4 different heuristics as to where to move to - purely aesthetics
-        let nx1 = n.children.length
-          ? Math.min(...n.children.map(m => m.x))
-          : rightLeaf;
-        let nx3 = n.children.length
-          ? Math.max(...n.children.map(m => m.x))
-          : rightLeaf;
-        let nx2 = (nx1 + nx3) / 2;
         let na = n.children.length
           ? average(n.children.map(m => m.x))
           : rightLeaf;
@@ -215,18 +208,16 @@ export function treeLayout(graph) {
   });
 
   // we have a left leaning tree, center parents over their kids (if we can move them that far right)
-  if (1) {
-    for (let ni = graph.nodes.length - 1; ni >= 0; ni--) {
-      const node = graph.nodes[ni];
-      if (node.primaryChildren.length) {
-        const goalX = average(node.primaryChildren.map(n => n.x));
-        const neighbor = graph.nodes[ni + 1];
-        if (neighbor.longest == node.longest) {
-          const maxX = neighbor.x - space(node) - space(neighbor) + spacer;
-          node.x = Math.min(maxX, goalX);
-        } else {
-          node.x = goalX;
-        }
+  for (let ni = graph.nodes.length - 1; ni >= 0; ni--) {
+    const node = graph.nodes[ni];
+    if (node.primaryChildren.length) {
+      const goalX = average(node.primaryChildren.map(n => n.x));
+      const neighbor = graph.nodes[ni + 1];
+      if (neighbor.longest == node.longest) {
+        const maxX = neighbor.x - space(node) - space(neighbor) + spacer;
+        node.x = Math.min(maxX, goalX);
+      } else {
+        node.x = goalX;
       }
     }
   }
@@ -332,11 +323,11 @@ export function treeLayoutChristoph(graph) {
   let global_max_position = levels[biggestIndex].length * 11;
 
   // Start laying out the points from the widest to the narrowest level
-  levelSizeList.forEach(function(level_index, li) {
+  levelSizeList.forEach(function(level_index) {
     let level = levels[level_index];
     let left = 0;
 
-    level.forEach(function(node, i) {
+    level.forEach(function(node) {
       // Leftmost
       node.x = left + space(node);
       node.y = topmargin + level_index * levelSep;

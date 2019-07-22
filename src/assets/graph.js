@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /*jshint esversion: 6 */
 // @ts-check
 
@@ -58,7 +59,7 @@ export class Link {
      * @param {string} color 
      * @param {number} value 
      */
-    constructor(source, target, color="#000", value=1) {
+    constructor(source, target, color="#FFF", value=1) {
         this.source = source;
         this.target = target;
         this.color = color;

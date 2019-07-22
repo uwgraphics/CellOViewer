@@ -55,7 +55,9 @@
 <script>
 export default {
   name: "cell-list",
-  props: ["cellData"],
+  props: {
+    cellData: Object
+  },
   mounted() {},
   data() {
     return {
