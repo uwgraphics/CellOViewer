@@ -1,6 +1,7 @@
 /*jshint esversion: 6 */
 // @ts-check
 
+// eslint-disable-next-line no-unused-vars
 import { Graph } from "./graph.js";
 
 /**

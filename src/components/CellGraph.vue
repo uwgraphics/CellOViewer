@@ -34,7 +34,7 @@ import {
   countCrossingsGraph,
   simpleSorter
 } from "./../assets/utils.js";
-import { drawGraph } from "./../assets/draw.js";
+import { drawGraph, drawGraph2 } from "./../assets/draw.js";
 import { jsonToGraph } from "./../assets/data.js";
 import { primaryParent } from "./../assets/tangler.js";
 import { treeLayout } from "./../assets/layout.js";
@@ -137,26 +137,21 @@ export default {
     // This is the lab version of the cell network graph
     showDag2() {
       let graph = jsonToGraph(this.cellData);
-      console.log(graph);
       analyzeGraph(graph);
-      console.log(graph);
       primaryParent(graph);
-      console.log(graph);
-
-      console.log(`crossings at start: ${countCrossingsGraph(graph)}`);
-
+      
       for (let i = 0; i < 20; i++) {
         simpleSorter(graph, 3, i);
-        console.log(`crossings after ${i + 1}: ${countCrossingsGraph(graph)}`);
+        // console.log(`crossings after ${i + 1}: ${countCrossingsGraph(graph)}`);
       }
 
       graph.links.forEach(
         link =>
           (link.color =
-            link.target.primaryParent == link.source ? "#42b983" : "#b0bec5")
+            link.target.primaryParent == link.source ? "#42b983" : "#42b983")
       );
       treeLayout(graph);
-      drawGraph(graph, this.$refs.graph);
+      drawGraph2(graph, this.$refs.graph);
     }
   },
   computed: {
@@ -183,7 +178,7 @@ export default {
 #graph {
   max-height: 800px;
   overflow-y: auto;
-  max-width: 800px;
+  max-width: 1200px;
   overflow-x: auto;
 }
 </style>

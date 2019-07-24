@@ -2,8 +2,20 @@
 /*jshint esversion: 6 */
 // @ts-check
 
+// eslint-disable-next-line no-unused-vars
 import { Graph, strifyNodes } from "./graph.js";
 import * as d3 from "d3";
+
+/**
+ *
+ * @param {Node} layout
+ * @param {Object} selector
+ * @param {number} width
+ * @param {number} height
+ */
+export function drawGraph(layout, selector, width, height) {
+  //Placeholder for D3-DAG library version to be placed here
+}
 
 /**
  *
@@ -11,17 +23,13 @@ import * as d3 from "d3";
  * @param {string} selector="body"
  * @param {Object} params={}
  * @param {number} [params.height = 800]
- * @param {number} [params.nodeRadius = 5]
+ * @param {number} [params.nodeRadius = 3]
  */
-export function drawGraph(graph, selector = "body", params = {}) {
+export function drawGraph2(graph, selector = "body", params = {}) {
   let height = params.height || 800;
-
-  let nodeRadius = params.nodeRadius || 5;
+  let nodeRadius = params.nodeRadius || 3;
 
   const width = Math.max(...graph.nodes.map(n => n.x)) + nodeRadius;
-  console.log(`Computed width ${width}`);
-
-  let linkType = "paths";
 
   let svg = d3
     .select(selector)
@@ -29,6 +37,7 @@ export function drawGraph(graph, selector = "body", params = {}) {
     .attr("width", width)
     .attr("height", height);
 
+  let linkType = "paths";
   let paths;
 
   switch (linkType) {
@@ -63,29 +72,32 @@ export function drawGraph(graph, selector = "body", params = {}) {
         .selectAll(".link")
         .data(graph.links)
         .enter()
-        .append("svg:path");
+        .append("svg:path")
+        .attr("stroke-width", 1)
+        .attr("fill", "none");
   }
   paths.style("stroke", link => link.color).attr("class", "link");
 
   function nodeColor(node) {
-    if (node.phantom) return "#FFF";
+    if (node.phantom) return "#42b983";
     if (node.istree) return "#FFF";
-    return "#42b983";
+    return "#FFF";
   }
 
   function radius(d) {
     return d.phantom ? 2 : nodeRadius;
   }
 
-  var node = svg
+  let node = svg
     .selectAll(".node")
     .data(graph.nodes)
     .enter()
     .append("circle")
     .attr("class", "node")
     .attr("r", radius)
-    .style("fill", "#FFF")
-    .style("stroke", "#000");
+    .style("fill", nodeColor)
+    .style("stroke", "#000")
+    .style("stoke-width", 0.5);
 
   node.append("title").text(function(d) {
     return `${
@@ -98,7 +110,7 @@ export function drawGraph(graph, selector = "body", params = {}) {
       case "arrows":
         // draw directed edges with proper padding from node centers
         paths.attr("d", function(d) {
-          var deltaX = d.target.x - d.source.x,
+          let deltaX = d.target.x - d.source.x,
             deltaY = d.target.y - d.source.y,
             dist = Math.sqrt(deltaX * deltaX + deltaY * deltaY),
             normX = deltaX / dist,
