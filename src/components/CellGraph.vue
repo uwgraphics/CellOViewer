@@ -59,9 +59,9 @@ export default {
     highlightSearch(filteredData, selector) {
       let svg = d3.select(selector).select("svg");
       svg.selectAll(".cell").style("fill", "#FFF");
-      if (filteredData.length != this.listLocalCopy.length) {
+      if (filteredData.length != this.listLocalCopy.length && this.$store.getters.getSearch !== "") {
         for (let i = 0; i < filteredData.length; i++) {
-          svg.select("#circle-" + filteredData[i][2]).style("fill", "#ff7878");
+          svg.select("#circle-" + filteredData[i][2]).transition().style("fill", "#ff7878");
         }
       }
     },
