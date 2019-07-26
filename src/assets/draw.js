@@ -5,7 +5,6 @@
 // eslint-disable-next-line no-unused-vars
 import { Graph, strifyNodes } from "./graph.js";
 import * as d3 from "d3";
-import _ from "lodash";
 
 /**
  *
@@ -82,9 +81,9 @@ export function drawGraphLab(graph, selector = "body", params = {}) {
 
   function nodeClass(node) {
     if (node.phantom) {
-      return "phantom"
+      return "phantom";
     } else {
-      return "cell"
+      return "cell";
     }
   }
 
@@ -103,6 +102,24 @@ export function drawGraphLab(graph, selector = "body", params = {}) {
     return "#000";
   }
 
+  function handleMouseOver() {
+    // Use D3 to select element, change color and size
+    let node = d3.select(this);
+    node.style("fill", "orange").attr("r", nodeRadius * 2);
+    node.append("svg:title").text(function(d) {
+      console.log(d.name);
+      return d.name;
+    }).attr("visibility", "visible")
+    .attr("width", "300px")
+    .attr("height", "200px");
+  }
+
+  function handleMouseOut() {
+    d3.select(this)
+      .style("fill", "#FFF")
+      .attr("r", nodeRadius);
+  }
+
   let node = svg
     .selectAll(".node")
     .data(graph.nodes)
@@ -113,17 +130,13 @@ export function drawGraphLab(graph, selector = "body", params = {}) {
     .attr("r", radius)
     .style("fill", nodeColor)
     .style("stroke", nodeStroke)
-    .style("stoke-width", 0.5);
-  
-  phantomId = 0;
-  circleId = 0;  
-  console.log(node);
+    .style("stoke-width", 0.5)
+    .on("mouseover", handleMouseOver)
+    .on("mouseout", handleMouseOut);
 
-  node.append("title").text(function(d) {
-    return `${
-      d.index
-    }:${d.name} ${strifyNodes(d.dalevel, "index")} tw:${d.twidth}`;
-  });
+  phantomId = 0;
+  circleId = 0;
+  console.log(node);
 
   function update() {
     switch (linkType) {
