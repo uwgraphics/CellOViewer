@@ -5,17 +5,7 @@
 // eslint-disable-next-line no-unused-vars
 import { Graph, strifyNodes } from "./graph.js";
 import * as d3 from "d3";
-
-/**
- *
- * @param {Node} layout
- * @param {Object} selector
- * @param {number} width
- * @param {number} height
- */
-export function drawGraph(layout, selector, width, height) {
-  //Placeholder for D3-DAG library version to be placed here
-}
+import _ from "lodash";
 
 /**
  *
@@ -25,7 +15,7 @@ export function drawGraph(layout, selector, width, height) {
  * @param {number} [params.height = 800]
  * @param {number} [params.nodeRadius = 3]
  */
-export function drawGraph2(graph, selector = "body", params = {}) {
+export function drawGraphLab(graph, selector = "body", params = {}) {
   let height = params.height || 800;
   let nodeRadius = params.nodeRadius || 3;
 
@@ -34,8 +24,8 @@ export function drawGraph2(graph, selector = "body", params = {}) {
   let svg = d3
     .select(selector)
     .append("svg")
-    .attr("width", width)
-    .attr("height", height);
+    .attr("preserveAspectRatio", "xMinYMin meet")
+    .attr("viewBox", `0 0 ${width + 50} ${height + 50}`);
 
   let linkType = "paths";
   let paths;
@@ -73,10 +63,34 @@ export function drawGraph2(graph, selector = "body", params = {}) {
         .data(graph.links)
         .enter()
         .append("svg:path")
-        .attr("stroke-width", 1)
+        .attr("stroke-width", 0.75)
         .attr("fill", "none");
   }
   paths.style("stroke", link => link.color).attr("class", "link");
+
+  // Assign an id to each circle based on node type
+  let phantomId = 0;
+  let circleId = 0;
+
+  function nodeId(node) {
+    if (node.phantom) {
+      return "phantom-" + phantomId++;
+    } else {
+      return "circle-" + circleId++;
+    }
+  }
+
+  function nodeClass(node) {
+    if (node.phantom) {
+      return "phantom"
+    } else {
+      return "cell"
+    }
+  }
+
+  function radius(node) {
+    return node.phantom ? 1 : nodeRadius;
+  }
 
   function nodeColor(node) {
     if (node.phantom) return "#42b983";
@@ -84,8 +98,9 @@ export function drawGraph2(graph, selector = "body", params = {}) {
     return "#FFF";
   }
 
-  function radius(d) {
-    return d.phantom ? 2 : nodeRadius;
+  function nodeStroke(node) {
+    if (node.phantom) return "none";
+    return "#000";
   }
 
   let node = svg
@@ -93,11 +108,16 @@ export function drawGraph2(graph, selector = "body", params = {}) {
     .data(graph.nodes)
     .enter()
     .append("circle")
-    .attr("class", "node")
+    .attr("id", nodeId)
+    .attr("class", nodeClass)
     .attr("r", radius)
     .style("fill", nodeColor)
-    .style("stroke", "#000")
+    .style("stroke", nodeStroke)
     .style("stoke-width", 0.5);
+  
+  phantomId = 0;
+  circleId = 0;  
+  console.log(node);
 
   node.append("title").text(function(d) {
     return `${

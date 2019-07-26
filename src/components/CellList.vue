@@ -38,8 +38,8 @@
                   >{{ keyValuePair[0] }}:</v-flex>
                   <v-flex md8 offset-md1 v-if="keyValuePair[1]">
                     <v-list v-for="(neighbor, index) in keyValuePair[1]" :key="index" dense>
-                      <span v-if="index===(keyValuePair[1].length - 1)">{{ neighbor }}</span>
-                      <span v-else>{{ neighbor }},</span>
+                        <span v-if="index===(keyValuePair[1].length - 1)">{{ neighbor }}</span>
+                        <span v-else>{{ neighbor }},</span>
                     </v-list>
                   </v-flex>
                 </v-layout>

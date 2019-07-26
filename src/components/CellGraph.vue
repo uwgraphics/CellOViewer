@@ -34,7 +34,7 @@ import {
   countCrossingsGraph,
   simpleSorter
 } from "./../assets/utils.js";
-import { drawGraph, drawGraph2 } from "./../assets/draw.js";
+import { drawGraph, drawGraphLab } from "./../assets/draw.js";
 import { jsonToGraph } from "./../assets/data.js";
 import { primaryParent } from "./../assets/tangler.js";
 import { treeLayout } from "./../assets/layout.js";
@@ -47,10 +47,24 @@ export default {
   mounted() {},
   data() {
     return {
+      listLocalCopy: [],
       loaded: false
     };
   },
   methods: {
+    // Turn this function to a Mixin later
+    generateListCopy(originalList) {
+      return Object.entries(_.cloneDeep(originalList));
+    },
+    highlightSearch(filteredData, selector) {
+      let svg = d3.select(selector).select("svg");
+      svg.selectAll(".cell").style("fill", "#FFF");
+      if (filteredData.length != this.listLocalCopy.length) {
+        for (let i = 0; i < filteredData.length; i++) {
+          svg.select("#circle-" + filteredData[i][2]).style("fill", "#dbd242");
+        }
+      }
+    },
     // This is the D3-DAG version of the cell network graph
     showDag() {
       let width = 2000;
@@ -71,11 +85,12 @@ export default {
       console.log(layout);
       console.log("LINKS", layout.links());
       console.log("NODES", layout.descendants());
+
       let svg = d3
         .select(this.$refs.graph)
         .append("svg")
         .attr("preserveAspectRatio", "xMinYMin meet")
-        .attr("viewBox", `0 0 ${width+200} ${height+200}`);
+        .attr("viewBox", `0 0 ${width + 50} ${height + 50}`);
 
       const line = d3
         .line()
@@ -132,29 +147,35 @@ export default {
         .attr("text-anchor", "middle")
         .attr("alignment-baseline", "middle")
         .style("font-size", "2px");
-      // yield svgNode;
     },
     // This is the lab version of the cell network graph
     showDag2() {
       let graph = jsonToGraph(this.cellData);
       analyzeGraph(graph);
       primaryParent(graph);
-      
       for (let i = 0; i < 20; i++) {
         simpleSorter(graph, 3, i);
-        // console.log(`crossings after ${i + 1}: ${countCrossingsGraph(graph)}`);
       }
-
       graph.links.forEach(
         link =>
           (link.color =
             link.target.primaryParent == link.source ? "#42b983" : "#42b983")
       );
       treeLayout(graph);
-      drawGraph2(graph, this.$refs.graph);
+      drawGraphLab(graph, this.$refs.graph);
     }
   },
   computed: {
+    filteredData() {
+      if (this.$store.getters.getSearch === "") {
+        return this.listLocalCopy;
+      } else {
+        const regex = new RegExp(this.search, "i");
+        return this.listLocalCopy.filter(cell => {
+          return regex.test(cell[0]) || regex.test(cell[1]);
+        });
+      }
+    },
     search: {
       get() {
         return this.$store.getters.getSearch;
@@ -167,8 +188,15 @@ export default {
   watch: {
     cellData() {
       this.loaded = true;
-      this.showDag();
+      // this.showDag();
+      this.listLocalCopy = this.generateListCopy(this.cellData);
+      for (let i = 0; i < this.listLocalCopy.length; i++) {
+        this.listLocalCopy[i].push(i.toString());
+      }
       this.showDag2();
+    },
+    filteredData() {
+      this.highlightSearch(this.filteredData, this.$refs.graph);
     }
   }
 };
