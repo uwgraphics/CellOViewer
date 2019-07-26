@@ -61,7 +61,7 @@ export default {
       svg.selectAll(".cell").style("fill", "#FFF");
       if (filteredData.length != this.listLocalCopy.length) {
         for (let i = 0; i < filteredData.length; i++) {
-          svg.select("#circle-" + filteredData[i][2]).style("fill", "#dbd242");
+          svg.select("#circle-" + filteredData[i][2]).style("fill", "#ff7878");
         }
       }
     },
