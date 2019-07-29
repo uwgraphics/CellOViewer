@@ -3,7 +3,7 @@
 // @ts-check
 
 // eslint-disable-next-line no-unused-vars
-import { Graph, strifyNodes } from "./graph.js";
+import { Graph } from "./graph.js";
 import * as d3 from "d3";
 
 /**
@@ -91,6 +91,10 @@ export function drawGraphLab(graph, selector = "body", params = {}) {
     return node.phantom ? 1 : nodeRadius;
   }
 
+  function nodeName(node) {
+    return node.name;
+  }
+
   function nodeColor(node) {
     if (node.phantom) return "#42b983";
     if (node.istree) return "#FFF";
@@ -105,19 +109,23 @@ export function drawGraphLab(graph, selector = "body", params = {}) {
   function handleMouseOver() {
     // Use D3 to select element, change color and size
     let node = d3.select(this);
-    node.style("fill", "orange").attr("r", nodeRadius * 2);
-    node.append("svg:title").text(function(d) {
-      console.log(d.name);
-      return d.name;
-    }).attr("visibility", "visible")
-    .attr("width", "300px")
-    .attr("height", "200px");
+    node.attr("r", nodeRadius * 2);
+
+    let d3plus = require("d3plus-tooltip");
+    new d3plus.Tooltip()
+      .data([{ name: node.attr("name") }])
+      .thead([
+        function(node) {
+          return node.name;
+        }
+      ])
+      .position("#" + node.attr("id"))
+      .render();
   }
 
   function handleMouseOut() {
-    d3.select(this)
-      .style("fill", "#FFF")
-      .attr("r", nodeRadius);
+    d3.select(this).attr("r", nodeRadius);
+    d3.select(".d3plus-tooltip").remove();
   }
 
   let node = svg
@@ -128,15 +136,20 @@ export function drawGraphLab(graph, selector = "body", params = {}) {
     .attr("id", nodeId)
     .attr("class", nodeClass)
     .attr("r", radius)
+    .attr("name", nodeName)
     .style("fill", nodeColor)
     .style("stroke", nodeStroke)
-    .style("stoke-width", 0.5)
+    .style("stoke-width", 0.5);
+
+  node
+    .filter(".cell")
     .on("mouseover", handleMouseOver)
     .on("mouseout", handleMouseOut);
 
   phantomId = 0;
   circleId = 0;
   console.log(node);
+  console.log(graph.nodes);
 
   function update() {
     switch (linkType) {
