@@ -15,7 +15,7 @@
             ></v-text-field>
           </v-flex>
           <v-card-text>
-            <h2>The graph shall go here</h2>
+            <h2 class="title">Graph View</h2>
             <div ref="graph" id="graph"></div>
           </v-card-text>
         </v-layout>
@@ -44,7 +44,8 @@ export default {
   mounted() {},
   data() {
     return {
-      cellDetailObject: {},
+      cellDetailObject: "",
+      keyValueDict: [],
       listLocalCopy: [],
       loaded: false
     };
@@ -176,7 +177,7 @@ export default {
             link.target.primaryParent == link.source ? "#42b983" : "#42b983")
       );
       treeLayout(graph);
-      drawGraphLab(graph, this.$refs.graph);
+      drawGraphLab(graph, this.$refs.graph, this);
     }
   },
   computed: {
@@ -204,6 +205,13 @@ export default {
       this.loaded = true;
       // this.showDag();
       this.listLocalCopy = this.generateListCopy(this.cellData);
+      // Create a key(cell name) value(cell neighbors) list dict
+      const keys = Object.entries(this.listLocalCopy);
+      keys.forEach(item => {
+        this.keyValueDict[item[1][0]] = item[1][1];
+      });
+      console.log(this.keyValueDict);
+
       for (let i = 0; i < this.listLocalCopy.length; i++) {
         this.listLocalCopy[i].push(i.toString());
       }
@@ -211,6 +219,18 @@ export default {
     },
     filteredData() {
       this.highlightSearch(this.filteredData, this.$refs.graph);
+    },
+    cellDetailObject() {
+      console.log(typeof this.filteredData);
+      console.log(this.keyValueDict[this.cellDetailObject]);
+      let cellDetailArray = []
+      cellDetailArray.push(this.cellDetailObject);
+      cellDetailArray.push(this.keyValueDict[this.cellDetailObject]);
+      console.log(Object.entries(_.cloneDeep(cellDetailArray)));
+      this.$store.dispatch(
+        "changeDetailObject",
+        Object.entries(_.cloneDeep(cellDetailArray))
+      );
     }
   }
 };

@@ -1,9 +1,9 @@
 <template>
   <v-layout row wrap align-center>
     <v-flex md12>
-      <v-card height="600">
+      <v-card :class="{ height:cardHeight }">
         <v-card-title class="justify-center">
-          <h2>The list shall go here</h2>
+          <h2 class="title">List View</h2>
         </v-card-title>
         <v-card-text>
           <v-layout row wrap>
@@ -27,22 +27,29 @@
               ></v-select>
             </v-flex>
           </v-layout>
-          <v-layout row wrap id="list">
+          <v-layout row wrap id="list" :class="{ 'max-height': listHeight }">
             <v-flex md12 v-if="loaded&&listLocalCopy">
-              <v-list v-for="(keyValuePair, index) in filteredData" :key="index" id="index">
-                <v-layout>
-                  <v-flex
-                    md2
-                    offset-md1
-                    v-if="keyValuePair[0]&&keyValuePair[1]"
-                  >{{ keyValuePair[0] }}:</v-flex>
-                  <v-flex md8 offset-md1 v-if="keyValuePair[1]">
-                    <v-list v-for="(neighbor, index) in keyValuePair[1]" :key="index" dense>
-                      <span v-if="index===(keyValuePair[1].length - 1)">{{ neighbor }}</span>
-                      <span v-else>{{ neighbor }},</span>
-                    </v-list>
-                  </v-flex>
-                </v-layout>
+              <v-list>
+                <v-list-item
+                  v-for="(keyValuePair, index) in filteredData"
+                  :key="index"
+                  @click="setDetailItem(keyValuePair)"
+                >
+                  <v-layout>
+                    <v-flex
+                      md2
+                      offset-md1
+                      v-if="keyValuePair[0]&&keyValuePair[1]"
+                      class="index"
+                    >{{ keyValuePair[0] }}:</v-flex>
+                    <v-flex md8 offset-md1 v-if="keyValuePair[1]">
+                      <v-list v-for="(neighbor, index) in keyValuePair[1]" :key="index" dense>
+                        <span v-if="index===(keyValuePair[1].length - 1)">{{ neighbor }}</span>
+                        <span v-else>{{ neighbor }},</span>
+                      </v-list>
+                    </v-flex>
+                  </v-layout>
+                </v-list-item>
               </v-list>
             </v-flex>
           </v-layout>
@@ -61,12 +68,23 @@ export default {
   mounted() {},
   data() {
     return {
+      cardHeight: this.$store.getters.getCardHeight,
+      detailItem: [],
+      listHeight: "400px",
       listLocalCopy: [],
       loaded: false,
       sortOptions: ["default", "neighbors"]
     };
   },
   methods: {
+    setDetailItem(item) {
+      console.log(item);
+      console.log(Object.entries(_.cloneDeep(item)));
+      this.$store.dispatch(
+        "changeDetailObject",
+        Object.entries(_.cloneDeep(item))
+      );
+    },
     generateListCopy(originalList) {
       return Object.entries(_.cloneDeep(originalList));
     },
@@ -126,7 +144,7 @@ export default {
 </script>
 
 <style scoped>
-#index {
+.index {
   color: #42b983;
   font-weight: bold;
 }

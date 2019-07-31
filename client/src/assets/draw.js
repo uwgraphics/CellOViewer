@@ -14,7 +14,8 @@ import * as d3 from "d3";
  * @param {number} [params.height = 800]
  * @param {number} [params.nodeRadius = 3]
  */
-export function drawGraphLab(graph, selector = "body", params = {}) {
+export function drawGraphLab(graph, selector = "body", vueThis, params = {}) {
+  console.log(vueThis);
   let height = params.height || 800;
   let nodeRadius = params.nodeRadius || 3;
 
@@ -147,7 +148,7 @@ export function drawGraphLab(graph, selector = "body", params = {}) {
   }
 
   function handleMouseClick() {
-    console.log(d3.select(this));
+    vueThis.cellDetailObject = d3.select(this).attr("name");
   }
 
   let node = svg

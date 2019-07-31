@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <v-app :dark="goDark">
+    <v-app :dark="setTheme">
       <v-container bg grid-list-md text-xs-center>
         <v-layout row justify-space-between>
           <v-flex md2>
@@ -64,8 +64,15 @@ export default {
     }
   },
   computed: {
-    selectedTheme: function() {
+    selectedTheme() {
       return this.goDark ? "Dark Theme" : "Light Theme";
+    },
+    setTheme() {
+      if (this.goDark == true) {
+        return (this.$vuetify.theme.dark = true);
+      } else {
+        return (this.$vuetify.theme.dark = false);
+      }
     }
   }
 };
@@ -86,7 +93,7 @@ li {
   display: inline-block;
   margin: 0 10px;
 }
-a {
+a{
   color: #42b983;
 }
 </style>

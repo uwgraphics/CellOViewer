@@ -1,28 +1,42 @@
-import "material-design-icons-iconfont/dist/material-design-icons.css"
-import 'vuetify/dist/vuetify.min.css'
+import "material-design-icons-iconfont/dist/material-design-icons.css";
+import "vuetify/dist/vuetify.min.css";
 
-import Vue from 'vue'
-import App from './App.vue'
-import VueLodash from 'vue-lodash'
-import Vuetify from 'vuetify'
-import store from './store.js'
+import Vue from "vue";
+import App from "./App.vue";
+import VueLodash from "vue-lodash";
+import Vuetify from "vuetify";
+import store from "./store.js";
 
-Vue.config.productionTip = false
+Vue.config.productionTip = false;
 
-const options = { name: 'lodash' } // customize the way you want to call it
-Vue.use(VueLodash, options)
+const options = { name: "lodash" }; // customize the way you want to call it
+Vue.use(VueLodash, options);
 
-Vue.use(Vuetify, {
-  iconfont: 'md',
+const vuetifyOptions = {
+  iconfont: "md",
   theme: {
-    primary: '#42b983',
-    secondary: '#b0bec5',
-    accent: '#8c9eff',
-    error: '#b71c1c'
+    dark: true,
+    themes: {
+      dark: {
+        primary: "#42b983",
+        secondary: "#b0bec5",
+        accent: "#8c9eff",
+        error: "#b71c1c"
+      },
+      light: {
+        primary: "#42b983",
+        secondary: "#b0bec5",
+        accent: "#8c9eff",
+        error: "#b71c1c"
+      }
+    }
   }
-});
+};
+
+Vue.use(Vuetify);
 
 new Vue({
   render: h => h(App),
-  store
-}).$mount('#app')
+  store,
+  vuetify: new Vuetify(vuetifyOptions)
+}).$mount("#app");
