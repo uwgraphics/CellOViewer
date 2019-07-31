@@ -68,14 +68,31 @@ export function drawGraphLab(graph, selector = "body", params = {}) {
   paths.style("stroke", link => link.color).attr("class", "link");
 
   // Assign an id to each circle based on node type
-  let phantomId = 0;
-  let circleId = 0;
-
   function nodeId(node) {
     if (node.phantom) {
-      return "phantom-" + phantomId++;
+      return (
+        "phantom-" +
+        node.name
+          .split(" ")
+          .join("-")
+          .split("(")
+          .join("")
+          .split(")")
+          .join("")
+          .replace(/\//g, "-")
+      );
     } else {
-      return "circle-" + circleId++;
+      return (
+        "circle-" +
+        node.name
+          .split(" ")
+          .join("-")
+          .split("(")
+          .join("")
+          .split(")")
+          .join("")
+          .replace(/\//g, "-")
+      );
     }
   }
 
@@ -129,6 +146,10 @@ export function drawGraphLab(graph, selector = "body", params = {}) {
     d3.select(".d3plus-tooltip").remove();
   }
 
+  function handleMouseClick() {
+    console.log(d3.select(this));
+  }
+
   let node = svg
     .selectAll(".node")
     .data(graph.nodes)
@@ -145,10 +166,9 @@ export function drawGraphLab(graph, selector = "body", params = {}) {
   node
     .filter(".cell")
     .on("mouseover", handleMouseOver)
-    .on("mouseout", handleMouseOut);
+    .on("mouseout", handleMouseOut)
+    .on("click", handleMouseClick);
 
-  phantomId = 0;
-  circleId = 0;
   console.log(node);
   console.log(graph.nodes);
 

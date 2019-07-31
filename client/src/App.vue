@@ -32,10 +32,10 @@
 </template>
 
 <script>
-import Details from "./components/CellDetails.vue";
-import Header from "./components/TheHeader.vue";
-import Graph from "./components/CellGraph.vue";
-import List from "./components/CellList.vue";
+import Details from "@/components/CellDetails.vue";
+import Header from "@/components/TheHeader.vue";
+import Graph from "@/components/CellGraph.vue";
+import List from "@/components/CellList.vue";
 
 import * as d3 from "d3";
 

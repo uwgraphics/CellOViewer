@@ -27,17 +27,14 @@
 <script>
 import * as d3 from "d3";
 import * as d3Dag from "d3-dag";
+import _ from "lodash";
 
-import { analyzeGraph } from "./../assets/graph.js";
-import {
-  average,
-  countCrossingsGraph,
-  simpleSorter
-} from "./../assets/utils.js";
-import { drawGraph, drawGraphLab } from "./../assets/draw.js";
-import { jsonToGraph } from "./../assets/data.js";
-import { primaryParent } from "./../assets/tangler.js";
-import { treeLayout } from "./../assets/layout.js";
+import { analyzeGraph } from "@/assets/graph.js";
+import { average, countCrossingsGraph, simpleSorter } from "@/assets/utils.js";
+import { drawGraph, drawGraphLab } from "@/assets/draw.js";
+import { jsonToGraph } from "@/assets/data.js";
+import { primaryParent } from "@/assets/tangler.js";
+import { treeLayout } from "@/assets/layout.js";
 
 export default {
   name: "cell-graph",
@@ -47,6 +44,7 @@ export default {
   mounted() {},
   data() {
     return {
+      cellDetailObject: {},
       listLocalCopy: [],
       loaded: false
     };
@@ -59,9 +57,25 @@ export default {
     highlightSearch(filteredData, selector) {
       let svg = d3.select(selector).select("svg");
       svg.selectAll(".cell").style("fill", "#FFF");
-      if (filteredData.length != this.listLocalCopy.length && this.$store.getters.getSearch !== "") {
+      if (
+        filteredData.length !== this.listLocalCopy.length &&
+        this.$store.getters.getSearch !== ""
+      ) {
         for (let i = 0; i < filteredData.length; i++) {
-          svg.select("#circle-" + filteredData[i][2]).transition().style("fill", "#ff7878");
+          svg
+            .select(
+              "#circle-" +
+                filteredData[i][0]
+                  .split(" ")
+                  .join("-")
+                  .split("(")
+                  .join("")
+                  .split(")")
+                  .join("")
+                  .replace(/\//g, "-")
+            )
+            .transition()
+            .style("fill", "#ff7878");
         }
       }
     },

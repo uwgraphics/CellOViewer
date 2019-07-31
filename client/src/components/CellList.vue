@@ -80,6 +80,9 @@ export default {
           );
           break;
       }
+    },
+    test(keyValuePair) {
+      console.log("This click works");
     }
   },
   computed: {
