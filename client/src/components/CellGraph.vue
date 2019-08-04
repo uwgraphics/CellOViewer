@@ -47,6 +47,7 @@ export default {
   data() {
     return {
       cellDetailObject: "",
+      cellTypeName: "",
       keyValueDict: [],
       listLocalCopy: [],
       loaded: false
@@ -233,6 +234,7 @@ export default {
         "changeDetailObject",
         Object.entries(_.cloneDeep(cellDetailArray))
       );
+      this.cellTypeName = cellDetailArray[0];
     }
   }
 };

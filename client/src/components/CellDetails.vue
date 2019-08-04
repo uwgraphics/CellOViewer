@@ -13,12 +13,13 @@
           <v-layout row wrap>
             <v-flex md12 sm12 v-if="Object.keys(detailObject).length !== 0" id="title">
               <h3>{{ detailObject[0][1] }}</h3>
-              <v-list v-if="detailObject[1]" id="list">
-                <v-list-item v-for="(neighbor, index) in detailObject[1][1]" :key="index" dense>
-                  <span v-if="index===(detailObject[1].length - 1)">{{ neighbor }}</span>
-                  <span v-else>{{ neighbor }},</span>
+              <v-list v-if="geneDataExist(detailObject[0][1])" id="list">
+                <v-list-item v-for="(value, index) in loadedGeneData[detailObject[0][1]]" :key="index" dense>
+                  <span v-if="index===(loadedGeneData[detailObject[0][1]].length - 1)">{{ index }}: {{value}}</span>
+                  <span v-else>{{ index }}: {{value}},</span>
                 </v-list-item>
               </v-list>
+              <p v-else>There is no top 10 gene data related to this cell type.</p>
             </v-flex>
           </v-layout>
         </v-card-text>
@@ -28,17 +29,36 @@
 </template>
 
 <script>
+import * as d3 from "d3";
+
 export default {
   name: "cell-details",
   props: [],
-  mounted() {},
+  mounted() {
+    this.fetchData();
+  },
   data() {
     return {
       cardHeight: this.$store.getters.getCardHeight,
-      detailObjectLocal: {}
+      detailObjectLocal: {},
+      loadedGeneData: {}
     };
   },
   methods: {
+    // Load gene data in this component to avoid latency in the main component
+    async fetchData() {
+      let data = await d3.json("./top_abs_10_dict.json");
+      this.loadedGeneData = Object.assign({}, data);
+      console.log(this.loadedGeneData);
+      console.log(this.loadedGeneData["B cell"]);
+    },
+    geneDataExist(cellTypeName) {
+      if (this.loadedGeneData[cellTypeName] === undefined) {
+        return false;
+      }
+
+      return true;
+    },
     removeDetailObject() {
       this.$store.dispatch("changeDetailObject", {});
     }
@@ -67,5 +87,8 @@ export default {
 #list {
   max-height: 400px;
   overflow-y: auto;
+}
+p {
+  color: #b71c1c;
 }
 </style>
