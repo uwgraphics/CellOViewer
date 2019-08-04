@@ -14,15 +14,15 @@
           </v-flex>
         </v-layout>
         <v-layout row wrap align-center>
-          <v-flex md12>
+          <v-flex md7>
             <Graph :cellData="this.loadedData" />
           </v-flex>
-        </v-layout>
-        <v-layout row wrap align-center>
           <v-flex md5>
             <List :cellData="this.loadedData" />
           </v-flex>
-          <v-flex md7>
+        </v-layout>
+        <v-layout row wrap align-center>
+          <v-flex md12>
             <Details />
           </v-flex>
         </v-layout>
@@ -93,7 +93,7 @@ li {
   display: inline-block;
   margin: 0 10px;
 }
-a{
+a {
   color: #42b983;
 }
 </style>

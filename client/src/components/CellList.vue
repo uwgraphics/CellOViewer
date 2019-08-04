@@ -1,7 +1,7 @@
 <template>
   <v-layout row wrap align-center>
     <v-flex md12>
-      <v-card :class="{ height:cardHeight }">
+      <v-card height="700">
         <v-card-title class="justify-center">
           <h2 class="title">List View</h2>
         </v-card-title>
@@ -149,7 +149,7 @@ export default {
   font-weight: bold;
 }
 #list {
-  max-height: 400px;
+  max-height: 500px;
   overflow-y: auto;
 }
 v-card-title {

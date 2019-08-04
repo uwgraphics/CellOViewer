@@ -1,7 +1,10 @@
 <template>
   <v-layout row wrap align-center>
     <v-flex md12>
-      <v-card>
+      <v-card height="700">
+        <v-card-title class="justify-center">
+          <h2 class="title">Graph View</h2>
+        </v-card-title>
         <v-layout row wrap align-center>
           <v-spacer></v-spacer>
           <v-flex md3 mr-3>
@@ -15,7 +18,6 @@
             ></v-text-field>
           </v-flex>
           <v-card-text>
-            <h2 class="title">Graph View</h2>
             <div ref="graph" id="graph"></div>
           </v-card-text>
         </v-layout>
@@ -223,7 +225,7 @@ export default {
     cellDetailObject() {
       console.log(typeof this.filteredData);
       console.log(this.keyValueDict[this.cellDetailObject]);
-      let cellDetailArray = []
+      let cellDetailArray = [];
       cellDetailArray.push(this.cellDetailObject);
       cellDetailArray.push(this.keyValueDict[this.cellDetailObject]);
       console.log(Object.entries(_.cloneDeep(cellDetailArray)));
