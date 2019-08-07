@@ -27,7 +27,7 @@
               ></v-select>
             </v-flex>
           </v-layout>
-          <v-layout row wrap id="list" :class="{ 'max-height': listHeight }">
+          <v-layout row wrap class="list" :class="{ 'max-height': listHeight }">
             <v-flex md12 v-if="loaded&&listLocalCopy">
               <v-list>
                 <v-list-item
@@ -78,10 +78,7 @@ export default {
   },
   methods: {
     setCellSelected(cellName) {
-      this.$store.dispatch(
-        "changeCellSelected",
-        cellName
-      );
+      this.$store.dispatch("changeCellSelected", cellName);
     },
     generateListCopy(originalList) {
       return Object.entries(_.cloneDeep(originalList));
@@ -142,10 +139,6 @@ export default {
 </script>
 
 <style scoped>
-#list {
-  max-height: 500px;
-  overflow-y: auto;
-}
 v-card-title {
   margin: 100px;
 }

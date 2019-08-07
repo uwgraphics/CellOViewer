@@ -10,17 +10,20 @@
             Remove Gene Details
             <v-icon dark right>remove_circle</v-icon>
           </v-btn>
-          <v-layout row wrap id="list" :class="{ 'max-height': listHeight }">
+          <v-layout row wrap class="list" :class="{ 'max-height': listHeight }">
             <v-flex md12 v-if="geneNotEmpty()">
               <h3 class="sub-title">Gene: {{ geneSelected }}</h3>
               <v-list>
-                <v-list-item v-for="(value, index) in filteredGeneCellList" :key="index">
+                <v-list-item
+                  v-for="(value, index) in filteredGeneCellList"
+                  :key="index"
+                  class="list"
+                  @click="setCellSelected(value[0])"
+                >
                   <v-layout>
                     <v-flex md12>
-                      <v-list-item @click="setCellSelected(value[0])">
-                        <span class="index">{{ value[0] }}:&nbsp;</span>
-                        <span>{{ value[1] }}</span>
-                      </v-list-item>
+                      <span class="index">{{ value[0] }}:&nbsp;</span>
+                      <span>{{ value[1] }}</span>
                     </v-flex>
                   </v-layout>
                 </v-list-item>

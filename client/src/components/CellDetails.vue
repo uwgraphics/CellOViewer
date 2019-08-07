@@ -13,13 +13,22 @@
           <v-layout row wrap>
             <v-flex md12 sm12 v-if="cellSelectedExist">
               <h3 class="sub-title">{{ cellSelected }}</h3>
-              <v-list v-if="geneDataExist(cellSelected)" id="list">
-                <v-list-item v-for="(value, index) in loadedGeneData[cellSelected]" :key="index" dense @click="setGeneItem(index)">
-                  <span v-if="index===(loadedGeneData[cellSelected].length - 1)">{{ index }}: {{value}}</span>
+              <v-list v-if="geneDataExist(cellSelected)" class="list">
+                <v-list-item
+                  v-for="(value, index) in loadedGeneData[cellSelected]"
+                  :key="index"
+                  dense
+                  @click="setGeneItem(index)"
+                >
+                  <span
+                    v-if="index===(loadedGeneData[cellSelected].length - 1)"
+                  >{{ index }}: {{value}}</span>
                   <span v-else>{{ index }}: {{value}},</span>
                 </v-list-item>
               </v-list>
-              <p v-else class="message">There are no top 10 gene data related to the selected cell type.</p>
+            </v-flex>
+            <v-flex md12 sm12 v-else>
+              <p class="message">There are no top 10 gene data related to the selected cell type.</p>
             </v-flex>
           </v-layout>
         </v-card-text>
@@ -83,12 +92,8 @@ export default {
 </script>
 
 <style scoped>
-#list {
-  max-height: 400px;
-  overflow-y: auto;
-}
 .message {
   color: red;
-  text-align: left
+  text-align: left;
 }
 </style>

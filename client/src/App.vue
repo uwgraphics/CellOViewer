@@ -98,7 +98,8 @@ li {
   display: inline-block;
   margin: 0 10px;
 }
-a, h3 {
+a,
+h3 {
   color: #42b983;
 }
 .index {
@@ -109,5 +110,9 @@ a, h3 {
   color: #42b983;
   font-weight: bold;
   text-align: left;
+}
+.list {
+  max-height: 500px;
+  overflow-y: auto;
 }
 </style>
