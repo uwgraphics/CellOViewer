@@ -5,7 +5,7 @@ Vue.use(Vuex);
 
 const state = {
   cardHeight: "600px",
-  detailObject: {},
+  cellSelected: "",
   geneSelected: "",
   optionSelected: "default",
   search: ""
@@ -15,8 +15,8 @@ const mutations = {
   CHANGE_CARD_HEIGHT(state, payload) {
     state.cardHeight = payload;
   },
-  CHANGE_DETAIL_OBJECT(state, payload) {
-    state.detailObject = payload;
+  CHANGE_CELL_SELECTED(state, payload) {
+    state.cellSelected = payload;
   },
   CHANGE_GENE_SELECTED(state, payload) {
     state.geneSelected = payload;
@@ -33,8 +33,8 @@ const actions = {
   changeCardHeight(context, cardHeightContent) {
     context.commit("CHANGE_CARD_HEIGHT", cardHeightContent);
   },
-  changeDetailObject(context, detailObject) {
-    context.commit("CHANGE_DETAIL_OBJECT", detailObject);
+  changeCellSelected(context, cellSelected) {
+    context.commit("CHANGE_CELL_SELECTED", cellSelected);
   },
   changeGeneSelected(context, geneSelected) {
     context.commit("CHANGE_GENE_SELECTED", geneSelected);
@@ -51,8 +51,8 @@ const getters = {
   getCardHeight(state) {
     return state.cardHeight;
   },
-  getDetailObject(state) {
-    return state.detailObject;
+  getCellSelected(state) {
+    return state.cellSelected;
   },
   getGeneSelected(state) {
     return state.geneSelected;

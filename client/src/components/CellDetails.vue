@@ -6,20 +6,20 @@
           <h2 class="title">Cell Details View</h2>
         </v-card-title>
         <v-card-text>
-          <v-btn class="ma-2" color="red" dark @click="removeDetailObject">
+          <v-btn class="ma-2" color="red" dark @click="removeCellSelected">
             Remove Cell Details
             <v-icon dark right>remove_circle</v-icon>
           </v-btn>
           <v-layout row wrap>
-            <v-flex md12 sm12 v-if="Object.keys(detailObject).length !== 0">
-              <h3 class="sub-title">{{ detailObject[0][1] }}</h3>
-              <v-list v-if="geneDataExist(detailObject[0][1])" id="list">
-                <v-list-item v-for="(value, index) in loadedGeneData[detailObject[0][1]]" :key="index" dense @click="setGeneItem(index)">
-                  <span v-if="index===(loadedGeneData[detailObject[0][1]].length - 1)">{{ index }}: {{value}}</span>
+            <v-flex md12 sm12 v-if="cellSelectedExist">
+              <h3 class="sub-title">{{ cellSelected }}</h3>
+              <v-list v-if="geneDataExist(cellSelected)" id="list">
+                <v-list-item v-for="(value, index) in loadedGeneData[cellSelected]" :key="index" dense @click="setGeneItem(index)">
+                  <span v-if="index===(loadedGeneData[cellSelected].length - 1)">{{ index }}: {{value}}</span>
                   <span v-else>{{ index }}: {{value}},</span>
                 </v-list-item>
               </v-list>
-              <p v-else class="message">There is no top 10 gene data related to this cell type.</p>
+              <p v-else class="message">There are no top 10 gene data related to the selected cell type.</p>
             </v-flex>
           </v-layout>
         </v-card-text>
@@ -40,17 +40,18 @@ export default {
   data() {
     return {
       cardHeight: this.$store.getters.getCardHeight,
-      detailObjectLocal: {},
       loadedGeneData: {}
     };
   },
   methods: {
     // Load gene data in this component to avoid latency in the main component
+    cellSelectedExist() {
+      return this.$store.getters.getCellSelected !== "";
+    },
     async fetchData() {
       let data = await d3.json("./top_abs_10_dict.json");
       this.loadedGeneData = Object.assign({}, data);
       console.log(this.loadedGeneData);
-      console.log(this.loadedGeneData["B cell"]);
     },
     geneDataExist(cellTypeName) {
       if (this.loadedGeneData[cellTypeName] === undefined) {
@@ -59,24 +60,24 @@ export default {
 
       return true;
     },
-    removeDetailObject() {
-      this.$store.dispatch("changeDetailObject", {});
+    removeCellSelected() {
+      this.$store.dispatch("changeCellSelected", "");
     },
     setGeneItem(index) {
       this.$store.dispatch("changeGeneSelected", index);
     }
   },
   computed: {
-    detailObject: {
+    cellSelected: {
       get() {
-        return this.$store.getters.getDetailObject;
+        return this.$store.getters.getCellSelected;
       }
     }
   },
   watch: {
-    detailObject() {
-      console.log(this.$store.getters.getDetailObject);
-    }
+    // cellSelected() {
+    //   console.log(this.$store.getters.getCellSelected);
+    // }
   }
 };
 </script>
@@ -88,5 +89,6 @@ export default {
 }
 .message {
   color: red;
+  text-align: left
 }
 </style>

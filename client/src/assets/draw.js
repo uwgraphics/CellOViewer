@@ -148,7 +148,7 @@ export function drawGraphLab(graph, selector = "body", vueThis, params = {}) {
   }
 
   function handleMouseClick() {
-    vueThis.cellDetailObject = d3.select(this).attr("name");
+    vueThis.selectedCellName = d3.select(this).attr("name");
   }
 
   let node = svg

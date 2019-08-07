@@ -33,7 +33,7 @@
                 <v-list-item
                   v-for="(keyValuePair, index) in filteredData"
                   :key="index"
-                  @click="setDetailItem(keyValuePair)"
+                  @click="setCellSelected(keyValuePair[0])"
                 >
                   <v-layout>
                     <v-flex
@@ -77,12 +77,10 @@ export default {
     };
   },
   methods: {
-    setDetailItem(item) {
-      console.log(item);
-      console.log(Object.entries(_.cloneDeep(item)));
+    setCellSelected(cellName) {
       this.$store.dispatch(
-        "changeDetailObject",
-        Object.entries(_.cloneDeep(item))
+        "changeCellSelected",
+        cellName
       );
     },
     generateListCopy(originalList) {

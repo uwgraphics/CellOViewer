@@ -46,8 +46,7 @@ export default {
   mounted() {},
   data() {
     return {
-      cellDetailObject: "",
-      cellTypeName: "",
+      selectedCellName: "",
       keyValueDict: [],
       listLocalCopy: [],
       loaded: false
@@ -223,18 +222,8 @@ export default {
     filteredData() {
       this.highlightSearch(this.filteredData, this.$refs.graph);
     },
-    cellDetailObject() {
-      console.log(typeof this.filteredData);
-      console.log(this.keyValueDict[this.cellDetailObject]);
-      let cellDetailArray = [];
-      cellDetailArray.push(this.cellDetailObject);
-      cellDetailArray.push(this.keyValueDict[this.cellDetailObject]);
-      console.log(Object.entries(_.cloneDeep(cellDetailArray)));
-      this.$store.dispatch(
-        "changeDetailObject",
-        Object.entries(_.cloneDeep(cellDetailArray))
-      );
-      this.cellTypeName = cellDetailArray[0];
+    selectedCellName() {
+      this.$store.dispatch("changeCellSelected", this.selectedCellName);
     }
   }
 };

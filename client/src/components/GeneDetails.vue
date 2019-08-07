@@ -10,16 +10,16 @@
             Remove Gene Details
             <v-icon dark right>remove_circle</v-icon>
           </v-btn>
-          <h3 class="sub-title">Gene: {{ geneSelected }}</h3>
           <v-layout row wrap id="list" :class="{ 'max-height': listHeight }">
             <v-flex md12 v-if="geneNotEmpty()">
+              <h3 class="sub-title">Gene: {{ geneSelected }}</h3>
               <v-list>
-                <v-list-item v-for="(topGenes, index) in loadedDictData" :key="index">
-                  <v-layout v-if="topGeneDataExist(topGenes, index)==true">
+                <v-list-item v-for="(value, index) in filteredGeneCellList" :key="index">
+                  <v-layout>
                     <v-flex md12>
-                      <v-list-item @click="setDetailItem(index)">
-                        <span class="index">{{ index }}:&nbsp;</span>
-                        <span>{{ loadedDictData[index][geneSelected] }}</span>
+                      <v-list-item @click="setCellSelected(value[0])">
+                        <span class="index">{{ value[0] }}:&nbsp;</span>
+                        <span>{{ value[1] }}</span>
                       </v-list-item>
                     </v-flex>
                   </v-layout>
@@ -44,6 +44,7 @@ export default {
   },
   data() {
     return {
+      filteredGeneCellList: [],
       cardHeight: this.$store.getters.getCardHeight,
       cellTypeNames: [],
       listHeight: "400px",
@@ -51,19 +52,9 @@ export default {
     };
   },
   methods: {
-    setDetailItem(index) {
-      console.log("OK", index);
-    },
     async fetchData() {
       let data = await d3.json("./top_abs_10_dict.json");
       this.loadedDictData = Object.assign({}, data);
-      console.log(this.loadedDictData);
-      for (const [key, value] of Object.entries(this.loadedDictData)) {
-        console.log(key, value);
-        for (const [key, value] of Object.entries(value)) {
-          console.log(key, value);
-        }
-      }
       // this.cellTypeNames = Object.keys(this.loadedDictData);
       // console.log(this.cellTypeNames);
     },
@@ -73,12 +64,10 @@ export default {
     removeGeneDetails() {
       this.$store.dispatch("changeGeneSelected", "");
     },
+    setCellSelected(cellName) {
+      this.$store.dispatch("changeCellSelected", cellName);
+    },
     topGeneDataExist(topGenes, cellTypeName) {
-      console.log(cellTypeName);
-      console.log(
-        typeof this.loadedDictData[cellTypeName][this.geneSelected] !==
-          "undefined"
-      );
       return typeof topGenes[this.geneSelected] !== "undefined";
     }
   },
@@ -89,7 +78,20 @@ export default {
       }
     }
   },
-  watch: {}
+  watch: {
+    geneSelected() {
+      let globalThis = this;
+      for (const [key, value] of Object.entries(this.loadedDictData)) {
+        (function(outerKey, outerValue) {
+          for (const [key, value] of Object.entries(outerValue)) {
+            if (key === globalThis.geneSelected) {
+              globalThis.filteredGeneCellList.push([outerKey, value]);
+            }
+          }
+        })(key, value);
+      }
+    }
+  }
 };
 </script>
 
