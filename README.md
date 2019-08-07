@@ -11,10 +11,6 @@ npm install
 ```
 npm run serve
 ```
-**server:**
-```
-npm run start
-```
 
 ### Compiles and minifies for production
 **client:**
