@@ -22,8 +22,11 @@
           </v-flex>
         </v-layout>
         <v-layout row wrap align-center>
-          <v-flex md12>
-            <Details />
+          <v-flex md7>
+            <CellDetails />
+          </v-flex>
+          <v-flex md5>
+            <GeneDetails />
           </v-flex>
         </v-layout>
       </v-container>
@@ -32,8 +35,9 @@
 </template>
 
 <script>
-import Details from "@/components/CellDetails.vue";
+import CellDetails from "@/components/CellDetails.vue";
 import Header from "@/components/TheHeader.vue";
+import GeneDetails from "@/components/GeneDetails.vue";
 import Graph from "@/components/CellGraph.vue";
 import List from "@/components/CellList.vue";
 
@@ -42,8 +46,9 @@ import * as d3 from "d3";
 export default {
   name: "app",
   components: {
-    Details,
+    CellDetails,
     Header,
+    GeneDetails,
     Graph,
     List
   },
@@ -93,7 +98,16 @@ li {
   display: inline-block;
   margin: 0 10px;
 }
-a {
+a, h3 {
   color: #42b983;
+}
+.index {
+  color: #42b983;
+  font-weight: bold;
+}
+.sub-title {
+  color: #42b983;
+  font-weight: bold;
+  text-align: left;
 }
 </style>

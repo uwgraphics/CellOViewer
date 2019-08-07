@@ -144,10 +144,6 @@ export default {
 </script>
 
 <style scoped>
-.index {
-  color: #42b983;
-  font-weight: bold;
-}
 #list {
   max-height: 500px;
   overflow-y: auto;

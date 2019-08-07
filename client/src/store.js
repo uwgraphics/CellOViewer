@@ -6,6 +6,7 @@ Vue.use(Vuex);
 const state = {
   cardHeight: "600px",
   detailObject: {},
+  geneSelected: "",
   optionSelected: "default",
   search: ""
 };
@@ -16,6 +17,9 @@ const mutations = {
   },
   CHANGE_DETAIL_OBJECT(state, payload) {
     state.detailObject = payload;
+  },
+  CHANGE_GENE_SELECTED(state, payload) {
+    state.geneSelected = payload;
   },
   CHANGE_SEARCH(state, payload) {
     state.search = payload;
@@ -32,6 +36,9 @@ const actions = {
   changeDetailObject(context, detailObject) {
     context.commit("CHANGE_DETAIL_OBJECT", detailObject);
   },
+  changeGeneSelected(context, geneSelected) {
+    context.commit("CHANGE_GENE_SELECTED", geneSelected);
+  },
   changeSearch(context, searchContent) {
     context.commit("CHANGE_SEARCH", searchContent);
   },
@@ -46,6 +53,9 @@ const getters = {
   },
   getDetailObject(state) {
     return state.detailObject;
+  },
+  getGeneSelected(state) {
+    return state.geneSelected;
   },
   getSearch(state) {
     return state.search;
