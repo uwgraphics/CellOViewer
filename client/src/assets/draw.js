@@ -30,39 +30,36 @@ export function drawGraphLab(graph, selector = "body", vueThis, params = {}) {
   let linkType = "paths";
   let paths;
 
+  function pathId(links) {
+    return (
+      links["source"]["name"]
+        .split(" ")
+        .join("-")
+        .split("(")
+        .join("")
+        .split(")")
+        .join("")
+        .replace(/\//g, "-") +
+      "---" +
+      links["target"]["name"]
+        .split(" ")
+        .join("-")
+        .split("(")
+        .join("")
+        .split(")")
+        .join("")
+        .replace(/\//g, "-")
+    );
+  }
+
   switch (linkType) {
-    case "arrows":
-      // define arrow markers for graph links
-      svg
-        .append("svg:defs")
-        .append("svg:marker")
-        .attr("id", "end-arrow")
-        .attr("viewBox", "0 -5 10 10")
-        .attr("refX", 6)
-        .attr("markerWidth", 3)
-        .attr("markerHeight", 3)
-        .attr("orient", "auto")
-        .append("svg:path")
-        .attr("d", "M0,-5L10,0L0,5");
-      paths = svg
-        .selectAll(".link")
-        .data(graph.links)
-        .enter()
-        .append("svg:path");
-      break; // end arrows
-    case "lines":
-      paths = svg
-        .selectAll(".link")
-        .data(graph.links)
-        .enter()
-        .append("svg:line");
-      break;
     case "paths":
       paths = svg
         .selectAll(".link")
         .data(graph.links)
         .enter()
         .append("svg:path")
+        .attr("id", pathId)
         .attr("stroke-width", 0.75)
         .attr("fill", "none");
   }
@@ -170,8 +167,25 @@ export function drawGraphLab(graph, selector = "body", vueThis, params = {}) {
     .on("mouseout", handleMouseOut)
     .on("click", handleMouseClick);
 
-  console.log(node);
   console.log(graph.nodes);
+  let linkDict = {};
+
+  for (let i = 0; i < graph.links.length; i++) {
+    let source = "";
+    let target = "";
+
+    if (!graph.links[i]["source"]["name"].includes("connector-")) {
+      source = graph.links[i]["source"]["name"];
+    }
+    if (!graph.links[i]["target"]["name"].includes("connector-")) {
+      target = graph.links[i]["target"]["name"];
+    }
+
+    if (source !== "" && target !== "") {
+      linkDict[source] = target;
+    }
+  }
+  console.log(linkDict);
 
   function update() {
     switch (linkType) {

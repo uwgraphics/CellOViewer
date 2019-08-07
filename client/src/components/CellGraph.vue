@@ -176,7 +176,7 @@ export default {
       graph.links.forEach(
         link =>
           (link.color =
-            link.target.primaryParent == link.source ? "#42b983" : "#42b983")
+            link.target.primaryParent == link.source ? "#42b983" : "#42b983"),
       );
       treeLayout(graph);
       drawGraphLab(graph, this.$refs.graph, this);
