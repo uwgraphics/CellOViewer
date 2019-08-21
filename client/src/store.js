@@ -6,6 +6,7 @@ Vue.use(Vuex);
 const state = {
   cardHeight: "600px",
   cellSelected: "",
+  cellSelectedPrevious: "",
   geneSelected: "",
   optionSelected: "default",
   search: ""
@@ -17,6 +18,9 @@ const mutations = {
   },
   CHANGE_CELL_SELECTED(state, payload) {
     state.cellSelected = payload;
+  },
+  CHANGE_CELL_SELECTED_PREVIOUS(state, payload) {
+    state.cellSelectedPrevious = payload;
   },
   CHANGE_GENE_SELECTED(state, payload) {
     state.geneSelected = payload;
@@ -36,6 +40,9 @@ const actions = {
   changeCellSelected(context, cellSelected) {
     context.commit("CHANGE_CELL_SELECTED", cellSelected);
   },
+  changeCellSelectedPrevious(context, cellSelectedPrevious) {
+    context.commit("CHANGE_CELL_SELECTED_PREVIOUS", cellSelectedPrevious);
+  },
   changeGeneSelected(context, geneSelected) {
     context.commit("CHANGE_GENE_SELECTED", geneSelected);
   },
@@ -53,6 +60,9 @@ const getters = {
   },
   getCellSelected(state) {
     return state.cellSelected;
+  },
+  getCellSelectedPrevious(state) {
+    return state.cellSelectedPrevious;
   },
   getGeneSelected(state) {
     return state.geneSelected;

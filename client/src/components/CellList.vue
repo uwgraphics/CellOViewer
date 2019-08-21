@@ -33,6 +33,7 @@
                 <v-list-item
                   v-for="(keyValuePair, index) in filteredData"
                   :key="index"
+                  class="list"
                   @click="setCellSelected(keyValuePair[0])"
                 >
                   <v-layout>

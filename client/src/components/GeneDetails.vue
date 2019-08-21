@@ -17,7 +17,6 @@
                 <v-list-item
                   v-for="(value, index) in filteredGeneCellList"
                   :key="index"
-                  class="list"
                   @click="setCellSelected(value[0])"
                 >
                   <v-layout>

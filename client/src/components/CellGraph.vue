@@ -176,13 +176,18 @@ export default {
       graph.links.forEach(
         link =>
           (link.color =
-            link.target.primaryParent == link.source ? "#42b983" : "#42b983"),
+            link.target.primaryParent == link.source ? "#42b983" : "#42b983")
       );
       treeLayout(graph);
       drawGraphLab(graph, this.$refs.graph, this);
     }
   },
   computed: {
+    cellSelected: {
+      get() {
+        return this.$store.getters.getCellSelected;
+      }
+    },
     filteredData() {
       if (this.$store.getters.getSearch === "") {
         return this.listLocalCopy;
@@ -218,6 +223,44 @@ export default {
         this.listLocalCopy[i].push(i.toString());
       }
       this.showDag2();
+    },
+    cellSelected() {
+      console.log("changed");
+      console.log(this.cellSelected);
+      console.log(this.$store.getters.getCellSelectedPrevious);
+      let svgClear = d3.select(this.$refs.graph).select("svg");
+      svgClear
+        .select(
+          "#circle-" +
+            this.$store.getters.getCellSelectedPrevious
+              .split(" ")
+              .join("-")
+              .split("(")
+              .join("")
+              .split(")")
+              .join("")
+              .replace(/\//g, "-")
+        )
+        .transition()
+        .style("fill", "#8F9296");
+
+      let svgHighlight = d3.select(this.$refs.graph).select("svg");
+      svgHighlight
+        .select(
+          "#circle-" +
+            this.cellSelected
+              .split(" ")
+              .join("-")
+              .split("(")
+              .join("")
+              .split(")")
+              .join("")
+              .replace(/\//g, "-")
+        )
+        .transition()
+        .style("fill", "#026CDF"); // Change to border later
+
+      this.$store.dispatch("changeCellSelectedPrevious", this.cellSelected);
     },
     filteredData() {
       this.highlightSearch(this.filteredData, this.$refs.graph);
