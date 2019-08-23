@@ -1,7 +1,7 @@
 <template>
   <v-layout row wrap align-center>
     <v-flex md12>
-      <v-card height="700">
+      <v-card height="650">
         <v-card-title class="justify-center">
           <h2 class="title">List View</h2>
         </v-card-title>

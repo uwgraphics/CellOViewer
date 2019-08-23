@@ -1,7 +1,7 @@
 <template>
   <v-layout row wrap align-center>
     <v-flex md12>
-      <v-card height="700">
+      <v-card height="650">
         <v-card-title class="justify-center">
           <h2 class="title">Graph View</h2>
         </v-card-title>
@@ -53,6 +53,16 @@ export default {
     };
   },
   methods: {
+    formatToId(cellName) {
+      return cellName
+        .split(" ")
+        .join("-")
+        .split("(")
+        .join("")
+        .split(")")
+        .join("")
+        .replace(/\//g, "-");
+    },
     // Turn this function to a Mixin later
     generateListCopy(originalList) {
       return Object.entries(_.cloneDeep(originalList));
@@ -231,34 +241,20 @@ export default {
       let svgClear = d3.select(this.$refs.graph).select("svg");
       svgClear
         .select(
-          "#circle-" +
-            this.$store.getters.getCellSelectedPrevious
-              .split(" ")
-              .join("-")
-              .split("(")
-              .join("")
-              .split(")")
-              .join("")
-              .replace(/\//g, "-")
+          "#circle-" + this.formatToId(this.$store.getters.getCellSelectedPrevious)
         )
         .transition()
-        .style("fill", "#8F9296");
+        .style("stroke", "#000")
+        .style("stroke-width", "1px");
 
       let svgHighlight = d3.select(this.$refs.graph).select("svg");
       svgHighlight
         .select(
-          "#circle-" +
-            this.cellSelected
-              .split(" ")
-              .join("-")
-              .split("(")
-              .join("")
-              .split(")")
-              .join("")
-              .replace(/\//g, "-")
+          "#circle-" + this.formatToId(this.cellSelected)
         )
         .transition()
-        .style("fill", "#026CDF"); // Change to border later
+        .style("stroke", "#FFEE10")
+        .style("stroke-width", "3px");
 
       this.$store.dispatch("changeCellSelectedPrevious", this.cellSelected);
     },
