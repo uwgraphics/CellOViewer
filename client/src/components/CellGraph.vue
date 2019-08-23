@@ -254,7 +254,7 @@ export default {
         )
         .transition()
         .style("stroke", "#FFEE10")
-        .style("stroke-width", "3px");
+        .style("stroke-width", "2px");
 
       this.$store.dispatch("changeCellSelectedPrevious", this.cellSelected);
     },
