@@ -15,7 +15,6 @@ import * as d3 from "d3";
  * @param {number} [params.nodeRadius = 3]
  */
 export function drawGraphLab(graph, selector = "body", vueThis, params = {}) {
-  console.log(vueThis);
   let height = params.height || 800;
   let nodeRadius = params.nodeRadius || 3;
 
@@ -25,13 +24,17 @@ export function drawGraphLab(graph, selector = "body", vueThis, params = {}) {
     .select(selector)
     .append("svg")
     .attr("preserveAspectRatio", "xMinYMin meet")
-    .attr("viewBox", `0 0 ${width + 50} ${height + 50}`);
+    .attr("viewBox", `0 0 ${width} ${height - 50}`)
+    .call(d3.zoom().on('zoom', function() {
+      svg.attr('transform', d3.event.transform)
+    })).append('g');
 
   let linkType = "paths";
   let paths;
 
   function pathId(links) {
     return (
+      "path-" +
       links["source"]["name"]
         .split(" ")
         .join("-")
@@ -64,6 +67,8 @@ export function drawGraphLab(graph, selector = "body", vueThis, params = {}) {
         .attr("fill", "none");
   }
   paths.style("stroke", link => link.color).attr("class", "link");
+
+  console.log(paths);
 
   // Assign an id to each circle based on node type
   function nodeId(node) {
@@ -166,26 +171,6 @@ export function drawGraphLab(graph, selector = "body", vueThis, params = {}) {
     .on("mouseover", handleMouseOver)
     .on("mouseout", handleMouseOut)
     .on("click", handleMouseClick);
-
-  console.log(graph.nodes);
-  let linkDict = {};
-
-  for (let i = 0; i < graph.links.length; i++) {
-    let source = "";
-    let target = "";
-
-    if (!graph.links[i]["source"]["name"].includes("connector-")) {
-      source = graph.links[i]["source"]["name"];
-    }
-    if (!graph.links[i]["target"]["name"].includes("connector-")) {
-      target = graph.links[i]["target"]["name"];
-    }
-
-    if (source !== "" && target !== "") {
-      linkDict[source] = target;
-    }
-  }
-  console.log(linkDict);
 
   function update() {
     switch (linkType) {
