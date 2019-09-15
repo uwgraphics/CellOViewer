@@ -21,7 +21,7 @@
             <List :cellData="this.loadedData" />
           </v-flex>
         </v-layout>
-        <v-layout row wrap align-center>
+        <v-layout row wrap>
           <v-flex md7>
             <CellDetails />
           </v-flex>
