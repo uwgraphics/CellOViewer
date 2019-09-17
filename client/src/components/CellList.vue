@@ -1,24 +1,14 @@
 <template>
   <v-layout row wrap align-center>
     <v-flex md12>
-      <v-card height="650">
+      <v-card max-height="600">
         <v-card-title class="justify-center">
-          <h2 class="title">List View</h2>
-        </v-card-title>
-        <v-card-text>
-          <v-layout row wrap>
-            <v-flex md8 sm12>
-              <v-text-field
-                v-model="search"
-                append-icon="search"
-                label="search the cell"
-                single-line
-                hide-details
-                hide-no-data
-              ></v-text-field>
+          <v-layout>
+            <v-flex md4 sm4>
+              <h2 class="title">List View</h2>
             </v-flex>
             <v-spacer></v-spacer>
-            <v-flex md3 sm12>
+            <v-flex md3 sm3>
               <v-select
                 v-model="option"
                 :items="sortOptions"
@@ -26,7 +16,19 @@
                 label="sort"
               ></v-select>
             </v-flex>
+            <v-flex md3 sm3>
+              <v-text-field
+                v-model="search"
+                append-icon="search"
+                label="search"
+                single-line
+                hide-details
+                hide-no-data
+              ></v-text-field>
+            </v-flex>
           </v-layout>
+        </v-card-title>
+        <v-card-text>
           <v-layout row wrap class="list" :class="{ 'max-height': listHeight }">
             <v-flex md12 v-if="loaded&&listLocalCopy">
               <v-list>
@@ -38,12 +40,12 @@
                 >
                   <v-layout>
                     <v-flex
-                      md2
+                      md3
                       offset-md1
                       v-if="keyValuePair[0]&&keyValuePair[1]"
                       class="index"
-                    >{{ keyValuePair[0] }}:</v-flex>
-                    <v-flex md8 offset-md1 v-if="keyValuePair[1]">
+                    >{{ keyValuePair[0] }}:&nbsp;</v-flex>
+                    <v-flex md6 offset-md1 v-if="keyValuePair[1]">
                       <v-list v-for="(neighbor, index) in keyValuePair[1]" :key="index" dense>
                         <span v-if="index===(keyValuePair[1].length - 1)">{{ neighbor }}</span>
                         <span v-else>{{ neighbor }},</span>
@@ -73,13 +75,19 @@ export default {
       detailItem: [],
       listHeight: "400px",
       listLocalCopy: [],
+      listSize: 2, // Put this in store at cleanup phase
       loaded: false,
       sortOptions: ["default", "neighbors"]
     };
   },
   methods: {
     setCellSelected(cellName) {
-      this.$store.dispatch("changeCellSelected", cellName);
+      let curList = this.$store.getters.getCellSelected;
+      while (curList.length >= this.listSize) {
+        curList.pop();
+      }
+      curList.push(cellName);
+      this.$store.dispatch("changeCellSelected", curList);
     },
     generateListCopy(originalList) {
       return Object.entries(_.cloneDeep(originalList));
@@ -142,5 +150,12 @@ export default {
 <style scoped>
 v-card-title {
   margin: 100px;
+}
+.list {
+  max-height: 500px;
+  overflow-y: auto;
+}
+.title {
+  margin-top: 10px;
 }
 </style>

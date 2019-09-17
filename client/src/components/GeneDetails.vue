@@ -1,29 +1,27 @@
 <template>
   <v-layout row wrap align-center>
     <v-flex md12>
-      <v-card :class="{ height:cardHeight }">
+      <v-card max-height="600">
         <v-card-title class="justify-center">
           <h2 class="title">Gene Details View</h2>
+          <v-spacer></v-spacer>
+          <v-btn medium color="red" justify-right dark @click="removeGeneDetails">
+            <v-icon dark>remove_circle</v-icon>
+          </v-btn>
         </v-card-title>
         <v-card-text>
-          <v-btn class="ma-2" color="red" dark @click="removeGeneDetails">
-            Remove Gene Details
-            <v-icon dark right>remove_circle</v-icon>
-          </v-btn>
-          <v-layout row wrap class="list" :class="{ 'max-height': listHeight }">
+          <v-layout row wrap>
             <v-flex md12 v-if="geneNotEmpty()">
               <h3 class="sub-title">Gene: {{ geneSelected }}</h3>
-              <v-list>
+              <v-list :class="{ 'max-height': listHeight }" class="list">
                 <v-list-item
                   v-for="(value, index) in filteredGeneCellList"
                   :key="index"
                   @click="setCellSelected(value[0])"
                 >
                   <v-layout>
-                    <v-flex md12>
-                      <span class="index">{{ value[0] }}:&nbsp;</span>
-                      <span>{{ value[1] }}</span>
-                    </v-flex>
+                    <v-flex md3 offset-md1 class="index">{{ value[0] }}:&nbsp;</v-flex>
+                    <v-flex md6 offset-md1>{{ value[1] }}</v-flex>
                   </v-layout>
                 </v-list-item>
               </v-list>
@@ -47,7 +45,6 @@ export default {
   data() {
     return {
       filteredGeneCellList: [],
-      cardHeight: this.$store.getters.getCardHeight,
       cellTypeNames: [],
       listHeight: "400px",
       loadedDictData: {}
@@ -60,6 +57,16 @@ export default {
       // this.cellTypeNames = Object.keys(this.loadedDictData);
       // console.log(this.cellTypeNames);
     },
+    formatToId(cellName) {
+      return cellName
+        .split(" ")
+        .join("-")
+        .split("(")
+        .join("")
+        .split(")")
+        .join("")
+        .replace(/\//g, "-");
+    },
     geneNotEmpty() {
       return this.geneSelected !== "";
     },
@@ -67,7 +74,12 @@ export default {
       this.$store.dispatch("changeGeneSelected", "");
     },
     setCellSelected(cellName) {
-      this.$store.dispatch("changeCellSelected", cellName);
+      let curList = this.$store.getters.getCellSelected;
+      if (curList.length > 0) {
+        curList.pop();
+      }
+      curList.push(cellName);
+      this.$store.dispatch("changeCellSelected", curList);
     },
     topGeneDataExist(topGenes, cellTypeName) {
       return typeof topGenes[this.geneSelected] !== "undefined";
@@ -83,11 +95,20 @@ export default {
   watch: {
     geneSelected() {
       let globalThis = this;
+      globalThis.filteredGeneCellList = [];
+      this.$store.dispatch("changeTopGeneCellList", []);
+      console.log(this.loadedDictData);
+      console.log(globalThis.$store.getters.getTopGeneCellList);
       for (const [key, value] of Object.entries(this.loadedDictData)) {
         (function(outerKey, outerValue) {
           for (const [key, value] of Object.entries(outerValue)) {
             if (key === globalThis.geneSelected) {
               globalThis.filteredGeneCellList.push([outerKey, value]);
+              globalThis.$store.dispatch("addToTopGeneCellList", [
+                outerKey,
+                value
+              ]);
+              console.log(globalThis.$store.getters.getTopGeneCellList);
             }
           }
         })(key, value);
@@ -98,4 +119,11 @@ export default {
 </script>
 
 <style scoped>
+v-card-title {
+  margin: 100px;
+}
+.list {
+  max-height: 400px;
+  overflow-y: auto;
+}
 </style>

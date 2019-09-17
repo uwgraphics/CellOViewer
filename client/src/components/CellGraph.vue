@@ -1,13 +1,13 @@
 <template>
-  <v-layout row wrap align-center>
+  <v-layout row wrap>
     <v-flex md12>
-      <v-card height="650">
+      <v-card max-height="600">
         <v-card-title class="justify-center">
-          <h2 class="title">Graph View</h2>
-        </v-card-title>
-        <v-layout row wrap align-center>
+          <v-flex md4 sm4>
+            <h2 class="title">Graph View</h2>
+          </v-flex>
           <v-spacer></v-spacer>
-          <v-flex md3 mr-3>
+          <v-flex md5 mr-5>
             <v-text-field
               v-model="search"
               append-icon="search"
@@ -17,6 +17,8 @@
               hide-no-data
             ></v-text-field>
           </v-flex>
+        </v-card-title>
+        <v-layout row wrap>
           <v-card-text>
             <div ref="graph" id="graph"></div>
           </v-card-text>
@@ -46,13 +48,34 @@ export default {
   mounted() {},
   data() {
     return {
+      keyValueDict: {},
       selectedCellName: "",
-      keyValueDict: [],
       listLocalCopy: [],
-      loaded: false
+      listSize: 2, // Put this in vuex store at cleanup phase
+      loaded: false,
+      pathsDict: {}
     };
   },
   methods: {
+    /**
+     * Create a key value pair where the key is the cell name, and value is a list where index 0 is the cell's
+     * parent and index 1 is an array of the cell's children.
+     */
+    fillPathsDict(graph) {
+      for (let i = 0; i < graph.links.length; i++) {
+        let source = graph.links[i]["source"];
+        let primaryParentName = "";
+        let childrenArray = [];
+        if (source.primaryParent !== undefined) {
+          primaryParentName = source.primaryParent.name;
+        }
+        if (source.children !== undefined) {
+          childrenArray = this.generateListCopy(source.children);
+        }
+        this.pathsDict[source.name] = [primaryParentName, childrenArray];
+      }
+    },
+    // Turn this function to a Mixin later
     formatToId(cellName) {
       return cellName
         .split(" ")
@@ -67,114 +90,155 @@ export default {
     generateListCopy(originalList) {
       return Object.entries(_.cloneDeep(originalList));
     },
-    highlightSearch(filteredData, selector) {
+    highlightSearch(filteredDataReverse, selector) {
       let svg = d3.select(selector).select("svg");
-      svg.selectAll(".cell").style("fill", "#FFF");
+      svg.selectAll(".cell").style("opacity", "1.0");
+
       if (
-        filteredData.length !== this.listLocalCopy.length &&
+        filteredDataReverse.length !== 0 &&
         this.$store.getters.getSearch !== ""
       ) {
-        for (let i = 0; i < filteredData.length; i++) {
+        // Add filtered out cells to a set for easier access
+        let filteredSet = new Set();
+        for (let i = 0; i < filteredDataReverse.length; i++) {
+          filteredSet.add(filteredDataReverse[i][0]);
+        }
+
+        for (let i = 0; i < filteredDataReverse.length; i++) {
+          let cellData = filteredDataReverse[i][0];
+
+          if (filteredSet.has(cellData)) {
+            let childrenArray = this.keyValueDict[cellData];
+            for (let i = 0; i < childrenArray.length; i++) {
+              if (!filteredSet.has(childrenArray[i])) {
+                svg
+                  .select(
+                    "#path-" +
+                      this.formatToId(childrenArray[i]) +
+                      "---" +
+                      this.formatToId(cellData)
+                  )
+                  .transition()
+                  .style("opacity", "0.1");
+                svg
+                  .select(
+                    "#path-" +
+                      this.formatToId(cellData) +
+                      "---" +
+                      this.formatToId(childrenArray[i])
+                  )
+                  .transition()
+                  .style("opacity", "0.1");
+              }
+            }
+          }
+          // let matchingKey = Object.keys(this.pathsDict).find(
+          //   key => this.pathsDict[key][0] === filteredDataReverse[i][0]
+          // );
+          // if (matchingKey !== undefined) {
+          //   svg
+          //     .select(
+          //       "#path-" +
+          //         this.formatToId(filteredDataReverse[i][0]) +
+          //         "---" +
+          //         this.formatToId(matchingKey)
+          //     )
+          //     .transition()
+          //     .style("opacity", "0.1")
+          //     .style("stroke", "red");
+          // }
           svg
-            .select(
-              "#circle-" +
-                filteredData[i][0]
-                  .split(" ")
-                  .join("-")
-                  .split("(")
-                  .join("")
-                  .split(")")
-                  .join("")
-                  .replace(/\//g, "-")
-            )
+            .select("#circle-" + this.formatToId(filteredDataReverse[i][0]))
             .transition()
-            .style("fill", "#ff7878");
+            .style("opacity", "0.25");
         }
       }
     },
-    // This is the D3-DAG version of the cell network graph
-    showDag() {
-      let width = 2000;
-      let height = 2000;
-      // Change our dataset to a node links structure(for dag structure conversion)
-      let links = [];
-      Object.keys(this.cellData).forEach(node => {
-        let children = this.cellData[node];
-        children.forEach(child => {
-          links.push([node, child]);
-        });
-      });
-      // Turn into DAG format data
-      let transformedData = d3Dag.dagConnect()(links);
-      let layout = d3Dag.sugiyama().decross(d3Dag.decrossTwoLayer())(
-        transformedData
-      );
-      console.log(layout);
-      console.log("LINKS", layout.links());
-      console.log("NODES", layout.descendants());
 
-      let svg = d3
-        .select(this.$refs.graph)
-        .append("svg")
-        .attr("preserveAspectRatio", "xMinYMin meet")
-        .attr("viewBox", `0 0 ${width + 50} ${height + 50}`);
+    // This is the D3-DAG version of the cell network graph, might still be useful
+    // showDag() {
+    //   let width = 2000;
+    //   let height = 2000;
+    //   // Change our dataset to a node links structure(for dag structure conversion)
+    //   let links = [];
+    //   Object.keys(this.cellData).forEach(node => {
+    //     let children = this.cellData[node];
+    //     children.forEach(child => {
+    //       links.push([node, child]);
+    //     });
+    //   });
+    //   // Turn into DAG format data
+    //   let transformedData = d3Dag.dagConnect()(links);
+    //   let layout = d3Dag.sugiyama().decross(d3Dag.decrossTwoLayer())(
+    //     transformedData
+    //   );
+    //   console.log(layout);
+    //   console.log("LINKS", layout.links());
+    //   console.log("NODES", layout.descendants());
 
-      const line = d3
-        .line()
-        .curve(d3.curveCatmullRom)
-        .x(d => d.x * width)
-        .y(d => d.y * height);
+    //   let svg = d3
+    //     .select(this.$refs.graph)
+    //     .append("svg")
+    //     .attr("preserveAspectRatio", "xMinYMin meet")
+    //     .attr("viewBox", `0 0 ${width + 50} ${height + 50}`);
 
-      const g = svg.append("g").attr("transform", `translate(${0},${0})`);
+    //   const line = d3
+    //     .line()
+    //     .curve(d3.curveCatmullRom)
+    //     .x(d => d.x * width)
+    //     .y(d => d.y * height);
 
-      g.append("g")
-        .selectAll("path")
-        .data(layout.links())
-        .enter()
-        .append("path")
-        .attr("d", ({ source, target, data }) =>
-          line(
-            [
-              {
-                x: source.x,
-                y: source.y
-              }
-            ].concat(data.points || [], [
-              {
-                x: target.x,
-                y: target.y
-              }
-            ])
-          )
-        )
-        .attr("fill", "none")
-        .attr("stroke", "#42b983");
+    //   const g = svg.append("g").attr("transform", `translate(${0},${0})`);
 
-      const nodes = g
-        .append("g")
-        .selectAll("g")
-        .data(layout.descendants())
-        .enter()
-        .append("g")
-        .attr(
-          "transform",
-          ({ x, y }) => `translate(${x * width}, ${y * height})`
-        );
+    //   g.append("g")
+    //     .selectAll("path")
+    //     .data(layout.links())
+    //     .enter()
+    //     .append("path")
+    //     .attr("d", ({ source, target, data }) =>
+    //       line(
+    //         [
+    //           {
+    //             x: source.x,
+    //             y: source.y
+    //           }
+    //         ].concat(data.points || [], [
+    //           {
+    //             x: target.x,
+    //             y: target.y
+    //           }
+    //         ])
+    //       )
+    //     )
+    //     .attr("fill", "none")
+    //     .attr("stroke", "#42b983");
 
-      nodes
-        .append("circle")
-        .attr("r", 5)
-        .attr("fill", "white")
-        .attr("stroke", "black");
+    //   const nodes = g
+    //     .append("g")
+    //     .selectAll("g")
+    //     .data(layout.descendants())
+    //     .enter()
+    //     .append("g")
+    //     .attr(
+    //       "transform",
+    //       ({ x, y }) => `translate(${x * width}, ${y * height})`
+    //     );
 
-      // Add text, which screws up measureement
-      nodes
-        .append("text")
-        .text(d => d.id)
-        .attr("text-anchor", "middle")
-        .attr("alignment-baseline", "middle")
-        .style("font-size", "2px");
-    },
+    //   nodes
+    //     .append("circle")
+    //     .attr("r", 5)
+    //     .attr("fill", "white")
+    //     .attr("stroke", "black");
+
+    //   // Add text, which screws up measureement
+    //   nodes
+    //     .append("text")
+    //     .text(d => d.id)
+    //     .attr("text-anchor", "middle")
+    //     .attr("alignment-baseline", "middle")
+    //     .style("font-size", "2px");
+    // },
+
     // This is the lab version of the cell network graph
     showDag2() {
       let graph = jsonToGraph(this.cellData);
@@ -190,6 +254,7 @@ export default {
       );
       treeLayout(graph);
       drawGraphLab(graph, this.$refs.graph, this);
+      this.fillPathsDict(graph);
     }
   },
   computed: {
@@ -208,6 +273,21 @@ export default {
         });
       }
     },
+    filteredDataReverse() {
+      if (this.$store.getters.getSearch === "") {
+        return [];
+      } else {
+        const regex = new RegExp(this.search, "i");
+        return this.listLocalCopy.filter(cell => {
+          return !(regex.test(cell[0]) || regex.test(cell[1]));
+        });
+      }
+    },
+    topGeneCellList: {
+      get() {
+        return this.$store.getters.getTopGeneCellList;
+      }
+    },
     search: {
       get() {
         return this.$store.getters.getSearch;
@@ -220,7 +300,6 @@ export default {
   watch: {
     cellData() {
       this.loaded = true;
-      // this.showDag();
       this.listLocalCopy = this.generateListCopy(this.cellData);
       // Create a key(cell name) value(cell neighbors) list dict
       const keys = Object.entries(this.listLocalCopy);
@@ -235,34 +314,53 @@ export default {
       this.showDag2();
     },
     cellSelected() {
-      console.log("changed");
-      console.log(this.cellSelected);
-      console.log(this.$store.getters.getCellSelectedPrevious);
+      // There may be asynchronous issue here, need to be handled
+      let curList = this.$store.getters.getCellSelected;
+
       let svgClear = d3.select(this.$refs.graph).select("svg");
       svgClear
-        .select(
-          "#circle-" + this.formatToId(this.$store.getters.getCellSelectedPrevious)
-        )
+        .selectAll(".cell")
         .transition()
         .style("stroke", "#000")
         .style("stroke-width", "1px");
 
-      let svgHighlight = d3.select(this.$refs.graph).select("svg");
-      svgHighlight
-        .select(
-          "#circle-" + this.formatToId(this.cellSelected)
-        )
-        .transition()
-        .style("stroke", "#FFEE10")
-        .style("stroke-width", "2px");
-
-      this.$store.dispatch("changeCellSelectedPrevious", this.cellSelected);
+      for (let i = 0; i < curList.length; i++) {
+        let svgHighlight = d3.select(this.$refs.graph).select("svg");
+        let highlightedCell = svgHighlight
+          .select("#circle-" + this.formatToId(curList[i]))
+          .transition()
+          .style("stroke", "#FFEE10")
+          .style("stroke-width", "2px");
+      }
     },
     filteredData() {
-      this.highlightSearch(this.filteredData, this.$refs.graph);
+      this.highlightSearch(this.filteredDataReverse, this.$refs.graph);
     },
     selectedCellName() {
-      this.$store.dispatch("changeCellSelected", this.selectedCellName);
+      let curList = this.$store.getters.getCellSelected;
+      while (curList.length >= this.listSize) {
+        curList.pop();
+      }
+      curList.push(this.selectedCellName);
+      this.$store.dispatch("changeCellSelected", curList);
+    },
+    topGeneCellList() {
+      let svgClear = d3.select(this.$refs.graph).select("svg");
+      let svgHighlight = d3.select(this.$refs.graph).select("svg");
+
+      svgClear
+        .selectAll(".cell")
+        .transition()
+        .style("fill", "#FFF");
+
+      let topGeneCellList = this.$store.getters.getTopGeneCellList;
+
+      for (let i = 0; i < topGeneCellList.length; i++) {
+        svgHighlight
+          .select("#circle-" + this.formatToId(topGeneCellList[i][0]))
+          .transition()
+          .style("fill", "#E95C20");
+      }
     }
   }
 };
@@ -270,9 +368,7 @@ export default {
 
 <style scoped>
 #graph {
-  max-height: 800px;
-  overflow-y: auto;
-  max-width: 1200px;
-  overflow-x: auto;
+  max-height: 650px;
+  max-width: 650px;
 }
 </style>

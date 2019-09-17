@@ -1,8 +1,9 @@
 <template>
   <div id="app">
     <v-app :dark="setTheme">
-      <v-container bg grid-list-md text-xs-center>
-        <v-layout row justify-space-between>
+      <!--Header Section-->
+      <v-container bg grid-list-md text-lg-center>
+        <v-layout row justify-space-between class="test">
           <v-flex md2>
             <v-switch color="primary" :label="selectedTheme" v-model="goDark"></v-switch>
           </v-flex>
@@ -13,7 +14,10 @@
             <Header msg="Boilerplate for Cell Netowrk Viewer" />
           </v-flex>
         </v-layout>
-        <v-layout row wrap align-center>
+      </v-container>
+      <!--Body Section-->
+      <v-container bg grid-list-md text-lg-center>
+        <v-layout row wrap>
           <v-flex md7>
             <Graph :cellData="this.loadedData" />
           </v-flex>
@@ -63,6 +67,9 @@ export default {
     };
   },
   methods: {
+    /**
+     * Fetch cell type data from json
+     */
     async fetchData() {
       let data = await d3.json("./cell_type_graph.json");
       this.loadedData = Object.assign({}, data);
@@ -111,8 +118,7 @@ h3 {
   font-weight: bold;
   text-align: left;
 }
-.list {
-  max-height: 500px;
-  overflow-y: auto;
+.test {
+  height: 10px;
 }
 </style>

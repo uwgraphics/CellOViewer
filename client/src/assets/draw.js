@@ -11,11 +11,11 @@ import * as d3 from "d3";
  * @param {Graph} graph
  * @param {string} selector="body"
  * @param {Object} params={}
- * @param {number} [params.height = 800]
+ * @param {number} [params.height = 750]
  * @param {number} [params.nodeRadius = 3]
  */
 export function drawGraphLab(graph, selector = "body", vueThis, params = {}) {
-  let height = params.height || 800;
+  let height = params.height || 750;
   let nodeRadius = params.nodeRadius || 3;
 
   const width = Math.max(...graph.nodes.map(n => n.x)) + nodeRadius;
@@ -24,10 +24,13 @@ export function drawGraphLab(graph, selector = "body", vueThis, params = {}) {
     .select(selector)
     .append("svg")
     .attr("preserveAspectRatio", "xMinYMin meet")
-    .attr("viewBox", `0 0 ${width} ${height - 50}`)
-    .call(d3.zoom().on('zoom', function() {
-      svg.attr('transform', d3.event.transform)
-    })).append('g');
+    .attr("viewBox", `0 0 ${width} ${height + 20}`)
+    .call(
+      d3.zoom().on("zoom", function() {
+        svg.attr("transform", d3.event.transform);
+      })
+    )
+    .append("g");
 
   let linkType = "paths";
   let paths;
@@ -67,9 +70,11 @@ export function drawGraphLab(graph, selector = "body", vueThis, params = {}) {
         .attr("fill", "none");
   }
   paths.style("stroke", link => link.color).attr("class", "link");
-
-  console.log(paths);
-
+  
+  /**
+   * Assign an id to each circle based on node type
+   * @param {Object} node 
+   */
   // Assign an id to each circle based on node type
   function nodeId(node) {
     if (node.phantom) {
@@ -149,6 +154,9 @@ export function drawGraphLab(graph, selector = "body", vueThis, params = {}) {
     d3.select(".d3plus-tooltip").remove();
   }
 
+  /**
+   * Where the vanilla JavaScript pass the click event to Vue
+   */
   function handleMouseClick() {
     vueThis.selectedCellName = d3.select(this).attr("name");
   }
