@@ -75,7 +75,7 @@ export default {
     },
     setCellSelected(cellName) {
       let curList = this.$store.getters.getCellSelected;
-      if (curList.length > 0) {
+      if (curList.length > 1) {
         curList.pop();
       }
       curList.push(cellName);
