@@ -1,7 +1,7 @@
 <template>
   <v-layout row wrap align-center>
     <v-flex md12>
-      <v-card max-height="600">
+      <v-card max-height="400">
         <v-card-title class="justify-center">
           <v-layout>
             <v-flex md4 sm4>
@@ -149,7 +149,7 @@ v-card-title {
   margin: 100px;
 }
 .list {
-  max-height: 500px;
+  max-height: 300px;
   overflow-y: auto;
 }
 .title {

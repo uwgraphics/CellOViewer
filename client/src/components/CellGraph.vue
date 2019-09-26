@@ -1,7 +1,7 @@
 <template>
   <v-layout row wrap>
     <v-flex md12>
-      <v-card max-height="600">
+      <v-card max-height="400">
         <v-card-title class="justify-center">
           <v-flex md4 sm4>
             <h2 class="title">Graph View</h2>
@@ -123,90 +123,6 @@ export default {
         }
       }
     },
-
-    // This is the D3-DAG version of the cell network graph, might still be useful
-    // showDag() {
-    //   let width = 2000;
-    //   let height = 2000;
-    //   // Change our dataset to a node links structure(for dag structure conversion)
-    //   let links = [];
-    //   Object.keys(this.cellData).forEach(node => {
-    //     let children = this.cellData[node];
-    //     children.forEach(child => {
-    //       links.push([node, child]);
-    //     });
-    //   });
-    //   // Turn into DAG format data
-    //   let transformedData = d3Dag.dagConnect()(links);
-    //   let layout = d3Dag.sugiyama().decross(d3Dag.decrossTwoLayer())(
-    //     transformedData
-    //   );
-    //   console.log(layout);
-    //   console.log("LINKS", layout.links());
-    //   console.log("NODES", layout.descendants());
-
-    //   let svg = d3
-    //     .select(this.$refs.graph)
-    //     .append("svg")
-    //     .attr("preserveAspectRatio", "xMinYMin meet")
-    //     .attr("viewBox", `0 0 ${width + 50} ${height + 50}`);
-
-    //   const line = d3
-    //     .line()
-    //     .curve(d3.curveCatmullRom)
-    //     .x(d => d.x * width)
-    //     .y(d => d.y * height);
-
-    //   const g = svg.append("g").attr("transform", `translate(${0},${0})`);
-
-    //   g.append("g")
-    //     .selectAll("path")
-    //     .data(layout.links())
-    //     .enter()
-    //     .append("path")
-    //     .attr("d", ({ source, target, data }) =>
-    //       line(
-    //         [
-    //           {
-    //             x: source.x,
-    //             y: source.y
-    //           }
-    //         ].concat(data.points || [], [
-    //           {
-    //             x: target.x,
-    //             y: target.y
-    //           }
-    //         ])
-    //       )
-    //     )
-    //     .attr("fill", "none")
-    //     .attr("stroke", "#42b983");
-
-    //   const nodes = g
-    //     .append("g")
-    //     .selectAll("g")
-    //     .data(layout.descendants())
-    //     .enter()
-    //     .append("g")
-    //     .attr(
-    //       "transform",
-    //       ({ x, y }) => `translate(${x * width}, ${y * height})`
-    //     );
-
-    //   nodes
-    //     .append("circle")
-    //     .attr("r", 5)
-    //     .attr("fill", "white")
-    //     .attr("stroke", "black");
-
-    //   // Add text, which screws up measureement
-    //   nodes
-    //     .append("text")
-    //     .text(d => d.id)
-    //     .attr("text-anchor", "middle")
-    //     .attr("alignment-baseline", "middle")
-    //     .style("font-size", "2px");
-    // },
 
     // This is the lab version of the cell network graph
     showDag2() {
@@ -337,7 +253,7 @@ export default {
 
 <style scoped>
 #graph {
-  max-height: 650px;
-  max-width: 650px;
+  max-height: 500px;
+  /* max-width: 650px; */
 }
 </style>

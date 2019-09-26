@@ -28,14 +28,13 @@ export function drawGraphLab(graph, selector = "body", vueThis, params = {}) {
     .select(selector)
     .append("svg")
     .attr("preserveAspectRatio", "xMinYMin meet")
-    .attr("viewBox", `0 0 ${width} ${height + 20}`);
-  // Below is for pan and zoom, decide on if needed later
-  // .call(
-  //   d3.zoom().on("zoom", function() {
-  //     svg.attr("transform", d3.event.transform);
-  //   })
-  // )
-  // .append("g");
+    .attr("viewBox", `0 0 ${width} ${height + 20}`)
+    .call(
+      d3.zoom().on("zoom", function() {
+        svg.attr("transform", d3.event.transform);
+      })
+    )
+    .append("g");
 
   let linkType = "paths";
   let paths;

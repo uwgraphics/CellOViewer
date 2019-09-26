@@ -1,7 +1,7 @@
 <template>
   <v-layout row wrap align-center>
     <v-flex md12>
-      <v-card max-height="550">
+      <v-card max-height="650">
         <v-card-title class="justify-center">
           <h2 class="title">Cell Details View</h2>
           <v-spacer></v-spacer>
@@ -20,7 +20,7 @@
               ></v-select>
               <v-layout row wrap v-if="geneDataExist(cellSelected[0])">
                 <v-flex md6 sm6>
-                  <h3 class="sub-title">Cell: {{ cellSelected[0] }}</h3>
+                  <h3 class="sub-title">{{ cellSelected[0] }}</h3>
                   <v-list class="list">
                     <v-list-item
                       v-for="(value, index) in dynamicData[0]"
@@ -28,10 +28,14 @@
                       dense
                       @click="setGeneItem(value)"
                     >
-                      <span
-                        v-if="index===(loadedGeneData[cellSelected[0]].length - 1)"
-                      >{{ value[2] }}: {{ value[1] }}</span>
-                      <span v-else>{{ value[2] }}: {{ value[1] }},</span>
+                      <span v-if="index===(loadedGeneData[cellSelected[0]].length - 1)">
+                        <span class="index">{{ value[2] }}:</span>
+                        {{ value[1] }}
+                      </span>
+                      <span v-else>
+                        <span class="index">{{ value[2] }}:</span>
+                        {{ value[1] }},
+                      </span>
                     </v-list-item>
                   </v-list>
                 </v-flex>
@@ -44,10 +48,14 @@
                       dense
                       @click="setGeneItem(value)"
                     >
-                      <span
-                        v-if="index===(loadedGeneData[cellSelected[1]].length - 1)"
-                      >{{ value[2] }}: {{ value[1] }}</span>
-                      <span v-else>{{ value[2] }}: {{ value[1] }},</span>
+                      <span v-if="index===(loadedGeneData[cellSelected[1]].length - 1)">
+                        <span class="index">{{ value[2] }}:</span>
+                        {{ value[1] }}
+                      </span>
+                      <span v-else>
+                        <span class="index">{{ value[2] }}:</span>
+                        {{ value[1] }},
+                      </span>
                     </v-list-item>
                   </v-list>
                 </v-flex>
@@ -75,7 +83,7 @@ export default {
       geneCellCopy1: [], // Could be removed, solely based on vuex
       geneCellCopy2: [], // Could be removed, solely based on vuex
       loadedGeneData: {},
-      sortOptions: ["strength", "magnitude"]
+      sortOptions: ["default", "strength", "magnitude"]
     };
   },
   methods: {
@@ -172,5 +180,8 @@ export default {
 .message {
   color: red;
   text-align: left;
+}
+.geneName {
+  color: #c5050c;
 }
 </style>

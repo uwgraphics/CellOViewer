@@ -1,7 +1,7 @@
 <template>
   <v-layout row wrap align-center>
     <v-flex md12>
-      <v-card max-height="600">
+      <v-card max-height="650">
         <v-card-title class="justify-center">
           <h2 class="title">Gene Details View</h2>
           <v-spacer></v-spacer>
@@ -12,6 +12,11 @@
         <v-card-text>
           <v-layout row wrap>
             <v-flex md12 v-if="geneNotEmpty()">
+              <v-select
+                :items="sortOptions"
+                @input="sortBasedOnOption"
+                label="sort"
+              ></v-select>
               <h3 class="sub-title">Gene: {{ geneSelected }}</h3>
               <v-list :class="{ 'max-height': listHeight }" class="list">
                 <v-list-item
@@ -48,7 +53,8 @@ export default {
       filteredGeneCellList: [],
       cellTypeNames: [],
       listHeight: "400px",
-      loadedDictData: {}
+      loadedDictData: {},
+      sortOptions: ["default", "strength", "magnitude"]
     };
   },
   methods: {
@@ -80,6 +86,9 @@ export default {
       }
       curList.push(cellName);
       this.$store.dispatch("changeCellSelected", curList);
+    },
+    sortBasedOnOption(option) {
+      // To be filled
     },
     topGeneDataExist(topGenes, cellTypeName) {
       return typeof topGenes[this.geneSelected] !== "undefined";
@@ -113,8 +122,6 @@ export default {
           }
         }
       }
-
-      console.log(this.filteredGeneCellList);
     }
   }
 };
@@ -125,7 +132,7 @@ v-card-title {
   margin: 100px;
 }
 .list {
-  max-height: 400px;
+  max-height: 420px;
   overflow-y: auto;
 }
 </style>
