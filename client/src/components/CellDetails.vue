@@ -10,22 +10,28 @@
           </v-btn>
         </v-card-title>
         <v-card-text>
-          <v-layout row wrap>
+          <v-layout row>
             <v-flex md12 sm12 v-if="cellSelectedExist">
-              <v-layout row wrap>
-                <v-flex md6 sm6 v-if="geneDataExist(cellSelected[0])">
-                  <h3 class="sub-title">{{ cellSelected[0] }}</h3>
+              <v-select
+                v-model="cellDetailsOption"
+                :items="sortOptions"
+                @input="sortBasedOnOption"
+                label="sort"
+              ></v-select>
+              <v-layout row wrap v-if="geneDataExist(cellSelected[0])">
+                <v-flex md6 sm6>
+                  <h3 class="sub-title">Cell: {{ cellSelected[0] }}</h3>
                   <v-list class="list">
                     <v-list-item
-                      v-for="(value, index) in loadedGeneData[cellSelected[0]]"
+                      v-for="(value, index) in dynamicData[0]"
                       :key="index"
                       dense
-                      @click="setGeneItem(index)"
+                      @click="setGeneItem(value)"
                     >
                       <span
                         v-if="index===(loadedGeneData[cellSelected[0]].length - 1)"
-                      >{{ index }}: {{value}}</span>
-                      <span v-else>{{ index }}: {{value}},</span>
+                      >{{ value[2] }}: {{ value[1] }}</span>
+                      <span v-else>{{ value[2] }}: {{ value[1] }},</span>
                     </v-list-item>
                   </v-list>
                 </v-flex>
@@ -33,22 +39,19 @@
                   <h3 class="sub-title">{{ cellSelected[1] }}</h3>
                   <v-list class="list">
                     <v-list-item
-                      v-for="(value, index) in loadedGeneData[cellSelected[1]]"
+                      v-for="(value, index) in dynamicData[1]"
                       :key="index"
                       dense
-                      @click="setGeneItem(index)"
+                      @click="setGeneItem(value)"
                     >
                       <span
                         v-if="index===(loadedGeneData[cellSelected[1]].length - 1)"
-                      >{{ index }}: {{value}}</span>
-                      <span v-else>{{ index }}: {{value}},</span>
+                      >{{ value[2] }}: {{ value[1] }}</span>
+                      <span v-else>{{ value[2] }}: {{ value[1] }},</span>
                     </v-list-item>
                   </v-list>
                 </v-flex>
               </v-layout>
-            </v-flex>
-            <v-flex md12 sm12 v-else>
-              <p class="message">There are no top 10 gene data related to the selected cell type.</p>
             </v-flex>
           </v-layout>
         </v-card-text>
@@ -69,10 +72,39 @@ export default {
   data() {
     return {
       cardHighlight: false,
-      loadedGeneData: {}
+      geneCellCopy1: [], // Could be removed, solely based on vuex
+      geneCellCopy2: [], // Could be removed, solely based on vuex
+      loadedGeneData: {},
+      sortOptions: ["strength", "magnitude"]
     };
   },
   methods: {
+    sortBasedOnOption(cellDetailsOption) {
+      this.$store.dispatch(
+        "changeCellDetailsOption",
+        String(cellDetailsOption)
+      );
+      switch (cellDetailsOption) {
+        case "strength":
+          return;
+        case "magnitude":
+          this.$store.dispatch("changeCellDetails", []);
+          this.geneCellCopy1 = this.geneCellCopy1.sort((a, b) => {
+            a[1] < b[1] ? 1 : -1;
+          });
+          this.$store.dispatch("addToCellDetails", this.geneCellCopy1);
+          if (this.geneCellCopy2.length != 0) {
+            this.geneCellCopy2 = this.geneCellCopy2.sort((a, b) => {
+              a[1] < b[1] ? 1 : -1;
+            });
+            this.$store.dispatch("addToCellDetails", this.geneCellCopy2);
+          }
+          // this.listLocalCopy = this.listLocalCopy.sort((a, b) =>
+          //   a[1].length < b[1].length ? 1 : -1
+          // );
+          return;
+      }
+    },
     // Load gene data in this component to avoid latency in the main component
     cellSelectedExist() {
       return this.$store.getters.getCellSelected.length !== 0;
@@ -91,8 +123,8 @@ export default {
     removeCellSelected() {
       this.$store.dispatch("popFromCellSelected");
     },
-    setGeneItem(index) {
-      this.$store.dispatch("changeGeneSelected", index);
+    setGeneItem(value) {
+      this.$store.dispatch("changeGeneSelected", value[2]);
     }
   },
   computed: {
@@ -100,9 +132,39 @@ export default {
       get() {
         return this.$store.getters.getCellSelected;
       }
+    },
+    cellDetailsOption: {
+      get() {
+        return this.$store.getters.getCellDetailsOption;
+      },
+      set(option) {
+        this.$store.dispatch("changeCellDetailsOption", option);
+      }
+    },
+    dynamicData() {
+      if (this.geneCellCopy1.length == 0) {
+        return;
+      } else {
+        return this.$store.getters.getCellDetails;
+      }
     }
   },
-  watch: {}
+  watch: {
+    cellSelected() {
+      let cellArr = this.$store.getters.getCellSelected;
+      this.$store.dispatch("changeCellDetails", []);
+
+      if (cellArr.length === 0) {
+        return;
+      }
+      this.geneCellCopy1 = this.loadedGeneData[cellArr[0]];
+      this.$store.dispatch("addToCellDetails", this.geneCellCopy1);
+      if (cellArr.length > 1) {
+        this.geneCellCopy2 = this.loadedGeneData[cellArr[1]];
+        this.$store.dispatch("addToCellDetails", this.geneCellCopy2);
+      }
+    }
+  }
 };
 </script>
 

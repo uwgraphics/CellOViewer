@@ -61,20 +61,6 @@ export default {
      * Create a key value pair where the key is the cell name, and value is a list where index 0 is the cell's
      * parent and index 1 is an array of the cell's children.
      */
-    fillPathsDict(graph) {
-      for (let i = 0; i < graph.links.length; i++) {
-        let source = graph.links[i]["source"];
-        let primaryParentName = "";
-        let childrenArray = [];
-        if (source.primaryParent !== undefined) {
-          primaryParentName = source.primaryParent.name;
-        }
-        if (source.children !== undefined) {
-          childrenArray = this.generateListCopy(source.children);
-        }
-        this.pathsDict[source.name] = [primaryParentName, childrenArray];
-      }
-    },
     // Turn this function to a Mixin later
     formatToId(cellName) {
       return cellName
@@ -106,47 +92,30 @@ export default {
 
         for (let i = 0; i < filteredDataReverse.length; i++) {
           let cellData = filteredDataReverse[i][0];
-
-          if (filteredSet.has(cellData)) {
-            let childrenArray = this.keyValueDict[cellData];
-            for (let i = 0; i < childrenArray.length; i++) {
-              if (!filteredSet.has(childrenArray[i])) {
-                svg
-                  .select(
-                    "#path-" +
-                      this.formatToId(childrenArray[i]) +
-                      "---" +
-                      this.formatToId(cellData)
-                  )
-                  .transition()
-                  .style("opacity", "0.1");
-                svg
-                  .select(
-                    "#path-" +
-                      this.formatToId(cellData) +
-                      "---" +
-                      this.formatToId(childrenArray[i])
-                  )
-                  .transition()
-                  .style("opacity", "0.1");
-              }
+          let childrenArray = this.keyValueDict[cellData];
+          for (let i = 0; i < childrenArray.length; i++) {
+            if (!filteredSet.has(childrenArray[i])) {
+              svg
+                .select(
+                  "#path-" +
+                    this.formatToId(childrenArray[i]) +
+                    "---" +
+                    this.formatToId(cellData)
+                )
+                .transition()
+                .style("opacity", "0.1");
+              svg
+                .select(
+                  "#path-" +
+                    this.formatToId(cellData) +
+                    "---" +
+                    this.formatToId(childrenArray[i])
+                )
+                .transition()
+                .style("opacity", "0.1");
             }
           }
-          // let matchingKey = Object.keys(this.pathsDict).find(
-          //   key => this.pathsDict[key][0] === filteredDataReverse[i][0]
-          // );
-          // if (matchingKey !== undefined) {
-          //   svg
-          //     .select(
-          //       "#path-" +
-          //         this.formatToId(filteredDataReverse[i][0]) +
-          //         "---" +
-          //         this.formatToId(matchingKey)
-          //     )
-          //     .transition()
-          //     .style("opacity", "0.1")
-          //     .style("stroke", "red");
-          // }
+
           svg
             .select("#circle-" + this.formatToId(filteredDataReverse[i][0]))
             .transition()
@@ -254,7 +223,7 @@ export default {
       );
       treeLayout(graph);
       drawGraphLab(graph, this.$refs.graph, this);
-      this.fillPathsDict(graph);
+      // this.fillPathsDict(graph);
     }
   },
   computed: {

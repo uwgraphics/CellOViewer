@@ -140,9 +140,6 @@ export default {
       this.loaded = true;
       this.listLocalCopy = this.generateListCopy(this.cellData);
     },
-    search() {
-      console.log(this.search);
-    }
   }
 };
 </script>

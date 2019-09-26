@@ -40,6 +40,7 @@ export default {
   name: "gene-details",
   props: [],
   mounted() {
+    // Fetch gene data once mounted
     this.fetchData();
   },
   data() {
@@ -53,9 +54,8 @@ export default {
   methods: {
     async fetchData() {
       let data = await d3.json("./top_abs_10_dict.json");
+      console.log(data);
       this.loadedDictData = Object.assign({}, data);
-      // this.cellTypeNames = Object.keys(this.loadedDictData);
-      // console.log(this.cellTypeNames);
     },
     formatToId(cellName) {
       return cellName
@@ -95,24 +95,26 @@ export default {
   watch: {
     geneSelected() {
       let globalThis = this;
+      // Clear both local list and store to receive updated values
       globalThis.filteredGeneCellList = [];
       this.$store.dispatch("changeTopGeneCellList", []);
-      console.log(this.loadedDictData);
-      console.log(globalThis.$store.getters.getTopGeneCellList);
+
       for (const [key, value] of Object.entries(this.loadedDictData)) {
-        (function(outerKey, outerValue) {
-          for (const [key, value] of Object.entries(outerValue)) {
-            if (key === globalThis.geneSelected) {
-              globalThis.filteredGeneCellList.push([outerKey, value]);
-              globalThis.$store.dispatch("addToTopGeneCellList", [
-                outerKey,
-                value
-              ]);
-              console.log(globalThis.$store.getters.getTopGeneCellList);
-            }
+        let geneArr = value;
+        for (let i = 0; i < geneArr.length; i++) {
+          if (geneArr[i][2] === globalThis.geneSelected) {
+            let cellName = key;
+            let geneValue = value[i][1];
+            globalThis.filteredGeneCellList.push([cellName, geneValue]);
+            globalThis.$store.dispatch("addToTopGeneCellList", [
+              cellName,
+              geneValue
+            ]);
           }
-        })(key, value);
+        }
       }
+
+      console.log(this.filteredGeneCellList);
     }
   }
 };

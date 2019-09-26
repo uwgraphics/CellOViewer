@@ -4,6 +4,7 @@
 
 // eslint-disable-next-line no-unused-vars
 import { Graph } from "./graph.js";
+import { d3Layout } from "./layout.js";
 import * as d3 from "d3";
 
 /**
@@ -11,12 +12,15 @@ import * as d3 from "d3";
  * @param {Graph} graph
  * @param {string} selector="body"
  * @param {Object} params={}
- * @param {number} [params.height = 750]
- * @param {number} [params.nodeRadius = 3]
+ * @param {number} [params.height = 1000]
+ * @param {number} [params.nodeRadius = 4]
+ * @param {?Boolean} [params.drawPhantoms]
+ * @param {number} [params.bezierVert = 25]
  */
 export function drawGraphLab(graph, selector = "body", vueThis, params = {}) {
-  let height = params.height || 750;
   let nodeRadius = params.nodeRadius || 3;
+  let bvert = params.bezierVert || 15;
+  let height = params.height || 1000;
 
   const width = Math.max(...graph.nodes.map(n => n.x)) + nodeRadius;
 
@@ -24,16 +28,28 @@ export function drawGraphLab(graph, selector = "body", vueThis, params = {}) {
     .select(selector)
     .append("svg")
     .attr("preserveAspectRatio", "xMinYMin meet")
-    .attr("viewBox", `0 0 ${width} ${height + 20}`)
-    .call(
-      d3.zoom().on("zoom", function() {
-        svg.attr("transform", d3.event.transform);
-      })
-    )
-    .append("g");
+    .attr("viewBox", `0 0 ${width} ${height + 20}`);
+  // Below is for pan and zoom, decide on if needed later
+  // .call(
+  //   d3.zoom().on("zoom", function() {
+  //     svg.attr("transform", d3.event.transform);
+  //   })
+  // )
+  // .append("g");
 
   let linkType = "paths";
   let paths;
+
+  // create the Bezier segment from x1,y1 to x2,y2 - assuming that x1,y1 was the last point
+  // note that the derivatives go vertically
+  function cseg(x1, y1, x2, y2) {
+    // I made this a variable to experiment with computing better values
+    // nothing works well
+    let bv = bvert;
+    return `C${x1},${y1 + nodeRadius + bv},${x2},${y2 -
+      nodeRadius -
+      bv},${x2},${y2 - nodeRadius}`;
+  }
 
   function pathId(links) {
     return (
@@ -58,22 +74,50 @@ export function drawGraphLab(graph, selector = "body", vueThis, params = {}) {
     );
   }
 
-  switch (linkType) {
-    case "paths":
-      paths = svg
-        .selectAll(".link")
-        .data(graph.links)
-        .enter()
-        .append("svg:path")
-        .attr("id", pathId)
-        .attr("stroke-width", 0.75)
-        .attr("fill", "none");
-  }
+  paths = svg
+    .selectAll(".link")
+    .data(graph.links.filter(link => !link.source.phantom))
+    .enter()
+    .append("svg:path")
+    .attr("id", pathId)
+    .attr("stroke-width", 0.75)
+    .attr("fill", "none")
+    .attr("d", function(d) {
+      // start at the beginning of the first source
+      let x1 = d.source.x;
+      let y1 = d.source.y + nodeRadius;
+      let pstr = `M${x1},${y1}`;
+      let next = d.target;
+      // traverse phantom nodes
+      while (next.phantom) {
+        let x2 = next.x;
+        let y2 = next.y;
+        pstr += cseg(x1, y1, x2, y2);
+        // vertical line through the node's location
+        pstr += `L${x2},${y2 + nodeRadius}`;
+        next = next.children[0];
+        x1 = x2;
+        y1 = y2;
+      }
+      // now we go to the final place
+      let x2 = next.x;
+      let y2 = next.y;
+      // pstr += `L${x2},${y2}`;
+      pstr += cseg(x1, y1, x2, y2);
+      return pstr;
+    });
+
   paths.style("stroke", link => link.color).attr("class", "link");
-  
+  paths.on("mouseover", function handle(d, i) {
+    d3.select(this).style("stroke", "#FF6F61");
+  });
+  paths.on("mouseout", function handle(d, i) {
+    d3.select(this).style("stroke", d.color);
+  });
+
   /**
    * Assign an id to each circle based on node type
-   * @param {Object} node 
+   * @param {Object} node
    */
   // Assign an id to each circle based on node type
   function nodeId(node) {
@@ -121,7 +165,7 @@ export function drawGraphLab(graph, selector = "body", vueThis, params = {}) {
   }
 
   function nodeColor(node) {
-    if (node.phantom) return "#42b983";
+    if (node.phantom) return "#42b98300";
     if (node.istree) return "#FFF";
     return "#FFF";
   }
@@ -163,7 +207,9 @@ export function drawGraphLab(graph, selector = "body", vueThis, params = {}) {
 
   let node = svg
     .selectAll(".node")
-    .data(graph.nodes)
+    .data(
+      params.drawPhantoms ? graph.nodes : graph.nodes.filter(n => !n.phantom)
+    )
     .enter()
     .append("circle")
     .attr("id", nodeId)

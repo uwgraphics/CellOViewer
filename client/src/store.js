@@ -4,6 +4,8 @@ import Vuex from "vuex";
 Vue.use(Vuex);
 
 const state = {
+  cellDetails: [],
+  cellDetailsOption: "",
   cellSelected: [],
   cellSelectedPrevious: "",
   topGeneCellList: [],
@@ -14,6 +16,15 @@ const state = {
 };
 
 const mutations = {
+  CHANGE_CELL_DETAILS_OPTION(state, payload) {
+    state.cellDetailsOption = payload;
+  },
+  ADD_TO_CELL_DETAILS(state, payload) {
+    state.cellDetails.push(payload);
+  },
+  CHANGE_CELL_DETAILS(state, payload) {
+    state.cellDetails = payload;
+  },
   ADD_TO_CELL_SELECTED(state, payload) {
     state.cellSelected.push(payload);
   },
@@ -47,6 +58,15 @@ const mutations = {
 };
 
 const actions = {
+  addToCellDetails(context, cellDetails) {
+    context.commit("ADD_TO_CELL_DETAILS", cellDetails);
+  },
+  changeCellDetails(context, cellDetails) {
+    context.commit("CHANGE_CELL_DETAILS", cellDetails);
+  },
+  changeCellDetailsOption(context, cellDetailsOption) {
+    context.commit("CHANGE_CELL_DETAILS_OPTION", cellDetailsOption);
+  },
   addToCellSelected(context, cellSelected) {
     context.commit("ADD_TO_CELL_SELECTED", cellSelected);
   },
@@ -74,12 +94,18 @@ const actions = {
   changeSearch(context, searchContent) {
     context.commit("CHANGE_SEARCH", searchContent);
   },
-  changeOption(context, option) {
-    context.commit("CHANGE_OPTION", option);
+  changeOption(context, optionSelected) {
+    context.commit("CHANGE_OPTION", optionSelected);
   }
 };
 
 const getters = {
+  getCellDetails(state) {
+    return state.cellDetails;
+  },
+  getCellDetailsOption(state) {
+    return state.cellDetailsOption;
+  },
   getCellSelected(state) {
     return state.cellSelected;
   },
