@@ -1,14 +1,13 @@
 <template>
   <v-layout row wrap align-center>
     <v-flex md12>
-      <v-card max-height="400">
+      <v-card max-height="450">
         <v-card-title class="justify-center">
+          <h4 class="view-title">List View</h4>
+        </v-card-title>
+        <v-card-text>
           <v-layout>
-            <v-flex md4 sm4>
-              <h2 class="title">List View</h2>
-            </v-flex>
-            <v-spacer></v-spacer>
-            <v-flex md3 sm3>
+            <v-flex md6 sm12>
               <v-select
                 v-model="option"
                 :items="sortOptions"
@@ -16,7 +15,7 @@
                 label="sort"
               ></v-select>
             </v-flex>
-            <v-flex md3 sm3>
+            <v-flex md6 sm12>
               <v-text-field
                 v-model="search"
                 append-icon="search"
@@ -27,8 +26,6 @@
               ></v-text-field>
             </v-flex>
           </v-layout>
-        </v-card-title>
-        <v-card-text>
           <v-layout row wrap class="list" :class="{ 'max-height': listHeight }">
             <v-flex md12 v-if="loaded&&listLocalCopy">
               <v-list>
@@ -139,7 +136,7 @@ export default {
     cellData() {
       this.loaded = true;
       this.listLocalCopy = this.generateListCopy(this.cellData);
-    },
+    }
   }
 };
 </script>

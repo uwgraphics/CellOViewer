@@ -12,15 +12,15 @@ import * as d3 from "d3";
  * @param {Graph} graph
  * @param {string} selector="body"
  * @param {Object} params={}
- * @param {number} [params.height = 1000]
+ * @param {number} [params.height = 800]
  * @param {number} [params.nodeRadius = 4]
  * @param {?Boolean} [params.drawPhantoms]
  * @param {number} [params.bezierVert = 25]
  */
 export function drawGraphLab(graph, selector = "body", vueThis, params = {}) {
-  let nodeRadius = params.nodeRadius || 3;
+  let nodeRadius = params.nodeRadius || 4;
   let bvert = params.bezierVert || 15;
-  let height = params.height || 1000;
+  let height = params.height || 800;
 
   const width = Math.max(...graph.nodes.map(n => n.x)) + nodeRadius;
 

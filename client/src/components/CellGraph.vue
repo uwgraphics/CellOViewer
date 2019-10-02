@@ -1,24 +1,19 @@
 <template>
   <v-layout row wrap>
     <v-flex md12>
-      <v-card max-height="400">
+      <v-card max-height="450">
         <v-card-title class="justify-center">
-          <v-flex md4 sm4>
-            <h2 class="title">Graph View</h2>
-          </v-flex>
-          <v-spacer></v-spacer>
-          <v-flex md5 mr-5>
-            <v-text-field
-              v-model="search"
-              append-icon="search"
-              label="search the cell"
-              single-line
-              hide-details
-              hide-no-data
-            ></v-text-field>
-          </v-flex>
+          <h4 class="view-title">Graph View</h4>
         </v-card-title>
         <v-layout row wrap>
+          <v-chip
+            v-if="chip3"
+            class="ma-2"
+            close
+            color="green"
+            outlined
+            @click:close="chip3 = false"
+          >Success</v-chip>
           <v-card-text>
             <div ref="graph" id="graph"></div>
           </v-card-text>
@@ -30,7 +25,6 @@
 
 <script>
 import * as d3 from "d3";
-import * as d3Dag from "d3-dag";
 import _ from "lodash";
 
 import { analyzeGraph } from "@/assets/graph.js";

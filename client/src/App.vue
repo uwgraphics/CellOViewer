@@ -2,21 +2,12 @@
   <div id="app">
     <v-app :dark="setTheme">
       <!--Header Section-->
-      <v-container bg grid-list-md text-lg-center>
-        <v-layout row justify-space-between class="test">
-          <v-flex md2>
-            <v-switch color="primary" :label="selectedTheme" v-model="goDark"></v-switch>
-          </v-flex>
-          <v-spacer></v-spacer>
-        </v-layout>
-        <v-layout row wrap align-center>
-          <v-flex>
-            <Header msg="Boilerplate for Cell Netowrk Viewer" />
-          </v-flex>
-        </v-layout>
+      <v-container fluid>
+         <v-switch color="primary" :label="selectedTheme" v-model="goDark" class="switch"></v-switch>
+        <Header msg="Cell Netowrk Viewer" />
       </v-container>
       <!--Body Section-->
-      <v-container bg grid-list-md text-lg-center>
+      <v-container bg grid-list-md fluid>
         <v-layout row wrap>
           <v-flex md7>
             <Graph :cellData="this.loadedData" />
@@ -50,11 +41,11 @@ import * as d3 from "d3";
 export default {
   name: "app",
   components: {
-    CellDetails,
     Header,
-    GeneDetails,
     Graph,
-    List
+    List,
+    CellDetails,
+    GeneDetails
   },
   mounted() {
     this.fetchData();
@@ -67,18 +58,18 @@ export default {
     };
   },
   methods: {
-    /**
-     * Fetch cell type data from json
-     */
+    // Fetch cell type graph data
     async fetchData() {
       let data = await d3.json("./cell_type_graph.json");
       this.loadedData = Object.assign({}, data);
     }
   },
   computed: {
+    // Display text of which theme is currently on
     selectedTheme() {
       return this.goDark ? "Dark Theme" : "Light Theme";
     },
+    // Toggle between light and dark theme
     setTheme() {
       if (this.goDark == true) {
         return (this.$vuetify.theme.dark = true);
@@ -97,13 +88,8 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
 }
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
+.switch {
+  margin: 20px;
 }
 a,
 h3 {
@@ -113,12 +99,13 @@ h3 {
   color: #42b983;
   font-weight: bold;
 }
+@import url('https://fonts.googleapis.com/css?family=BioRhyme&display=swap');
+.view-title {
+  font-family: 'BioRhyme', serif;
+  color: #eeeeee;
+}
 .sub-title {
-  color: #42b983;
   font-weight: bold;
   text-align: left;
-}
-.test {
-  height: 10px;
 }
 </style>
