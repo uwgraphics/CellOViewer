@@ -61,7 +61,7 @@ export function layout(graph) {
 
   const width = 1200;
   const topmargin = 50;
-  const levelSep = 70;
+  const levelSep = 50;
 
   const vertexRadius = 5;
   const phantomRadius = 1;
@@ -208,7 +208,7 @@ export function layout(graph) {
 export function treeLayout(graph) {
   // parameters (should be passed)
   const topmargin = 50;
-  const levelSep = 50;
+  const levelSep = 60;
 
   const vertexRadius = 5;
   const phantomRadius = 2;
