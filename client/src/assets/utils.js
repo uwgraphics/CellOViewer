@@ -77,11 +77,11 @@ export function countCrossingsGraph(graph) {
 
 export function simpleSorter(graph, hlevel = 3, pass = 0) {
   const levels = graph.getLevels();
+
   // compare two nodes
   function cmp(a, b) {
     // heuristic one - stick to your primary parent
     if (!a.primaryParent) {
-      // eslint-disable-next-line no-console
       console.log(`node ${a.index} ${a.name} no primary parent`);
     }
     let ai = a.primaryParent.levelIdx;
@@ -137,4 +137,7 @@ export function simpleSorter(graph, hlevel = 3, pass = 0) {
 
   // reorder the nodes
   graph.nodes.sort((a, b) => a.index - b.index);
+  // make sure the children are sorted correctly
+  graph.nodes.forEach(n => n.primaryChildren.sort((a, b) => a.index - b.index));
+  graph.nodes.forEach(n => n.children.sort((a, b) => a.index - b.index));
 }

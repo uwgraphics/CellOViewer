@@ -6,14 +6,6 @@
           <h4 class="view-title">Graph View</h4>
         </v-card-title>
         <v-layout row wrap>
-          <v-chip
-            v-if="chip3"
-            class="ma-2"
-            close
-            color="green"
-            outlined
-            @click:close="chip3 = false"
-          >Success</v-chip>
           <v-card-text>
             <div ref="graph" id="graph"></div>
           </v-card-text>
@@ -29,8 +21,8 @@ import _ from "lodash";
 
 import { analyzeGraph } from "@/assets/graph.js";
 import { average, countCrossingsGraph, simpleSorter } from "@/assets/utils.js";
-import { drawGraph, drawGraphLab } from "@/assets/draw.js";
-import { jsonToGraph } from "@/assets/data.js";
+import { drawGraph } from "@/assets/draw.js";
+import { jsonToGraph } from "@/assets/structure.js";
 import { primaryParent } from "@/assets/tangler.js";
 import { treeLayout } from "@/assets/layout.js";
 
@@ -119,7 +111,7 @@ export default {
     },
 
     // This is the lab version of the cell network graph
-    showDag2() {
+    showGraph() {
       let graph = jsonToGraph(this.cellData);
       analyzeGraph(graph);
       primaryParent(graph);
@@ -129,10 +121,10 @@ export default {
       graph.links.forEach(
         link =>
           (link.color =
-            link.target.primaryParent == link.source ? "#42b983" : "#42b983")
+            link.target.primaryParent == link.source ? "#42b983" : "666")
       );
       treeLayout(graph);
-      drawGraphLab(graph, this.$refs.graph, this);
+      drawGraph(graph, this.$refs.graph, this);
       // this.fillPathsDict(graph);
     }
   },
@@ -190,7 +182,7 @@ export default {
       for (let i = 0; i < this.listLocalCopy.length; i++) {
         this.listLocalCopy[i].push(i.toString());
       }
-      this.showDag2();
+      this.showGraph();
     },
     cellSelected() {
       // There may be asynchronous issue here, need to be handled
@@ -205,7 +197,7 @@ export default {
 
       for (let i = 0; i < curList.length; i++) {
         let svgHighlight = d3.select(this.$refs.graph).select("svg");
-        let highlightedCell = svgHighlight
+        svgHighlight
           .select("#circle-" + this.formatToId(curList[i]))
           .transition()
           .style("stroke", "#FFEE10")

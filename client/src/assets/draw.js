@@ -3,40 +3,114 @@
 // @ts-check
 
 // eslint-disable-next-line no-unused-vars
-import { Graph } from "./graph.js";
-import { d3Layout } from "./layout.js";
+import { Graph, strifyNodes } from "./graph.js";
+// @ts-ignore
+// @ts-ignore
 import * as d3 from "d3";
 
+// /**
+//  *
+//  * @param {Graph} graph
+//  * @param {string} selector="body"
+//  * @param {Object} params={}
+//  * @param {number} [params.height = 800]
+//  * @param {number} [params.nodeRadius = 4]
+//  * @param {?Boolean} [params.drawPhantoms]
+//  * @param {number} [params.bezierVert = 25]
+//  */
+// export function drawGraphLab(graph, selector = "body", vueThis, params = {}) {
+
+//   let linkType = "paths";
+//   let paths;
+
+//   /**
+//    * Where the vanilla JavaScript pass the click event to Vue
+//    */
+//   function update() {
+//     switch (linkType) {
+//       case "arrows":
+//         // draw directed edges with proper padding from node centers
+//         paths.attr("d", function(d) {
+//           let deltaX = d.target.x - d.source.x,
+//             deltaY = d.target.y - d.source.y,
+//             dist = Math.sqrt(deltaX * deltaX + deltaY * deltaY),
+//             normX = deltaX / dist,
+//             normY = deltaY / dist,
+//             sourcePadding = d.source.phantom ? 1 : nodeRadius,
+//             targetPadding = d.target.phantom ? 1 : nodeRadius + 2,
+//             sourceX = d.source.x + sourcePadding * normX,
+//             sourceY = d.source.y + sourcePadding * normY,
+//             targetX = d.target.x - targetPadding * normX,
+//             targetY = d.target.y - targetPadding * normY;
+//           return "M" + sourceX + "," + sourceY + "L" + targetX + "," + targetY;
+//         });
+//         break; // end arrow update
+//       case "lines":
+//         paths.attr("x1", d => d.source.x);
+//         paths.attr("y1", d => d.source.y);
+//         paths.attr("x2", d => d.target.x);
+//         paths.attr("y2", d => d.target.y);
+//         break;
+//       case "paths":
+//         paths.attr("d", function(d) {
+//           let x1 = d.source.x;
+//           let y1 = d.source.y + radius(d.source);
+//           let x2 = d.target.x;
+//           let y2 = d.target.y - radius(d.target);
+//           //return `M${x1},${y1}L${x2},${y2}`;
+//           return `M${x1},${y1}C${x1},${y1 + 15},${x2},${y2 - 15},${x2},${y2}`;
+//         });
+//         break;
+//     }
+
+//     // update node positions
+//     node
+//       .attr("cx", function(d) {
+//         return d.x;
+//       })
+//       .attr("cy", function(d) {
+//         return d.y;
+//       });
+//   }
+//   update();
+// }
+
 /**
+ * New drawwing code - only does Beziers
+ * has a few parameters
+ * and cannot update node positions
  *
  * @param {Graph} graph
  * @param {string} selector="body"
  * @param {Object} params={}
  * @param {number} [params.height = 800]
- * @param {number} [params.nodeRadius = 4]
+ * @param {number} [params.nodeRadius = 5]
  * @param {?Boolean} [params.drawPhantoms]
  * @param {number} [params.bezierVert = 25]
  */
-export function drawGraphLab(graph, selector = "body", vueThis, params = {}) {
+// @ts-ignore
+// @ts-ignore
+export function drawGraph(graph, selector = "body", vueThis, params = {}) {
   let nodeRadius = params.nodeRadius || 4;
   let bvert = params.bezierVert || 15;
   let height = params.height || 800;
-
   const width = Math.max(...graph.nodes.map(n => n.x)) + nodeRadius;
 
   let svg = d3
+    // @ts-ignore
     .select(selector)
     .append("svg")
     .attr("preserveAspectRatio", "xMinYMin meet")
     .attr("viewBox", `0 0 ${width} ${height + 20}`)
     .call(
+      // @ts-ignore
       d3.zoom().on("zoom", function() {
+        // @ts-ignore
         svg.attr("transform", d3.event.transform);
       })
     )
     .append("g");
 
-  let linkType = "paths";
   let paths;
 
   // create the Bezier segment from x1,y1 to x2,y2 - assuming that x1,y1 was the last point
@@ -50,29 +124,29 @@ export function drawGraphLab(graph, selector = "body", vueThis, params = {}) {
       bv},${x2},${y2 - nodeRadius}`;
   }
 
+  function formatToId(cellName) {
+    return cellName
+      .split(" ")
+      .join("-")
+      .split("(")
+      .join("")
+      .split(")")
+      .join("")
+      .replace(/\//g, "-");
+  }
+
+  // @ts-ignore
   function pathId(links) {
     return (
       "path-" +
-      links["source"]["name"]
-        .split(" ")
-        .join("-")
-        .split("(")
-        .join("")
-        .split(")")
-        .join("")
-        .replace(/\//g, "-") +
+      formatToId(links["source"]["name"]) +
       "---" +
-      links["target"]["name"]
-        .split(" ")
-        .join("-")
-        .split("(")
-        .join("")
-        .split(")")
-        .join("")
-        .replace(/\//g, "-")
+      formatToId(links["target"]["name"])
     );
   }
 
+  // we only create links for the non-phantom source nodes
+  // we then trace through the phantom nodes
   paths = svg
     .selectAll(".link")
     .data(graph.links.filter(link => !link.source.phantom))
@@ -101,16 +175,17 @@ export function drawGraphLab(graph, selector = "body", vueThis, params = {}) {
       // now we go to the final place
       let x2 = next.x;
       let y2 = next.y;
-      // pstr += `L${x2},${y2}`;
       pstr += cseg(x1, y1, x2, y2);
       return pstr;
     });
 
   paths.style("stroke", link => link.color).attr("class", "link");
-  paths.on("mouseover", function handle(d, i) {
+  paths.on("mouseover", function handle() {
+    // @ts-ignore
     d3.select(this).style("stroke", "#FF6F61");
   });
-  paths.on("mouseout", function handle(d, i) {
+  paths.on("mouseout", function handle(d) {
+    // @ts-ignore
     d3.select(this).style("stroke", d.color);
   });
 
@@ -119,66 +194,23 @@ export function drawGraphLab(graph, selector = "body", vueThis, params = {}) {
    * @param {Object} node
    */
   // Assign an id to each circle based on node type
+  // @ts-ignore
   function nodeId(node) {
     if (node.phantom) {
-      return (
-        "phantom-" +
-        node.name
-          .split(" ")
-          .join("-")
-          .split("(")
-          .join("")
-          .split(")")
-          .join("")
-          .replace(/\//g, "-")
-      );
+      return "phantom-" + formatToId(node.name);
     } else {
-      return (
-        "circle-" +
-        node.name
-          .split(" ")
-          .join("-")
-          .split("(")
-          .join("")
-          .split(")")
-          .join("")
-          .replace(/\//g, "-")
-      );
+      return "circle-" + formatToId(node.name);
     }
   }
 
-  function nodeClass(node) {
-    if (node.phantom) {
-      return "phantom";
-    } else {
-      return "cell";
-    }
-  }
-
-  function radius(node) {
-    return node.phantom ? 1 : nodeRadius;
-  }
-
-  function nodeName(node) {
-    return node.name;
-  }
-
-  function nodeColor(node) {
-    if (node.phantom) return "#42b98300";
-    if (node.istree) return "#FFF";
-    return "#FFF";
-  }
-
-  function nodeStroke(node) {
-    if (node.phantom) return "none";
-    return "#000";
-  }
-
+  // @ts-ignore
   function handleMouseOver() {
     // Use D3 to select element, change color and size
+    // @ts-ignore
     let node = d3.select(this);
     node.attr("r", nodeRadius * 2);
 
+    // @ts-ignore
     let d3plus = require("d3plus-tooltip");
     // @ts-ignore: This is a notation that d3plus-tooltip uses
     new d3plus.Tooltip()
@@ -192,16 +224,42 @@ export function drawGraphLab(graph, selector = "body", vueThis, params = {}) {
       .render();
   }
 
+  // @ts-ignore
   function handleMouseOut() {
+    // @ts-ignore
     d3.select(this).attr("r", nodeRadius);
+    // @ts-ignore
     d3.select(".d3plus-tooltip").remove();
   }
 
-  /**
-   * Where the vanilla JavaScript pass the click event to Vue
-   */
   function handleMouseClick() {
+    // @ts-ignore
+    console.log("Here");
+    // @ts-ignore
     vueThis.selectedCellName = d3.select(this).attr("name");
+  }
+
+  function nodeClass(node) {
+    if (node.phantom) {
+      return "phantom";
+    } else {
+      return "cell";
+    }
+  }
+
+  function nodeColor(node) {
+    if (node.phantom) return "#42b98300";
+    if (node.istree) return "#FFF";
+    return "#FFF";
+  }
+
+  function nodeName(node) {
+    return node.name;
+  }
+
+  function nodeStroke(node) {
+    if (node.phantom) return "none";
+    return "#000";
   }
 
   let node = svg
@@ -211,13 +269,15 @@ export function drawGraphLab(graph, selector = "body", vueThis, params = {}) {
     )
     .enter()
     .append("circle")
+    .attr("name", nodeName)
     .attr("id", nodeId)
     .attr("class", nodeClass)
-    .attr("r", radius)
-    .attr("name", nodeName)
+    .attr("r", nodeRadius)
     .style("fill", nodeColor)
     .style("stroke", nodeStroke)
-    .style("stoke-width", 0.5);
+    .style("stroke-width", 0.5)
+    .attr("cx", d => d.x)
+    .attr("cy", d => d.y);
 
   node
     .filter(".cell")
@@ -225,51 +285,9 @@ export function drawGraphLab(graph, selector = "body", vueThis, params = {}) {
     .on("mouseout", handleMouseOut)
     .on("click", handleMouseClick);
 
-  function update() {
-    switch (linkType) {
-      case "arrows":
-        // draw directed edges with proper padding from node centers
-        paths.attr("d", function(d) {
-          let deltaX = d.target.x - d.source.x,
-            deltaY = d.target.y - d.source.y,
-            dist = Math.sqrt(deltaX * deltaX + deltaY * deltaY),
-            normX = deltaX / dist,
-            normY = deltaY / dist,
-            sourcePadding = d.source.phantom ? 1 : nodeRadius,
-            targetPadding = d.target.phantom ? 1 : nodeRadius + 2,
-            sourceX = d.source.x + sourcePadding * normX,
-            sourceY = d.source.y + sourcePadding * normY,
-            targetX = d.target.x - targetPadding * normX,
-            targetY = d.target.y - targetPadding * normY;
-          return "M" + sourceX + "," + sourceY + "L" + targetX + "," + targetY;
-        });
-        break; // end arrow update
-      case "lines":
-        paths.attr("x1", d => d.source.x);
-        paths.attr("y1", d => d.source.y);
-        paths.attr("x2", d => d.target.x);
-        paths.attr("y2", d => d.target.y);
-        break;
-      case "paths":
-        paths.attr("d", function(d) {
-          let x1 = d.source.x;
-          let y1 = d.source.y + radius(d.source);
-          let x2 = d.target.x;
-          let y2 = d.target.y - radius(d.target);
-          //return `M${x1},${y1}L${x2},${y2}`;
-          return `M${x1},${y1}C${x1},${y1 + 15},${x2},${y2 - 15},${x2},${y2}`;
-        });
-        break;
-    }
-
-    // update node positions
-    node
-      .attr("cx", function(d) {
-        return d.x;
-      })
-      .attr("cy", function(d) {
-        return d.y;
-      });
-  }
-  update();
+  node.append("title").text(function(d) {
+    return `${
+      d.index
+    }:${d.name} ${strifyNodes(d.dalevel, "index")} tw:${d.twidth}`;
+  });
 }

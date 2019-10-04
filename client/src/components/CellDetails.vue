@@ -1,7 +1,7 @@
 <template>
   <v-layout row wrap align-center>
     <v-flex md12>
-      <v-card max-height="650">
+      <v-card max-height="1300">
         <v-card-title class="justify-center">
           <h2 class="title">Cell Details View</h2>
           <v-spacer></v-spacer>
@@ -13,6 +13,7 @@
           <v-layout row>
             <v-flex md12 sm12 v-if="cellSelectedExist">
               <v-select
+                v-if="geneDataExist(cellSelected[0])"
                 v-model="cellDetailsOption"
                 :items="sortOptions"
                 @input="sortBasedOnOption"
@@ -28,13 +29,9 @@
                       dense
                       @click="setGeneItem(value)"
                     >
-                      <span v-if="index===(loadedGeneData[cellSelected[0]].length - 1)">
+                      <span>
                         <span class="index">{{ value[2] }}:</span>
                         {{ value[1] }}
-                      </span>
-                      <span v-else>
-                        <span class="index">{{ value[2] }}:</span>
-                        {{ value[1] }},
                       </span>
                     </v-list-item>
                   </v-list>
@@ -48,13 +45,9 @@
                       dense
                       @click="setGeneItem(value)"
                     >
-                      <span v-if="index===(loadedGeneData[cellSelected[1]].length - 1)">
+                      <span>
                         <span class="index">{{ value[2] }}:</span>
                         {{ value[1] }}
-                      </span>
-                      <span v-else>
-                        <span class="index">{{ value[2] }}:</span>
-                        {{ value[1] }},
                       </span>
                     </v-list-item>
                   </v-list>
