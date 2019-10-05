@@ -60,7 +60,6 @@ export default {
   methods: {
     async fetchData() {
       let data = await d3.json("./top_abs_10_dict.json");
-      console.log(data);
       this.loadedDictData = Object.assign({}, data);
     },
     formatToId(cellName) {

@@ -14,7 +14,7 @@
             <v-flex md12 sm12 v-if="cellSelectedExist">
               <v-select
                 v-if="geneDataExist(cellSelected[0])"
-                v-model="cellDetailsOption"
+                v-model="option"
                 :items="sortOptions"
                 @input="sortBasedOnOption"
                 label="sort"
@@ -24,7 +24,7 @@
                   <h3 class="sub-title">{{ cellSelected[0] }}</h3>
                   <v-list class="list">
                     <v-list-item
-                      v-for="(value, index) in dynamicData[0]"
+                      v-for="(value, index) in geneCellCopy1"
                       :key="index"
                       dense
                       @click="setGeneItem(value)"
@@ -40,7 +40,7 @@
                   <h3 class="sub-title">{{ cellSelected[1] }}</h3>
                   <v-list class="list">
                     <v-list-item
-                      v-for="(value, index) in dynamicData[1]"
+                      v-for="(value, index) in geneCellCopy2"
                       :key="index"
                       dense
                       @click="setGeneItem(value)"
@@ -80,30 +80,27 @@ export default {
     };
   },
   methods: {
-    sortBasedOnOption(cellDetailsOption) {
-      this.$store.dispatch(
-        "changeCellDetailsOption",
-        String(cellDetailsOption)
-      );
-      switch (cellDetailsOption) {
+    sortBasedOnOption(option) {
+      if (this.$store.getters.getCellDetails.length == 0) {
+        return;
+      }
+
+      switch (option) {
         case "strength":
           return;
         case "magnitude":
           this.$store.dispatch("changeCellDetails", []);
           this.geneCellCopy1 = this.geneCellCopy1.sort((a, b) => {
-            a[1] < b[1] ? 1 : -1;
+            Math.abs(a[1]) < Math.abs(b[1]) ? 1 : -1;
           });
-          this.$store.dispatch("addToCellDetails", this.geneCellCopy1);
           if (this.geneCellCopy2.length != 0) {
-            this.geneCellCopy2 = this.geneCellCopy2.sort((a, b) => {
-              a[1] < b[1] ? 1 : -1;
-            });
-            this.$store.dispatch("addToCellDetails", this.geneCellCopy2);
+            this.$store.dispatch("changeCellDetails", [
+              this.geneCellCopy1,
+              this.geneCellCopy2
+            ]);
+          } else {
+            this.$store.dispatch("changeCellDetails", [this.geneCellCopy1]);
           }
-          // this.listLocalCopy = this.listLocalCopy.sort((a, b) =>
-          //   a[1].length < b[1].length ? 1 : -1
-          // );
-          return;
       }
     },
     // Load gene data in this component to avoid latency in the main component
@@ -118,7 +115,6 @@ export default {
       if (this.loadedGeneData[cellTypeName] === undefined) {
         return false;
       }
-
       return true;
     },
     removeCellSelected() {
@@ -134,19 +130,19 @@ export default {
         return this.$store.getters.getCellSelected;
       }
     },
-    cellDetailsOption: {
-      get() {
-        return this.$store.getters.getCellDetailsOption;
-      },
-      set(option) {
-        this.$store.dispatch("changeCellDetailsOption", option);
-      }
-    },
     dynamicData() {
       if (this.geneCellCopy1.length == 0) {
         return;
       } else {
         return this.$store.getters.getCellDetails;
+      }
+    },
+    option: {
+      get() {
+        return this.$store.getters.getOption;
+      },
+      set(option) {
+        this.$store.dispatch("changeOption", option);
       }
     }
   },

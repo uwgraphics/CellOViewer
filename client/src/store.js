@@ -5,7 +5,6 @@ Vue.use(Vuex);
 
 const state = {
   cellDetails: [],
-  cellDetailsOption: "",
   cellSelected: [],
   cellSelectedPrevious: "",
   topGeneCellList: [],
@@ -16,9 +15,6 @@ const state = {
 };
 
 const mutations = {
-  CHANGE_CELL_DETAILS_OPTION(state, payload) {
-    state.cellDetailsOption = payload;
-  },
   ADD_TO_CELL_DETAILS(state, payload) {
     state.cellDetails.push(payload);
   },
@@ -64,9 +60,6 @@ const actions = {
   changeCellDetails(context, cellDetails) {
     context.commit("CHANGE_CELL_DETAILS", cellDetails);
   },
-  changeCellDetailsOption(context, cellDetailsOption) {
-    context.commit("CHANGE_CELL_DETAILS_OPTION", cellDetailsOption);
-  },
   addToCellSelected(context, cellSelected) {
     context.commit("ADD_TO_CELL_SELECTED", cellSelected);
   },
@@ -102,9 +95,6 @@ const actions = {
 const getters = {
   getCellDetails(state) {
     return state.cellDetails;
-  },
-  getCellDetailsOption(state) {
-    return state.cellDetailsOption;
   },
   getCellSelected(state) {
     return state.cellSelected;
