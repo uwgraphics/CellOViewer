@@ -7,6 +7,8 @@
         </v-card-title>
         <v-layout row wrap>
           <v-card-text>
+            <v-chip v-if="cellType1" class="ma-2">{{ cellType1 }}</v-chip>
+            <v-chip v-if="cellType2" class="ma-2">{{ cellType2 }}</v-chip>
             <div ref="graph" id="graph"></div>
           </v-card-text>
         </v-layout>
@@ -34,6 +36,8 @@ export default {
   mounted() {},
   data() {
     return {
+      cellType1: "",
+      cellType2: "",
       keyValueDict: {},
       selectedCellName: "",
       listLocalCopy: [],
@@ -187,6 +191,15 @@ export default {
     cellSelected() {
       // There may be asynchronous issue here, need to be handled
       let curList = this.$store.getters.getCellSelected;
+      this.cellType1 = "";
+      this.cellType2 = "";
+      
+      if (curList.length == 1) {
+        this.cellType1 = curList[0];
+      } else if (curList.length == 2) {
+        this.cellType1 = curList[0];
+        this.cellType2 = curList[1];
+      }
 
       let svgClear = d3.select(this.$refs.graph).select("svg");
       svgClear

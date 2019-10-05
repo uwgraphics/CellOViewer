@@ -93,7 +93,7 @@ import * as d3 from "d3";
 export function drawGraph(graph, selector = "body", vueThis, params = {}) {
   let nodeRadius = params.nodeRadius || 4;
   let bvert = params.bezierVert || 15;
-  let height = params.height || 935;
+  let height = params.height || 1035;
   const width = Math.max(...graph.nodes.map(n => n.x)) + nodeRadius;
 
   let svg = d3
