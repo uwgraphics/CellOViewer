@@ -84,14 +84,14 @@ import * as d3 from "d3";
  * @param {string} selector="body"
  * @param {Object} params={}
  * @param {number} [params.height = 800]
- * @param {number} [params.nodeRadius = 5]
+ * @param {number} [params.nodeRadius = 4.5]
  * @param {?Boolean} [params.drawPhantoms]
  * @param {number} [params.bezierVert = 25]
  */
 // @ts-ignore
 // @ts-ignore
 export function drawGraph(graph, selector = "body", vueThis, params = {}) {
-  let nodeRadius = params.nodeRadius || 4;
+  let nodeRadius = params.nodeRadius || 4.5;
   let bvert = params.bezierVert || 15;
   let height = params.height || 1035;
   const width = Math.max(...graph.nodes.map(n => n.x)) + nodeRadius;
@@ -247,8 +247,8 @@ export function drawGraph(graph, selector = "body", vueThis, params = {}) {
 
   function nodeColor(node) {
     if (node.phantom) return "#42b98300";
-    if (node.istree) return "#FFF";
-    return "#FFF";
+    if (node.istree) return "#faed27";
+    return "#faed27";
   }
 
   function nodeName(node) {

@@ -193,7 +193,7 @@ export default {
       let curList = this.$store.getters.getCellSelected;
       this.cellType1 = "";
       this.cellType2 = "";
-      
+
       if (curList.length == 1) {
         this.cellType1 = curList[0];
       } else if (curList.length == 2) {
@@ -205,16 +205,14 @@ export default {
       svgClear
         .selectAll(".cell")
         .transition()
-        .style("stroke", "#000")
-        .style("stroke-width", "1px");
+        .style("fill", "#faed27");
 
       for (let i = 0; i < curList.length; i++) {
         let svgHighlight = d3.select(this.$refs.graph).select("svg");
         svgHighlight
           .select("#circle-" + this.formatToId(curList[i]))
           .transition()
-          .style("stroke", "#FFEE10")
-          .style("stroke-width", "2px");
+          .style("fill", "#f33");
       }
     },
     filteredData() {
@@ -235,7 +233,7 @@ export default {
       svgClear
         .selectAll(".cell")
         .transition()
-        .style("fill", "#FFF");
+        .style("stroke", "none");
 
       let topGeneCellList = this.$store.getters.getTopGeneCellList;
 
@@ -243,7 +241,8 @@ export default {
         svgHighlight
           .select("#circle-" + this.formatToId(topGeneCellList[i][0]))
           .transition()
-          .style("fill", "#E95C20");
+          .style("stroke", "#000")
+          .style("stroke-width", "2px");
       }
     }
   }
