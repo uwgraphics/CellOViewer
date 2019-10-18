@@ -13,6 +13,7 @@
           <v-layout row wrap>
             <v-flex md12 v-if="geneNotEmpty()">
               <v-select
+                v-model="option"
                 :items="sortOptions"
                 @input="sortBasedOnOption"
                 label="sort"
@@ -50,11 +51,11 @@ export default {
   },
   data() {
     return {
-      filteredGeneCellList: [],
       cellTypeNames: [],
+      filteredList: [],
       listHeight: "400px",
       loadedDictData: {},
-      sortOptions: ["default", "strength", "magnitude"]
+      sortOptions: ["default", "magnitude"]
     };
   },
   methods: {
@@ -78,6 +79,22 @@ export default {
     removeGeneDetails() {
       this.$store.dispatch("changeGeneSelected", "");
     },
+    returnToDefaultList() {
+      let list = [];
+      let globalThis = this;
+      for (const [key, value] of Object.entries(this.loadedDictData)) {
+        let geneArr = value;
+        for (let i = 0; i < geneArr.length; i++) {
+          if (geneArr[i][2] === globalThis.geneSelected) {
+            let cellName = key;
+            let geneValue = value[i][1];
+            list.push([cellName, geneValue]);
+          }
+        }
+      }
+
+      return list;
+    },
     setCellSelected(cellName) {
       let curList = this.$store.getters.getCellSelected;
       if (curList.length > 1) {
@@ -86,25 +103,40 @@ export default {
       curList.push(cellName);
       this.$store.dispatch("changeCellSelected", curList);
     },
-    sortBasedOnOption(option) {
-      // To be filled
+    sortBasedOnOption() {
+      return this.filteredList.sort((a, b) => (a[1] > b[1] ? -1 : 1));
     },
     topGeneDataExist(topGenes, cellTypeName) {
       return typeof topGenes[this.geneSelected] !== "undefined";
     }
   },
   computed: {
+    filteredGeneCellList() {
+      return this.$store.getters.getGeneSearchOption === "default"
+        ? this.returnToDefaultList()
+        : this.sortBasedOnOption();
+    },
     geneSelected: {
       get() {
         return this.$store.getters.getGeneSelected;
+      }
+    },
+    option: {
+      get() {
+        return this.$store.getters.getGeneSearchOption;
+      },
+      set(option) {
+        this.$store.dispatch("changeGeneSearchOption", option);
       }
     }
   },
   watch: {
     geneSelected() {
+      // Change sorting back to default
+      this.$store.dispatch("changeGeneSearchOption", "default");
       let globalThis = this;
       // Clear both local list and store to receive updated values
-      globalThis.filteredGeneCellList = [];
+      globalThis.filteredList = [];
       this.$store.dispatch("changeTopGeneCellList", []);
 
       for (const [key, value] of Object.entries(this.loadedDictData)) {
@@ -113,7 +145,7 @@ export default {
           if (geneArr[i][2] === globalThis.geneSelected) {
             let cellName = key;
             let geneValue = value[i][1];
-            globalThis.filteredGeneCellList.push([cellName, geneValue]);
+            globalThis.filteredList.push([cellName, geneValue]);
             globalThis.$store.dispatch("addToTopGeneCellList", [
               cellName,
               geneValue

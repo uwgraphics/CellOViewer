@@ -102,7 +102,6 @@ h3 {
 @import url('https://fonts.googleapis.com/css?family=BioRhyme&display=swap');
 .view-title {
   font-family: 'BioRhyme', serif;
-  color: #eeeeee;
 }
 .sub-title {
   font-weight: bold;

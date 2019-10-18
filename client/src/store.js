@@ -9,6 +9,7 @@ const state = {
   cellSelectedPrevious: "",
   topGeneCellList: [],
   topGeneCellListPrevious: [],
+  geneSearchOption: "default",
   geneSelected: "",
   optionSelected: "default",
   search: ""
@@ -41,6 +42,9 @@ const mutations = {
   },
   CHANGE_CELL_SELECTED_PREVIOUS(state, payload) {
     state.cellSelectedPrevious = payload;
+  },
+  CHANGE_GENE_SEARCH_OPTION(state, payload) {
+    state.geneSearchOption = payload;
   },
   CHANGE_GENE_SELECTED(state, payload) {
     state.geneSelected = payload;
@@ -81,6 +85,9 @@ const actions = {
   changeCellSelectedPrevious(context, cellSelectedPrevious) {
     context.commit("CHANGE_CELL_SELECTED_PREVIOUS", cellSelectedPrevious);
   },
+  changeGeneSearchOption(context, geneSearchOption) {
+    context.commit("CHANGE_GENE_SEARCH_OPTION", geneSearchOption);
+  },
   changeGeneSelected(context, geneSelected) {
     context.commit("CHANGE_GENE_SELECTED", geneSelected);
   },
@@ -107,6 +114,9 @@ const getters = {
   },
   getCellSelectedPrevious(state) {
     return state.cellSelectedPrevious;
+  },
+  getGeneSearchOption(state) {
+    return state.geneSearchOption;
   },
   getGeneSelected(state) {
     return state.geneSelected;

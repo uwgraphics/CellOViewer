@@ -11,9 +11,8 @@
         </v-card-title>
         <v-card-text>
           <v-layout row>
-            <v-flex md12 sm12 v-if="cellSelectedExist">
+            <v-flex md12 sm12 v-if="cellSelectedExist && geneDataExist(cellSelected[0])">
               <v-select
-                v-if="geneDataExist(cellSelected[0])"
                 v-model="option"
                 :items="sortOptions"
                 @input="sortBasedOnOption"
@@ -76,7 +75,7 @@ export default {
       geneCellCopy1: [], // Could be removed, solely based on vuex
       geneCellCopy2: [], // Could be removed, solely based on vuex
       loadedGeneData: {},
-      sortOptions: ["default", "strength", "magnitude"]
+      sortOptions: ["default", "magnitude"]
     };
   },
   methods: {
@@ -86,21 +85,11 @@ export default {
       }
 
       switch (option) {
-        case "strength":
-          return;
         case "magnitude":
-          this.$store.dispatch("changeCellDetails", []);
+          console.log(this.geneCellCopy1);
           this.geneCellCopy1 = this.geneCellCopy1.sort((a, b) => {
             Math.abs(a[1]) < Math.abs(b[1]) ? 1 : -1;
           });
-          if (this.geneCellCopy2.length != 0) {
-            this.$store.dispatch("changeCellDetails", [
-              this.geneCellCopy1,
-              this.geneCellCopy2
-            ]);
-          } else {
-            this.$store.dispatch("changeCellDetails", [this.geneCellCopy1]);
-          }
       }
     },
     // Load gene data in this component to avoid latency in the main component
