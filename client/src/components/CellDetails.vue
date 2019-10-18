@@ -12,18 +12,22 @@
         <v-card-text>
           <v-layout row>
             <v-flex md12 sm12 v-if="cellSelectedExist && geneDataExist(cellSelected[0])">
-              <v-select
-                v-model="option"
-                :items="sortOptions"
-                @input="sortBasedOnOption"
-                label="sort"
-              ></v-select>
+              <v-layout>
+                <v-flex md12>
+                  <v-select
+                    v-model="option"
+                    :items="sortOptions"
+                    @input="sortBasedOnOption"
+                    label="sort"
+                  ></v-select>
+                </v-flex>
+              </v-layout>
               <v-layout row wrap v-if="geneDataExist(cellSelected[0])">
                 <v-flex md6 sm6>
                   <h3 class="sub-title">{{ cellSelected[0] }}</h3>
                   <v-list class="list">
                     <v-list-item
-                      v-for="(value, index) in geneCellCopy1"
+                      v-for="(value, index) in currentCells[0]"
                       :key="index"
                       dense
                       @click="setGeneItem(value)"
@@ -39,7 +43,7 @@
                   <h3 class="sub-title">{{ cellSelected[1] }}</h3>
                   <v-list class="list">
                     <v-list-item
-                      v-for="(value, index) in geneCellCopy2"
+                      v-for="(value, index) in currentCells[1]"
                       :key="index"
                       dense
                       @click="setGeneItem(value)"
@@ -72,8 +76,6 @@ export default {
   data() {
     return {
       cardHighlight: false,
-      geneCellCopy1: [], // Could be removed, solely based on vuex
-      geneCellCopy2: [], // Could be removed, solely based on vuex
       loadedGeneData: {},
       sortOptions: ["default", "magnitude"]
     };
@@ -106,6 +108,34 @@ export default {
       }
       return true;
     },
+    getDefaultCells() {
+      let cellArr = this.$store.getters.getCellSelected;
+      let geneCellCopy = [];
+      geneCellCopy.push(this.loadedGeneData[cellArr[0]]);
+      if (cellArr.length > 1) {
+        geneCellCopy.push(this.loadedGeneData[cellArr[1]]);
+      }
+
+      return geneCellCopy;
+    },
+    sortCells() {
+      let cellArr = this.$store.getters.getCellSelected;
+      let geneCellCopy = [];
+      geneCellCopy.push(
+        this.loadedGeneData[cellArr[0]]
+          .concat()
+          .sort((a, b) => (a[1] < b[1] ? 1 : -1))
+      );
+      if (cellArr.length > 1) {
+        geneCellCopy.push(
+          this.loadedGeneData[cellArr[1]]
+            .concat()
+            .sort((a, b) => (a[1] < b[1] ? 1 : -1))
+        );
+      }
+
+      return geneCellCopy;
+    },
     removeCellSelected() {
       this.$store.dispatch("popFromCellSelected");
     },
@@ -118,6 +148,11 @@ export default {
       get() {
         return this.$store.getters.getCellSelected;
       }
+    },
+    currentCells() {
+      return this.$store.getters.getOption === "default"
+        ? this.getDefaultCells()
+        : this.sortCells();
     },
     dynamicData() {
       if (this.geneCellCopy1.length == 0) {
