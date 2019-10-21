@@ -11,13 +11,28 @@
         </v-card-title>
         <v-card-text>
           <v-layout row wrap>
-            <v-flex md12 v-if="geneNotEmpty()">
+            <v-flex md9 sm12 v-if="geneNotEmpty()">
+              <v-text-field
+                v-model="search"
+                append-icon="search"
+                label="search"
+                single-line
+                hide-details
+                hide-no-data
+              ></v-text-field>
+            </v-flex>
+            <v-spacer />
+            <v-flex md3 sm12 v-if="geneNotEmpty()">
               <v-select
                 v-model="option"
                 :items="sortOptions"
                 @input="sortBasedOnOption"
                 label="sort"
               ></v-select>
+            </v-flex>
+          </v-layout>
+          <v-layout>
+            <v-flex v-if="geneNotEmpty()">
               <h3 class="sub-title">Gene: {{ geneSelected }}</h3>
               <v-list :class="{ 'max-height': listHeight }" class="list">
                 <v-list-item
@@ -63,6 +78,16 @@ export default {
       let data = await d3.json("./top_abs_10_dict.json");
       this.loadedDictData = Object.assign({}, data);
     },
+    filterBySearchList(list) {
+      let globalThis = this;
+      let filterBySearchList = [];
+      list.forEach(element => {
+        if (element[0].includes(globalThis.search)) {
+          filterBySearchList.push(element);
+        }
+      });
+      return filterBySearchList;
+    },
     formatToId(cellName) {
       return cellName
         .split(" ")
@@ -93,7 +118,7 @@ export default {
         }
       }
 
-      return list;
+      return this.filterBySearchList(list);
     },
     setCellSelected(cellName) {
       let curList = this.$store.getters.getCellSelected;
@@ -104,13 +129,16 @@ export default {
       this.$store.dispatch("changeCellSelected", curList);
     },
     sortBasedOnOption(option) {
+      let globalThis = this;
       switch (option) {
         case "default":
-          return this.filteredList;
+          return this.filterBySearchList(this.filteredList);
         case "strength":
-          return this.filteredList.sort((a, b) => (Math.abs(a[1]) > Math.abs(b[1]) ? -1 : 1))
+          return this.filterBySearchList(this.filteredList.sort((a, b) =>
+            Math.abs(a[1]) > Math.abs(b[1]) ? -1 : 1
+          ));
         case "magnitude":
-          return this.filteredList.sort((a, b) => (a[1] > b[1] ? -1 : 1));
+          return this.filterBySearchList(this.filteredList.sort((a, b) => (a[1] > b[1] ? -1 : 1)));
       }
     },
     topGeneDataExist(topGenes, cellTypeName) {
@@ -134,6 +162,14 @@ export default {
       },
       set(option) {
         this.$store.dispatch("changeGeneSearchOption", option);
+      }
+    },
+    search: {
+      get() {
+        return this.$store.getters.getCellInGeneSearch;
+      },
+      set(input) {
+        this.$store.dispatch("changeCellInGeneSearch", input);
       }
     }
   },
