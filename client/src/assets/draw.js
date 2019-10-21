@@ -132,6 +132,8 @@ export function drawGraph(graph, selector = "body", vueThis, params = {}) {
       .join("")
       .split(")")
       .join("")
+      .split(",")
+      .join("")
       .replace(/\//g, "-");
   }
 

@@ -42,6 +42,9 @@
                       :key="index"
                       dense
                       @click="setGeneItem(value)"
+                      @mouseover="setGeneNameOnHover(value)"
+                      @mouseleave="clearGeneNameOnHover()"
+                      :class="[value[2] === geneNameOnHover ? 'highlight-theme' : '']"
                     >
                       <span>
                         <span class="index">{{ value[2] }}:</span>
@@ -58,6 +61,9 @@
                       :key="index"
                       dense
                       @click="setGeneItem(value)"
+                      @mouseover="setGeneNameOnHover(value)"
+                      @mouseleave="clearGeneNameOnHover()"
+                      :class="[value[2] === geneNameOnHover ? 'highlight-theme' : '']"
                     >
                       <span>
                         <span class="index">{{ value[2] }}:</span>
@@ -88,7 +94,8 @@ export default {
     return {
       cardHighlight: false,
       loadedGeneData: {},
-      sortOptions: ["default", "magnitude"]
+      sortOptions: ["default", "magnitude"],
+      geneNameOnHover: ""
     };
   },
   methods: {
@@ -152,6 +159,12 @@ export default {
     },
     setGeneItem(value) {
       this.$store.dispatch("changeGeneSelected", value[2]);
+    },
+    setGeneNameOnHover(value) {
+      this.geneNameOnHover = value[2];
+    },
+    clearGeneNameOnHover() {
+      this.geneNameOnHover = "";
     }
   },
   computed: {
@@ -216,6 +229,9 @@ export default {
       set(input) {
         this.$store.dispatch("changeGeneSearch", input);
       }
+    },
+    selectedTheme() {
+      return this.onHover === true ? "highlight-theme" : "";
     }
   },
   watch: {
@@ -244,5 +260,8 @@ export default {
 }
 .geneName {
   color: #c5050c;
+}
+.highlight-theme {
+  background: #34495e;
 }
 </style>

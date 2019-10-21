@@ -68,51 +68,52 @@ export default {
       return Object.entries(_.cloneDeep(originalList));
     },
     highlightSearch(filteredDataReverse, selector) {
-      let svg = d3.select(selector).select("svg");
-      svg.selectAll(".cell").style("opacity", "1.0");
+      /**Needs to be fixed*/
+      // let svg = d3.select(selector).select("svg");
+      // svg.selectAll(".cell").style("opacity", "1.0");
 
-      if (
-        filteredDataReverse.length !== 0 &&
-        this.$store.getters.getSearch !== ""
-      ) {
-        // Add filtered out cells to a set for easier access
-        let filteredSet = new Set();
-        for (let i = 0; i < filteredDataReverse.length; i++) {
-          filteredSet.add(filteredDataReverse[i][0]);
-        }
+      // if (
+      //   filteredDataReverse.length !== 0 &&
+      //   this.$store.getters.getSearch !== ""
+      // ) {
+      //   // Add filtered out cells to a set for easier access
+      //   let filteredSet = new Set();
+      //   for (let i = 0; i < filteredDataReverse.length; i++) {
+      //     filteredSet.add(filteredDataReverse[i][0]);
+      //   }
 
-        for (let i = 0; i < filteredDataReverse.length; i++) {
-          let cellData = filteredDataReverse[i][0];
-          let childrenArray = this.keyValueDict[cellData];
-          for (let i = 0; i < childrenArray.length; i++) {
-            if (!filteredSet.has(childrenArray[i])) {
-              svg
-                .select(
-                  "#path-" +
-                    this.formatToId(childrenArray[i]) +
-                    "---" +
-                    this.formatToId(cellData)
-                )
-                .transition()
-                .style("opacity", "0.1");
-              svg
-                .select(
-                  "#path-" +
-                    this.formatToId(cellData) +
-                    "---" +
-                    this.formatToId(childrenArray[i])
-                )
-                .transition()
-                .style("opacity", "0.1");
-            }
-          }
+      //   for (let i = 0; i < filteredDataReverse.length; i++) {
+      //     let cellData = filteredDataReverse[i][0];
+      //     let childrenArray = this.keyValueDict[cellData];
+      //     for (let i = 0; i < childrenArray.length; i++) {
+      //       if (!filteredSet.has(childrenArray[i])) {
+      //         svg
+      //           .select(
+      //             "#path-" +
+      //               this.formatToId(childrenArray[i]) +
+      //               "---" +
+      //               this.formatToId(cellData)
+      //           )
+      //           .transition()
+      //           .style("opacity", "0.1");
+      //         svg
+      //           .select(
+      //             "#path-" +
+      //               this.formatToId(cellData) +
+      //               "---" +
+      //               this.formatToId(childrenArray[i])
+      //           )
+      //           .transition()
+      //           .style("opacity", "0.1");
+      //       }
+      //     }
 
-          svg
-            .select("#circle-" + this.formatToId(filteredDataReverse[i][0]))
-            .transition()
-            .style("opacity", "0.25");
-        }
-      }
+      //     svg
+      //       .select("#circle-" + this.formatToId(filteredDataReverse[i][0]))
+      //       .transition()
+      //       .style("opacity", "0.25");
+      //   }
+      // }
     },
 
     // This is the lab version of the cell network graph
