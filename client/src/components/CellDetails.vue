@@ -13,7 +13,18 @@
           <v-layout row>
             <v-flex md12 sm12 v-if="cellSelectedExist && geneDataExist(cellSelected[0])">
               <v-layout>
-                <v-flex md12>
+                <v-flex md9 sm12>
+                  <v-text-field
+                    v-model="search"
+                    append-icon="search"
+                    label="search"
+                    single-line
+                    hide-details
+                    hide-no-data
+                  ></v-text-field>
+                </v-flex>
+                <v-spacer />
+                <v-flex md3 sm12>
                   <v-select
                     v-model="option"
                     :items="sortOptions"
@@ -27,7 +38,7 @@
                   <h3 class="sub-title">{{ cellSelected[0] }}</h3>
                   <v-list class="list">
                     <v-list-item
-                      v-for="(value, index) in currentCells[0]"
+                      v-for="(value, index) in filteredData[0]"
                       :key="index"
                       dense
                       @click="setGeneItem(value)"
@@ -43,7 +54,7 @@
                   <h3 class="sub-title">{{ cellSelected[1] }}</h3>
                   <v-list class="list">
                     <v-list-item
-                      v-for="(value, index) in currentCells[1]"
+                      v-for="(value, index) in filteredData[1]"
                       :key="index"
                       dense
                       @click="setGeneItem(value)"
@@ -161,12 +172,49 @@ export default {
         return this.$store.getters.getCellDetails;
       }
     },
+    filteredData() {
+      let globalThis = this;
+      if (this.$store.getters.getGeneSearch === "") {
+        return this.currentCells;
+      } else {
+        let resultArr = [];
+        let cellTypes = this.currentCells;
+        let cell1FilteredArray = [];
+        let cell2FilteredArray = [];
+        if (cellTypes.length > 1) {
+          cellTypes[1].forEach(element => {
+            if (element[2].includes(globalThis.search)) {
+              cell2FilteredArray.push(element);
+            }
+          });
+        }
+        if (cellTypes.length > 0) {
+          cellTypes[0].forEach(element => {
+            if (element[2].includes(globalThis.search)) {
+              cell1FilteredArray.push(element);
+            }
+          });
+        }
+        resultArr.push(cell1FilteredArray);
+        resultArr.push(cell2FilteredArray);
+
+        return resultArr;
+      }
+    },
     option: {
       get() {
         return this.$store.getters.getOption;
       },
       set(option) {
         this.$store.dispatch("changeOption", option);
+      }
+    },
+    search: {
+      get() {
+        return this.$store.getters.getGeneSearch;
+      },
+      set(input) {
+        this.$store.dispatch("changeGeneSearch", input);
       }
     }
   },

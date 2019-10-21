@@ -93,7 +93,7 @@ import * as d3 from "d3";
 export function drawGraph(graph, selector = "body", vueThis, params = {}) {
   let nodeRadius = params.nodeRadius || 4.5;
   let bvert = params.bezierVert || 15;
-  let height = params.height || 1035;
+  let height = params.height || 985;
   const width = Math.max(...graph.nodes.map(n => n.x)) + nodeRadius;
 
   let svg = d3
@@ -101,7 +101,7 @@ export function drawGraph(graph, selector = "body", vueThis, params = {}) {
     .select(selector)
     .append("svg")
     .attr("preserveAspectRatio", "xMinYMin meet")
-    .attr("viewBox", `0 0 ${width} ${height + 20}`)
+    .attr("viewBox", `0 0 ${width} ${height}`)
     .call(
       // @ts-ignore
       d3.zoom().on("zoom", function() {

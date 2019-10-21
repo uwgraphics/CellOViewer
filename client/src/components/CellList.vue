@@ -2,20 +2,12 @@
   <v-layout row wrap align-center>
     <v-flex md12>
       <v-card max-height="450">
-        <v-card-title class="justify-center">
+        <v-card-title class="justify-left">
           <h4 class="view-title">List View</h4>
         </v-card-title>
         <v-card-text>
           <v-layout>
-            <v-flex md6 sm12>
-              <v-select
-                v-model="option"
-                :items="sortOptions"
-                @input="sortBasedOnOption"
-                label="sort"
-              ></v-select>
-            </v-flex>
-            <v-flex md6 sm12>
+            <v-flex md9 sm12>
               <v-text-field
                 v-model="search"
                 append-icon="search"
@@ -24,6 +16,15 @@
                 hide-details
                 hide-no-data
               ></v-text-field>
+            </v-flex>
+            <v-spacer />
+            <v-flex md3 sm12>
+              <v-select
+                v-model="option"
+                :items="sortOptions"
+                @input="sortBasedOnOption"
+                label="sort"
+              ></v-select>
             </v-flex>
           </v-layout>
           <v-layout row wrap class="list" :class="{ 'max-height': listHeight }">
@@ -109,9 +110,8 @@ export default {
       if (this.$store.getters.getSearch === "") {
         return this.listLocalCopy;
       } else {
-        const regex = new RegExp(this.search, "i");
         return this.listLocalCopy.filter(cell => {
-          return regex.test(cell[0]) || regex.test(cell[1]);
+          return cell[0].includes(this.search) || cell[1].includes(this.search);
         });
       }
     },

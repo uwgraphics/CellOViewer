@@ -4,14 +4,15 @@
       <v-card max-height="450">
         <v-card-title class="justify-center">
           <h4 class="view-title">Graph View</h4>
-        </v-card-title>
-        <v-layout row wrap>
-          <v-card-text>
-            <v-chip v-if="cellType1" class="ma-2">{{ cellType1 }}</v-chip>
+          <v-spacer/>
+           <v-chip v-if="cellType1" class="ma-2">{{ cellType1 }}</v-chip>
             <v-chip v-if="cellType2" class="ma-2">{{ cellType2 }}</v-chip>
-            <div ref="graph" id="graph"></div>
+        </v-card-title>
+        <!-- <v-layout row wrap>
+          <v-card-text>
           </v-card-text>
-        </v-layout>
+        </v-layout> -->
+        <div ref="graph" id="graph"></div>
       </v-card>
     </v-flex>
   </v-layout>
@@ -252,6 +253,5 @@ export default {
 <style scoped>
 #graph {
   max-height: 500px;
-  /* max-width: 650px; */
 }
 </style>
