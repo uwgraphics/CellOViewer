@@ -3,7 +3,7 @@
     <v-flex md12>
       <v-card max-height="1300">
         <v-card-title class="justify-center">
-          <h2 class="title">Cell Details View</h2>
+          <h4 class="view-title">Cell Details View</h4>
           <v-spacer></v-spacer>
           <v-btn medium color="red" justify-right dark @click="removeCellSelected">
             <v-icon dark>remove_circle</v-icon>

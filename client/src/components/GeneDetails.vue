@@ -3,7 +3,7 @@
     <v-flex md12>
       <v-card max-height="650">
         <v-card-title class="justify-center">
-          <h2 class="title">Gene Details View</h2>
+          <h4 class="view-title">Gene Details View</h4>
           <v-spacer></v-spacer>
           <v-btn medium color="red" justify-right dark @click="removeGeneDetails">
             <v-icon dark>remove_circle</v-icon>
@@ -55,7 +55,7 @@ export default {
       filteredList: [],
       listHeight: "400px",
       loadedDictData: {},
-      sortOptions: ["default", "magnitude"]
+      sortOptions: ["default", "strength", "magnitude"]
     };
   },
   methods: {
@@ -103,8 +103,15 @@ export default {
       curList.push(cellName);
       this.$store.dispatch("changeCellSelected", curList);
     },
-    sortBasedOnOption() {
-      return this.filteredList.sort((a, b) => (a[1] > b[1] ? -1 : 1));
+    sortBasedOnOption(option) {
+      switch (option) {
+        case "default":
+          return this.filteredList;
+        case "strength":
+          return this.filteredList.sort((a, b) => (Math.abs(a[1]) > Math.abs(b[1]) ? -1 : 1))
+        case "magnitude":
+          return this.filteredList.sort((a, b) => (a[1] > b[1] ? -1 : 1));
+      }
     },
     topGeneDataExist(topGenes, cellTypeName) {
       return typeof topGenes[this.geneSelected] !== "undefined";
@@ -114,7 +121,7 @@ export default {
     filteredGeneCellList() {
       return this.$store.getters.getGeneSearchOption === "default"
         ? this.returnToDefaultList()
-        : this.sortBasedOnOption();
+        : this.sortBasedOnOption(this.$store.getters.getGeneSearchOption);
     },
     geneSelected: {
       get() {
