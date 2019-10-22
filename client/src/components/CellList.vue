@@ -1,7 +1,7 @@
 <template>
   <v-layout row wrap align-center>
     <v-flex md12>
-      <v-card max-height="500">
+      <v-card max-height="600">
         <v-card-title class="justify-left">
           <h4 class="view-title">List View</h4>
         </v-card-title>
@@ -71,7 +71,7 @@ export default {
     return {
       cardHeight: this.$store.getters.getCardHeight,
       detailItem: [],
-      listHeight: "400px",
+      listHeight: "500px",
       listLocalCopy: [],
       listSize: 2, // Put this in store at cleanup phase
       loaded: false,
@@ -95,10 +95,9 @@ export default {
       this.listLocalCopy = this.generateListCopy(this.cellData);
       switch (option) {
         case "neighbors":
-          this.listLocalCopy = this.listLocalCopy.sort((a, b) =>
+          return (this.listLocalCopy.sort((a, b) =>
             a[1].length < b[1].length ? 1 : -1
-          );
-          break;
+          ));
       }
     },
     test(keyValuePair) {

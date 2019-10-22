@@ -13,7 +13,7 @@
             <Graph :cellData="this.loadedData" />
           </v-flex>
           <v-flex md5>
-            <List :cellData="this.loadedData" />
+            <CellList :cellData="this.loadedData" />
           </v-flex>
         </v-layout>
         <v-layout row wrap>
@@ -34,7 +34,7 @@ import CellDetails from "@/components/CellDetails.vue";
 import Header from "@/components/TheHeader.vue";
 import GeneDetails from "@/components/GeneDetails.vue";
 import Graph from "@/components/CellGraph.vue";
-import List from "@/components/CellList.vue";
+import CellList from "@/components/CellList.vue";
 
 import * as d3 from "d3";
 
@@ -43,7 +43,7 @@ export default {
   components: {
     Header,
     Graph,
-    List,
+    CellList,
     CellDetails,
     GeneDetails
   },
