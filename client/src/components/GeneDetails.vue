@@ -34,6 +34,9 @@
           <v-layout>
             <v-flex v-if="geneNotEmpty()">
               <h3 class="sub-title">Gene: {{ geneSelected }}</h3>
+              <div class="gene-web-link">
+                <a target="_blank" @click="navigateToGenePage()">Gene data web link</a>
+              </div>
               <v-list :class="{ 'max-height': listHeight }" class="list">
                 <v-list-item
                   v-for="(value, index) in filteredGeneCellList"
@@ -101,6 +104,13 @@ export default {
     geneNotEmpty() {
       return this.geneSelected !== "";
     },
+    navigateToGenePage() {
+      window.open(
+        "http://useast.ensembl.org/Homo_sapiens/Gene/Summary?g=" +
+          this.geneSelected,
+        "_blank"
+      );
+    },
     removeGeneDetails() {
       this.$store.dispatch("changeGeneSelected", "");
     },
@@ -134,11 +144,15 @@ export default {
         case "default":
           return this.filterBySearchList(this.filteredList);
         case "strength":
-          return this.filterBySearchList(this.filteredList.sort((a, b) =>
-            Math.abs(a[1]) > Math.abs(b[1]) ? -1 : 1
-          ));
+          return this.filterBySearchList(
+            this.filteredList.sort((a, b) =>
+              Math.abs(a[1]) > Math.abs(b[1]) ? -1 : 1
+            )
+          );
         case "magnitude":
-          return this.filterBySearchList(this.filteredList.sort((a, b) => (a[1] > b[1] ? -1 : 1)));
+          return this.filterBySearchList(
+            this.filteredList.sort((a, b) => (a[1] > b[1] ? -1 : 1))
+          );
       }
     },
     topGeneDataExist(topGenes, cellTypeName) {
@@ -208,5 +222,10 @@ v-card-title {
 .list {
   max-height: 420px;
   overflow-y: auto;
+}
+.gene-web-link {
+  text-align: left;
+  margin-top: 10px;
+  text-decoration: underline;
 }
 </style>
