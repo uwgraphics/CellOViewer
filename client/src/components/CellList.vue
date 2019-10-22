@@ -1,7 +1,7 @@
 <template>
   <v-layout row wrap align-center>
     <v-flex md12>
-      <v-card max-height="600">
+      <v-card max-height="1000">
         <v-card-title class="justify-left">
           <h4 class="view-title">List View</h4>
         </v-card-title>

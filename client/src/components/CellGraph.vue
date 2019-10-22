@@ -1,7 +1,7 @@
 <template>
   <v-layout row wrap>
     <v-flex md12>
-      <v-card max-height="600">
+      <v-card max-height="1000">
         <v-card-title class="justify-center">
           <h4 class="view-title">Graph View</h4>
           <v-spacer/>
@@ -249,6 +249,6 @@ export default {
 
 <style scoped>
 #graph {
-  max-height: 550px;
+  max-height: 950px;
 }
 </style>
