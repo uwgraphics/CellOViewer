@@ -167,6 +167,9 @@ export default {
     geneSelected: {
       get() {
         return this.$store.getters.getGeneSelected;
+      },
+      set(option) {
+        this.$store.dispatch("changeGeneSelected", option);
       }
     },
     option: {

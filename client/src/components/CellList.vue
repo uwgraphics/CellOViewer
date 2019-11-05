@@ -63,13 +63,30 @@
           </v-tab-item>
           <!-- Gene Centric Search View -->
           <v-tab-item>
-            <virtual-list :size="40" :remain="8" class="list">
-              <v-list-item
-                v-for="item of loadedGeneData"
-                :key="item.id"
-                @click="navigateToGenePage(item)"
-              >{{ item }}</v-list-item>
-            </virtual-list>
+            <v-card-text>
+              <v-layout>
+                <v-flex md12 sm12>
+                  <v-text-field
+                    v-model="geneSearch"
+                    append-icon="search"
+                    label="search"
+                    single-line
+                    hide-details
+                    hide-no-data
+                  ></v-text-field>
+                </v-flex>
+              </v-layout>
+              <virtual-list :size="40" :remain="8" class="list">
+                <v-list-item
+                  v-for="item of filteredGeneData"
+                  :key="item.id"
+                  @click="setGeneItem(item)"
+                >
+                  {{ item }}:&nbsp;
+                  <a @click="navigateToGenePage(item)">web link</a>
+                </v-list-item>
+              </virtual-list>
+            </v-card-text>
           </v-tab-item>
         </v-tabs>
       </v-card>
@@ -123,6 +140,9 @@ export default {
         "http://useast.ensembl.org/Homo_sapiens/Gene/Summary?g=" + item
       );
     },
+    setGeneItem(gene) {
+      this.$store.dispatch("changeGeneSelected", gene);
+    },
     sortBasedOnOption(option) {
       this.$store.dispatch("changeOption", String(option));
       this.listLocalCopy = this.generateListCopy(this.cellData);
@@ -132,9 +152,6 @@ export default {
             a[1].length < b[1].length ? 1 : -1
           );
       }
-    },
-    test(keyValuePair) {
-      console.log("This click works");
     }
   },
   computed: {
@@ -144,6 +161,15 @@ export default {
       } else {
         return this.listLocalCopy.filter(cell => {
           return cell[0].includes(this.search) || cell[1].includes(this.search);
+        });
+      }
+    },
+    filteredGeneData() {
+      if (this.$store.getters.getGeneSearchFromSearchView === "") {
+        return this.loadedGeneData;
+      } else {
+        return this.loadedGeneData.filter(gene => {
+          return gene.includes(this.geneSearch);
         });
       }
     },
@@ -161,6 +187,14 @@ export default {
       },
       set(input) {
         this.$store.dispatch("changeSearch", input);
+      }
+    },
+    geneSearch: {
+      get() {
+        return this.$store.getters.getGeneSearchFromSearchView;
+      },
+      set(input) {
+        this.$store.dispatch("changeGeneSearchFromSearchView", input);
       }
     }
   },

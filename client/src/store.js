@@ -13,6 +13,7 @@ const state = {
   geneSelected: "",
   optionSelected: "default",
   cellInGeneSearch: "",
+  geneSearchFromSearchView: "",
   geneSearch: "",
   search: ""
 };
@@ -56,6 +57,9 @@ const mutations = {
   },
   CHANGE_GENE_SEARCH(state, payload) {
     state.geneSearch = payload;
+  },
+  CHANGE_GENE_SEARCH_FROM_SEARCH_VIEW(state, payload) {
+    state.geneSearchFromSearchView = payload;
   },
   CHANGE_SEARCH(state, payload) {
     state.search = payload;
@@ -105,6 +109,9 @@ const actions = {
   changeGeneSearch(context, searchContent) {
     context.commit("CHANGE_GENE_SEARCH", searchContent);
   },
+  changeGeneSearchFromSearchView(context, searchContent) {
+    context.commit("CHANGE_GENE_SEARCH_FROM_SEARCH_VIEW", searchContent);
+  },
   changeSearch(context, searchContent) {
     context.commit("CHANGE_SEARCH", searchContent);
   },
@@ -140,6 +147,9 @@ const getters = {
   },
   getGeneSearch(state) {
     return state.geneSearch;
+  },
+  getGeneSearchFromSearchView(state) {
+    return state.geneSearchFromSearchView;
   },
   getSearch(state) {
     return state.search;
