@@ -107,8 +107,7 @@ export default {
     navigateToGenePage() {
       window.open(
         "http://useast.ensembl.org/Homo_sapiens/Gene/Summary?g=" +
-          this.geneSelected,
-        "_blank"
+          this.geneSelected
       );
     },
     removeGeneDetails() {

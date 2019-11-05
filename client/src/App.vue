@@ -4,7 +4,7 @@
       <!--Header Section-->
       <v-container fluid>
          <v-switch color="primary" :label="selectedTheme" v-model="goDark" class="switch"></v-switch>
-        <Header msg="Cell Netowrk Viewer" />
+        <Header msg="Cell Network Viewer" />
       </v-container>
       <!--Body Section-->
       <v-container bg grid-list-md fluid>

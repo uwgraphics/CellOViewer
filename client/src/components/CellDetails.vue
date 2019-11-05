@@ -9,6 +9,7 @@
             <v-icon dark>remove_circle</v-icon>
           </v-btn>
         </v-card-title>
+
         <v-card-text>
           <v-layout row>
             <v-flex md12 sm12 v-if="cellSelectedExist && geneDataExist(cellSelected[0])">
