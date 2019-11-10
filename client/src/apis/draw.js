@@ -173,18 +173,15 @@ export function drawGraph(graph, selector = "body", vueThis, params = {}) {
     // @ts-ignore
     let link = d3.select(this);
     link.style("stroke", "#FF6F61");
-    // // @ts-ignore
-    // let d3plus = require("d3plus-tooltip");
-    // // @ts-ignore: This is a notation that d3plus-tooltip uses
-    // new d3plus.Tooltip()
-    //   .data([{ nodeName: link.attr("id") }])
-    //   .thead([
-    //     function(link) {
-    //       return link.id;
-    //     }
-    //   ])
-    //   .position("#" + link.attr("id"))
-    //   .render();
+   
+    /**
+     * 
+     * 
+     * Need to add the hover over edge show tooltips
+     * on both nodes functionality here
+     * 
+     * 
+     */
   });
   paths.on("mouseout", function handle(d) {
     // @ts-ignore

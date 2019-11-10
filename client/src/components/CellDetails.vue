@@ -61,7 +61,7 @@
                             <v-tooltip top>
                               <template v-slot:activator="{ on }">
                                 <v-progress-linear
-                                  value="25"
+                                  :value="[columnOneIndex1]"
                                   height="15"
                                   v-on="on"
                                   rounded
@@ -122,7 +122,6 @@
           </v-layout>
         </v-card-text>
       </v-card>
-
     </v-flex>
   </v-layout>
 </template>
@@ -142,7 +141,18 @@ export default {
       fixedGeneDigits: 5,
       loadedGeneData: {},
       sortOptions: ["default", "magnitude"],
-      geneNameOnHover: ""
+      geneNameOnHover: "",
+
+      columnOneIndex0: 30,
+      columnOneIndex1: 0,
+      columnOneIndex2: 0,
+      columnOneIndex3: 0,
+      columnOneIndex4: 0,
+      columnOneIndex5: 0,
+      columnOneIndex6: 0,
+      columnOneIndex7: 0,
+      columnOneIndex8: 0,
+      columnOneIndex9: 0
     };
   },
   methods: {
@@ -153,7 +163,6 @@ export default {
 
       switch (option) {
         case "magnitude":
-          console.log(this.geneCellCopy1);
           this.geneCellCopy1 = this.geneCellCopy1.sort((a, b) => {
             Math.abs(a[1]) < Math.abs(b[1]) ? 1 : -1;
           });
@@ -163,6 +172,7 @@ export default {
     cellSelectedExist() {
       return this.$store.getters.getCellSelected.length !== 0;
     },
+
     async fetchData() {
       let data = await d3.json("./top_abs_10_dict.json");
       for (const cellType of Object.values(data)) {
@@ -172,12 +182,14 @@ export default {
       }
       this.loadedGeneData = data;
     },
+
     geneDataExist(cellTypeName) {
       if (this.loadedGeneData[cellTypeName] === undefined) {
         return false;
       }
       return true;
     },
+
     getDefaultCells() {
       let cellArr = this.$store.getters.getCellSelected;
       let geneCellCopy = [];
@@ -188,6 +200,7 @@ export default {
 
       return geneCellCopy;
     },
+
     sortCells() {
       let cellArr = this.$store.getters.getCellSelected;
       let geneCellCopy = [];
@@ -203,18 +216,21 @@ export default {
             .sort((a, b) => (a[1] < b[1] ? 1 : -1))
         );
       }
-
       return geneCellCopy;
     },
+
     removeCellSelected() {
       this.$store.dispatch("popFromCellSelected");
     },
+
     setGeneItem(value) {
       this.$store.dispatch("changeGeneSelected", value[2]);
     },
+
     setGeneNameOnHover(value) {
       this.geneNameOnHover = value[2];
     },
+
     clearGeneNameOnHover() {
       this.geneNameOnHover = "";
     }
@@ -225,11 +241,13 @@ export default {
         return this.$store.getters.getCellSelected;
       }
     },
+
     currentCells() {
       return this.$store.getters.getOption === "default"
         ? this.getDefaultCells()
         : this.sortCells();
     },
+
     dynamicData() {
       if (this.geneCellCopy1.length == 0) {
         return;
@@ -237,6 +255,7 @@ export default {
         return this.$store.getters.getCellDetails;
       }
     },
+
     filteredData() {
       let globalThis = this;
       if (this.$store.getters.getGeneSearch === "") {
@@ -266,6 +285,7 @@ export default {
         return resultArr;
       }
     },
+
     option: {
       get() {
         return this.$store.getters.getOption;
@@ -274,6 +294,7 @@ export default {
         this.$store.dispatch("changeOption", option);
       }
     },
+
     search: {
       get() {
         return this.$store.getters.getGeneSearch;
@@ -282,12 +303,16 @@ export default {
         this.$store.dispatch("changeGeneSearch", input);
       }
     },
+
     selectedTheme() {
       return this.onHover === true ? "highlight-theme" : "";
     }
   },
   watch: {
     cellSelected() {
+      let globalThis = this;
+      console.log(globalThis.columnOneIndex0);
+
       let cellArr = this.$store.getters.getCellSelected;
       this.$store.dispatch("changeCellDetails", []);
 
@@ -296,6 +321,17 @@ export default {
       }
       this.geneCellCopy1 = this.loadedGeneData[cellArr[0]];
       this.$store.dispatch("addToCellDetails", this.geneCellCopy1);
+      /* Update Column One Index value to offer dynamic rendering */
+      let indexCounter = 0;
+      for (const geneData of this.geneCellCopy1) {
+        let indexValueToChange = `columnOneIndex${indexCounter}`;
+        globalThis[indexValueToChange] = (geneData[1] * 1000).toFixed(5);
+        indexCounter++;
+      }
+
+      console.log(this.columnOneIndex0);
+      console.log(this.columnOneIndex1);
+
       if (cellArr.length > 1) {
         this.geneCellCopy2 = this.loadedGeneData[cellArr[1]];
         this.$store.dispatch("addToCellDetails", this.geneCellCopy2);
