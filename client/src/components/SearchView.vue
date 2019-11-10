@@ -3,7 +3,7 @@
     <v-flex md12>
       <v-card max-height="600">
         <v-card-title class="justify-left">
-          <h4 class="view-title">List View</h4>
+          <h4 class="view-title">Search View</h4>
         </v-card-title>
 
         <v-tabs fixed-tabs>
@@ -76,7 +76,7 @@
                   ></v-text-field>
                 </v-flex>
               </v-layout>
-              <virtual-list :size="40" :remain="8" class="list">
+              <virtual-list :size="40" :remain="10" class="list">
                 <v-list-item
                   v-for="item of filteredGeneData"
                   :key="item.id"
@@ -114,6 +114,7 @@ export default {
       listLocalCopy: [],
       listSize: 2, // Put this in store at cleanup phase
       loaded: false,
+      loadedDictData: {},
       loadedGeneData: [],
       sortOptions: ["default", "neighbors"]
     };
@@ -122,7 +123,8 @@ export default {
     async fetchData() {
       let data = await d3.json("./genes.json");
       this.loadedGeneData = data;
-      console.log(this.loadedGeneData);
+      let top10Data = await d3.json("./top_abs_10_dict.json");
+      this.loadedDictData = top10Data;
     },
     setCellSelected(cellName) {
       let curList = this.$store.getters.getCellSelected;
@@ -173,6 +175,11 @@ export default {
         });
       }
     },
+    geneSelected: {
+      get() {
+        return this.$store.getters.getGeneSelected;
+      }
+    },
     option: {
       get() {
         return this.$store.getters.getOption;
@@ -202,6 +209,23 @@ export default {
     cellData() {
       this.loaded = true;
       this.listLocalCopy = this.generateListCopy(this.cellData);
+    },
+    geneSelected() {
+      let globalThis = this;
+      this.$store.dispatch("changeTopGeneCellList", []);
+      for (const [key, value] of Object.entries(this.loadedDictData)) {
+        let geneArr = value;
+        for (let i = 0; i < geneArr.length; i++) {
+          if (geneArr[i][2] === globalThis.geneSelected) {
+            let cellName = key;
+            let geneValue = value[i][1];
+            globalThis.$store.dispatch("addToTopGeneCellList", [
+              cellName,
+              geneValue
+            ]);
+          }
+        }
+      }
     }
   },
   components: {

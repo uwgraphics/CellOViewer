@@ -1,6 +1,7 @@
 /*jshint esversion: 6 */
 // @ts-check
 
+// @ts-ignore
 import { listOfLists } from "./utils.js";
 
 /**

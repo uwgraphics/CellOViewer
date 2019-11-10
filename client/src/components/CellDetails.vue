@@ -14,6 +14,7 @@
           <v-layout row>
             <v-flex md12 sm12 v-if="cellSelectedExist && geneDataExist(cellSelected[0])">
               <v-layout>
+                <!-- Search Box -->
                 <v-flex md9 sm12>
                   <v-text-field
                     v-model="search"
@@ -24,7 +25,10 @@
                     hide-no-data
                   ></v-text-field>
                 </v-flex>
+
                 <v-spacer />
+
+                <!-- Sort Box -->
                 <v-flex md3 sm12>
                   <v-select
                     v-model="option"
@@ -34,6 +38,7 @@
                   ></v-select>
                 </v-flex>
               </v-layout>
+
               <v-layout row wrap v-if="geneDataExist(cellSelected[0])">
                 <v-flex md6 sm6>
                   <h3 class="sub-title">{{ cellSelected[0] }}</h3>
@@ -47,10 +52,28 @@
                       @mouseleave="clearGeneNameOnHover()"
                       :class="[value[2] === geneNameOnHover ? 'highlight-theme' : '']"
                     >
-                      <span>
-                        <span class="index">{{ value[2] }}:</span>
-                        {{ value[1] }}
-                      </span>
+                      <v-layout>
+                        <v-flex md5 sm5>
+                          <span class="index">{{ value[2] }}:</span>
+                        </v-flex>
+                        <v-flex md7 sm7>
+                          <span>
+                            <v-tooltip top>
+                              <template v-slot:activator="{ on }">
+                                <v-progress-linear
+                                  value="25"
+                                  height="15"
+                                  v-on="on"
+                                  rounded
+                                  striped
+                                  reactive
+                                ></v-progress-linear>
+                              </template>
+                              <span>{{ value[1] }}</span>
+                            </v-tooltip>
+                          </span>
+                        </v-flex>
+                      </v-layout>
                     </v-list-item>
                   </v-list>
                 </v-flex>
@@ -66,10 +89,31 @@
                       @mouseleave="clearGeneNameOnHover()"
                       :class="[value[2] === geneNameOnHover ? 'highlight-theme' : '']"
                     >
-                      <span>
-                        <span class="index">{{ value[2] }}:</span>
-                        {{ value[1] }}
-                      </span>
+                      <v-layout>
+                        <v-flex md5 sm12>
+                          <span class="index">{{ value[2] }}:</span>
+                        </v-flex>
+                        <v-flex md7 sm12>
+                          <span>
+                            <v-tooltip top>
+                              <template v-slot:activator="{ on }">
+                                <v-progress-linear
+                                  :value="35"
+                                  height="15"
+                                  v-on="on"
+                                  rounded
+                                  striped
+                                >
+                                  <template v-slot="{ value }">
+                                    <strong>{{ Math.ceil(value) }}</strong>
+                                  </template>
+                                </v-progress-linear>
+                              </template>
+                              <span>{{ value[1] }}</span>
+                            </v-tooltip>
+                          </span>
+                        </v-flex>
+                      </v-layout>
                     </v-list-item>
                   </v-list>
                 </v-flex>
@@ -78,6 +122,7 @@
           </v-layout>
         </v-card-text>
       </v-card>
+
     </v-flex>
   </v-layout>
 </template>
@@ -94,6 +139,7 @@ export default {
   data() {
     return {
       cardHighlight: false,
+      fixedGeneDigits: 5,
       loadedGeneData: {},
       sortOptions: ["default", "magnitude"],
       geneNameOnHover: ""
@@ -119,7 +165,12 @@ export default {
     },
     async fetchData() {
       let data = await d3.json("./top_abs_10_dict.json");
-      this.loadedGeneData = Object.assign({}, data);
+      for (const cellType of Object.values(data)) {
+        for (const gene of cellType) {
+          gene[1] = gene[1].toFixed(this.fixedGeneDigits);
+        }
+      }
+      this.loadedGeneData = data;
     },
     geneDataExist(cellTypeName) {
       if (this.loadedGeneData[cellTypeName] === undefined) {

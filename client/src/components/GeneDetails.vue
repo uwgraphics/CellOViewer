@@ -71,6 +71,7 @@ export default {
     return {
       cellTypeNames: [],
       filteredList: [],
+      fixedGeneDigits: 5,
       listHeight: "400px",
       loadedDictData: {},
       sortOptions: ["default", "strength", "magnitude"]
@@ -79,7 +80,7 @@ export default {
   methods: {
     async fetchData() {
       let data = await d3.json("./top_abs_10_dict.json");
-      this.loadedDictData = Object.assign({}, data);
+      this.loadedDictData = data;
     },
     filterBySearchList(list) {
       let globalThis = this;
@@ -90,16 +91,6 @@ export default {
         }
       });
       return filterBySearchList;
-    },
-    formatToId(cellName) {
-      return cellName
-        .split(" ")
-        .join("-")
-        .split("(")
-        .join("")
-        .split(")")
-        .join("")
-        .replace(/\//g, "-");
     },
     geneNotEmpty() {
       return this.geneSelected !== "";
@@ -121,7 +112,7 @@ export default {
         for (let i = 0; i < geneArr.length; i++) {
           if (geneArr[i][2] === globalThis.geneSelected) {
             let cellName = key;
-            let geneValue = value[i][1];
+            let geneValue = value[i][1].toFixed(this.fixedGeneDigits);
             list.push([cellName, geneValue]);
           }
         }

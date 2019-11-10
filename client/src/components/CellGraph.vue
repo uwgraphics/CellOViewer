@@ -1,14 +1,16 @@
 <template>
   <v-layout row wrap>
     <v-flex md12>
-      <v-card max-height="1000">
+      <v-card :max-height="maxCardHeight">
         <v-card-title class="justify-center">
           <h4 class="view-title">Graph View</h4>
-          <v-spacer/>
-           <v-chip v-if="cellType1" class="ma-2">{{ cellType1 }}</v-chip>
-            <v-chip v-if="cellType2" class="ma-2">{{ cellType2 }}</v-chip>
+          <v-spacer />
+          <v-chip v-if="cellType1" class="ma-2">{{ cellType1 }}</v-chip>
+          <v-chip v-if="cellType2" class="ma-2">{{ cellType2 }}</v-chip>
         </v-card-title>
-        <div ref="graph" id="graph"></div>
+        <v-card-text>
+          <div ref="graph" id="graph"></div>
+        </v-card-text>
       </v-card>
     </v-flex>
   </v-layout>
@@ -18,101 +20,51 @@
 import * as d3 from "d3";
 import _ from "lodash";
 
-import { analyzeGraph } from "@/assets/graph.js";
-import { average, countCrossingsGraph, simpleSorter } from "@/assets/utils.js";
-import { drawGraph } from "@/assets/draw.js";
-import { jsonToGraph } from "@/assets/structure.js";
-import { primaryParent } from "@/assets/tangler.js";
-import { treeLayout } from "@/assets/layout.js";
+import * as config from "@/config";
+import * as util from "@/util";
+
+import { analyzeGraph } from "@/apis/graph.js";
+import { average, countCrossingsGraph, simpleSorter } from "@/apis/utils.js";
+import { drawGraph } from "@/apis/draw.js";
+import { jsonToGraph } from "@/apis/structure.js";
+import { primaryParent } from "@/apis/tangler.js";
+import { treeLayout } from "@/apis/layout.js";
 
 export default {
   name: "cell-graph",
   props: {
     cellData: Object
   },
-  mounted() {},
+  mounted() {
+    this.fetchData();
+  },
   data() {
     return {
       cellType1: "",
       cellType2: "",
       keyValueDict: {},
-      selectedCellName: "",
       listLocalCopy: [],
-      listSize: 2, // Put this in vuex store at cleanup phase
+      listSize: config.MAX_SELECTED_CELL_TYPE_NUMBER,
       loaded: false,
+      loadedDictData: {},
+      maxCardHeight: config.FIRST_ROW_CARD_MAX_HEIGHT,
+      selectedCellName: "",
       pathsDict: {}
     };
   },
   methods: {
-    /**
-     * Create a key value pair where the key is the cell name, and value is a list where index 0 is the cell's
-     * parent and index 1 is an array of the cell's children.
-     */
-    // Turn this function to a Mixin later
-    formatToId(cellName) {
-      return cellName
-        .split(" ")
-        .join("-")
-        .split("(")
-        .join("")
-        .split(")")
-        .join("")
-        .replace(/\//g, "-");
+    async fetchData() {
+      let data = await d3.json("./top_abs_10_dict.json");
+      this.loadedDictData = data;
     },
-    // Turn this function to a Mixin later
-    generateListCopy(originalList) {
-      return Object.entries(_.cloneDeep(originalList));
+    linkArrayEdgeCases(edgeCaseCheck) {
+      return (
+        edgeCaseCheck === "cell" ||
+        edgeCaseCheck === "native cell" ||
+        edgeCaseCheck === "eukaryotic cell"
+      );
     },
-    highlightSearch(filteredDataReverse, selector) {
-      /**Needs to be fixed*/
-      // let svg = d3.select(selector).select("svg");
-      // svg.selectAll(".cell").style("opacity", "1.0");
-
-      // if (
-      //   filteredDataReverse.length !== 0 &&
-      //   this.$store.getters.getSearch !== ""
-      // ) {
-      //   // Add filtered out cells to a set for easier access
-      //   let filteredSet = new Set();
-      //   for (let i = 0; i < filteredDataReverse.length; i++) {
-      //     filteredSet.add(filteredDataReverse[i][0]);
-      //   }
-
-      //   for (let i = 0; i < filteredDataReverse.length; i++) {
-      //     let cellData = filteredDataReverse[i][0];
-      //     let childrenArray = this.keyValueDict[cellData];
-      //     for (let i = 0; i < childrenArray.length; i++) {
-      //       if (!filteredSet.has(childrenArray[i])) {
-      //         svg
-      //           .select(
-      //             "#path-" +
-      //               this.formatToId(childrenArray[i]) +
-      //               "---" +
-      //               this.formatToId(cellData)
-      //           )
-      //           .transition()
-      //           .style("opacity", "0.1");
-      //         svg
-      //           .select(
-      //             "#path-" +
-      //               this.formatToId(cellData) +
-      //               "---" +
-      //               this.formatToId(childrenArray[i])
-      //           )
-      //           .transition()
-      //           .style("opacity", "0.1");
-      //       }
-      //     }
-
-      //     svg
-      //       .select("#circle-" + this.formatToId(filteredDataReverse[i][0]))
-      //       .transition()
-      //       .style("opacity", "0.25");
-      //   }
-      // }
-    },
-
-    // This is the lab version of the cell network graph
+    // Show graph
     showGraph() {
       let graph = jsonToGraph(this.cellData);
       analyzeGraph(graph);
@@ -127,33 +79,17 @@ export default {
       );
       treeLayout(graph);
       drawGraph(graph, this.$refs.graph, this);
-      // this.fillPathsDict(graph);
     }
   },
   computed: {
+    geneSelected: {
+      get() {
+        return this.$store.getters.getGeneSelected;
+      }
+    },
     cellSelected: {
       get() {
         return this.$store.getters.getCellSelected;
-      }
-    },
-    filteredData() {
-      if (this.$store.getters.getSearch === "") {
-        return this.listLocalCopy;
-      } else {
-        const regex = new RegExp(this.search, "i");
-        return this.listLocalCopy.filter(cell => {
-          return regex.test(cell[0]) || regex.test(cell[1]);
-        });
-      }
-    },
-    filteredDataReverse() {
-      if (this.$store.getters.getSearch === "") {
-        return [];
-      } else {
-        const regex = new RegExp(this.search, "i");
-        return this.listLocalCopy.filter(cell => {
-          return !(regex.test(cell[0]) || regex.test(cell[1]));
-        });
       }
     },
     topGeneCellList: {
@@ -171,15 +107,15 @@ export default {
     }
   },
   watch: {
+    // This is entry point of where the graph starts rendering
     cellData() {
       this.loaded = true;
-      this.listLocalCopy = this.generateListCopy(this.cellData);
+      this.listLocalCopy = util.GENERATE_LIST_COPY(this.cellData);
       // Create a key(cell name) value(cell neighbors) list dict
       const keys = Object.entries(this.listLocalCopy);
       keys.forEach(item => {
         this.keyValueDict[item[1][0]] = item[1][1];
       });
-      console.log(this.keyValueDict);
 
       for (let i = 0; i < this.listLocalCopy.length; i++) {
         this.listLocalCopy[i].push(i.toString());
@@ -187,8 +123,7 @@ export default {
       this.showGraph();
     },
     cellSelected() {
-      // There may be asynchronous issue here, need to be handled
-      let curList = this.$store.getters.getCellSelected;
+      let curList = this.cellSelected;
       this.cellType1 = "";
       this.cellType2 = "";
 
@@ -198,26 +133,26 @@ export default {
         this.cellType1 = curList[0];
         this.cellType2 = curList[1];
       }
-
+      // Set all cell nodes back to default
       let svgClear = d3.select(this.$refs.graph).select("svg");
       svgClear
         .selectAll(".cell")
+        .style("r", config.NODE_RADIUS_DEFAULT)
         .transition()
-        .style("fill", "#faed27");
-
+        .style("fill", config.CELL_TYPE_DEFAULT_COLOR);
+      // Highlight the node being selected
       for (let i = 0; i < curList.length; i++) {
         let svgHighlight = d3.select(this.$refs.graph).select("svg");
         svgHighlight
-          .select("#circle-" + this.formatToId(curList[i]))
+          .select("#circle-" + util.FORMAT_TO_ID(curList[i]))
+          .style("r", config.NODE_RADIUS_POPPED)
           .transition()
-          .style("fill", "#f33");
+          .style("fill", config.CELL_TYPE_CHANGED_COLOR);
       }
     },
-    filteredData() {
-      this.highlightSearch(this.filteredDataReverse, this.$refs.graph);
-    },
+    // Maintain selected cell type in display list
     selectedCellName() {
-      let curList = this.$store.getters.getCellSelected;
+      let curList = this.cellSelected;
       while (curList.length >= this.listSize) {
         curList.pop();
       }
@@ -226,29 +161,113 @@ export default {
     },
     topGeneCellList() {
       let svgClear = d3.select(this.$refs.graph).select("svg");
-      let svgHighlight = d3.select(this.$refs.graph).select("svg");
+      let svgFade = d3.select(this.$refs.graph).select("svg");
+      // fade all non-related nodes
+      // svgFade.selectAll(".cell")
+    },
+    geneSelected() {
+      // Change sorting back to default
+      let globalThis = this;
+      // Clear both local list and store to receive updated values
+      console.log(this.geneSelected);
+      console.log(this.loadedDictData);
+      console.log(
+        d3
+          .select(this.$refs.graph)
+          .select("svg")
+          .selectAll(".link")
+      );
+      let dict = this.loadedDictData;
+      let svgReset = d3.select(this.$refs.graph).select("svg");
+      svgReset = d3.selectAll(".cell").style("opacity", 1);
+      let strokeWidthReset = d3.select(this.$refs.graph).select("svg");
+      strokeWidthReset = d3
+        .selectAll(".link")
+        .style("opacity", 1.0)
+        .attr("stroke-width", 0.5);
 
-      svgClear
-        .selectAll(".cell")
-        .transition()
-        .style("stroke", "none");
-
-      let topGeneCellList = this.$store.getters.getTopGeneCellList;
-
-      for (let i = 0; i < topGeneCellList.length; i++) {
-        svgHighlight
-          .select("#circle-" + this.formatToId(topGeneCellList[i][0]))
-          .transition()
-          .style("stroke", "#000")
-          .style("stroke-width", "2px");
+      if (this.geneSelected === "") {
+        return;
       }
+
+      let geneSpecificCellTypeSet = new Set();
+      for (const cellType of Object.entries(dict)) {
+        // console.log(cellType);
+        let cellName = cellType[0];
+        let cellValues = cellType[1];
+        let geneExist = false;
+        for (const gene of cellValues) {
+          // console.log(gene);
+          let geneName = gene[2];
+          if (this.geneSelected === geneName) {
+            geneExist = true;
+            break;
+          }
+        }
+        if (!geneExist) {
+          // Add cellname to the set if it has the selected gene
+          geneSpecificCellTypeSet.add(
+            cellName
+              .replace(/-/g, " ")
+              .replace(/\(/g, "")
+              .replace(/\)/g, "")
+              .replace(/,/, "")
+              .replace(/\//g, "-")
+          );
+          let svgFade = d3.select(this.$refs.graph).select("svg");
+          svgFade
+            .select("#circle-" + util.FORMAT_TO_ID(cellName))
+            .style("opacity", 0.2);
+        }
+      }
+      // Currently need to handle these edge cases, need to figure out what happened here
+      let svgEdgeCase1 = d3.select(this.$refs.graph).select("svg");
+      svgEdgeCase1
+        .select("#circle-" + util.FORMAT_TO_ID("cell"))
+        .style("opacity", 0.2);
+      let svgEdgeCase2 = d3.select(this.$refs.graph).select("svg");
+      svgEdgeCase2
+        .select("#circle-" + util.FORMAT_TO_ID("native cell"))
+        .style("opacity", 0.2);
+      let svgEdgeCase3 = d3.select(this.$refs.graph).select("svg");
+      svgEdgeCase3
+        .select("#circle-" + util.FORMAT_TO_ID("eukaryotic cell"))
+        .style("opacity", 0.2);
+
+      d3.select(this.$refs.graph)
+        .select("svg")
+        .selectAll(".link")
+        .each(function(d) {
+          let linkArray = d3
+            .select(this)
+            .attr("id")
+            .split("---");
+          for (let i = 0; i < linkArray.length; i++) {
+            linkArray[i] = linkArray[i]
+              .replace(/-/g, " ")
+              .replace(/\(/g, "")
+              .replace(/\)/g, "")
+              .replace(/,/, "")
+              .replace(/\//g, "-");
+          }
+          if (
+            geneSpecificCellTypeSet.has(linkArray[0]) ||
+            geneSpecificCellTypeSet.has(linkArray[1]) ||
+            globalThis.linkArrayEdgeCases(linkArray[0]) ||
+            globalThis.linkArrayEdgeCases(linkArray[1])
+          ) {
+            d3.select(this).style("opacity", 0.2);
+          } else {
+            console.log("Here");
+            console.log(linkArray[0]);
+            console.log(linkArray[1]);
+            d3.select(this).attr("stroke-width", 3);
+          }
+        });
     }
   }
 };
 </script>
 
 <style scoped>
-#graph {
-  max-height: 950px;
-}
 </style>

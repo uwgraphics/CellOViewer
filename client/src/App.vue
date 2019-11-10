@@ -3,25 +3,38 @@
     <v-app :dark="setTheme">
       <!--Header Section-->
       <v-container fluid>
-         <v-switch color="primary" :label="selectedTheme" v-model="goDark" class="switch"></v-switch>
+        <v-switch color="primary" :label="selectedTheme" v-model="goDark" class="switch"></v-switch>
         <Header msg="Cell Network Viewer" />
       </v-container>
+
       <!--Body Section-->
       <v-container bg grid-list-md fluid>
         <v-layout row wrap>
+          <!-- 
+          Search View 
+          -->
+          <v-flex md5>
+            <SearchView :cellData="this.loadedData" />
+          </v-flex>
+          <!-- 
+          Graph View 
+          -->
           <v-flex md7>
             <Graph :cellData="this.loadedData" />
           </v-flex>
-          <v-flex md5>
-            <CellList :cellData="this.loadedData" />
-          </v-flex>
         </v-layout>
         <v-layout row wrap>
-          <v-flex md7>
-            <CellDetails />
-          </v-flex>
+          <!-- 
+          Gene Details View 
+          -->
           <v-flex md5>
             <GeneDetails />
+          </v-flex>
+          <!-- 
+          Cell Details View 
+          -->
+          <v-flex md7>
+            <CellDetails />
           </v-flex>
         </v-layout>
       </v-container>
@@ -34,7 +47,7 @@ import CellDetails from "@/components/CellDetails.vue";
 import Header from "@/components/TheHeader.vue";
 import GeneDetails from "@/components/GeneDetails.vue";
 import Graph from "@/components/CellGraph.vue";
-import CellList from "@/components/CellList.vue";
+import SearchView from "@/components/SearchView.vue";
 
 import * as d3 from "d3";
 
@@ -43,7 +56,7 @@ export default {
   components: {
     Header,
     Graph,
-    CellList,
+    SearchView,
     CellDetails,
     GeneDetails
   },
@@ -53,19 +66,17 @@ export default {
   data: function() {
     return {
       loadedData: {},
-      goDark: true,
-      search: ""
+      goDark: true
     };
   },
   methods: {
     // Fetch cell type graph data
     async fetchData() {
-      let data = await d3.json("./cell_type_graph.json");
-      this.loadedData = Object.assign({}, data);
+      this.loadedData = await d3.json("./cell_type_graph.json");
     }
   },
   computed: {
-    // Display text of which theme is currently on
+    // Display which theme is currently on
     selectedTheme() {
       return this.goDark ? "Dark Theme" : "Light Theme";
     },
@@ -99,9 +110,9 @@ h3 {
   color: #42b983;
   font-weight: bold;
 }
-@import url('https://fonts.googleapis.com/css?family=BioRhyme&display=swap');
+@import url("https://fonts.googleapis.com/css?family=BioRhyme&display=swap");
 .view-title {
-  font-family: 'BioRhyme', serif;
+  font-family: "BioRhyme", serif;
 }
 .sub-title {
   font-weight: bold;

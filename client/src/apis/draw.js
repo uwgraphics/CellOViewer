@@ -7,6 +7,7 @@ import { Graph, strifyNodes } from "./graph.js";
 // @ts-ignore
 // @ts-ignore
 import * as d3 from "d3";
+import * as util from "../util";
 
 // /**
 //  *
@@ -124,26 +125,12 @@ export function drawGraph(graph, selector = "body", vueThis, params = {}) {
       bv},${x2},${y2 - nodeRadius}`;
   }
 
-  function formatToId(cellName) {
-    return cellName
-      .split(" ")
-      .join("-")
-      .split("(")
-      .join("")
-      .split(")")
-      .join("")
-      .split(",")
-      .join("")
-      .replace(/\//g, "-");
-  }
-
   // @ts-ignore
   function pathId(links) {
     return (
-      "path-" +
-      formatToId(links["source"]["name"]) +
+      util.FORMAT_TO_ID(links["source"]["name"]) +
       "---" +
-      formatToId(links["target"]["name"])
+      util.FORMAT_TO_ID(links["target"]["name"])
     );
   }
 
@@ -182,9 +169,22 @@ export function drawGraph(graph, selector = "body", vueThis, params = {}) {
     });
 
   paths.style("stroke", link => link.color).attr("class", "link");
-  paths.on("mouseover", function handle() {
+  paths.on("mouseover", function handle(d) {
     // @ts-ignore
-    d3.select(this).style("stroke", "#FF6F61");
+    let link = d3.select(this);
+    link.style("stroke", "#FF6F61");
+    // // @ts-ignore
+    // let d3plus = require("d3plus-tooltip");
+    // // @ts-ignore: This is a notation that d3plus-tooltip uses
+    // new d3plus.Tooltip()
+    //   .data([{ nodeName: link.attr("id") }])
+    //   .thead([
+    //     function(link) {
+    //       return link.id;
+    //     }
+    //   ])
+    //   .position("#" + link.attr("id"))
+    //   .render();
   });
   paths.on("mouseout", function handle(d) {
     // @ts-ignore
@@ -199,9 +199,9 @@ export function drawGraph(graph, selector = "body", vueThis, params = {}) {
   // @ts-ignore
   function nodeId(node) {
     if (node.phantom) {
-      return "phantom-" + formatToId(node.name);
+      return "phantom-" + util.FORMAT_TO_ID(node.name);
     } else {
-      return "circle-" + formatToId(node.name);
+      return "circle-" + util.FORMAT_TO_ID(node.name);
     }
   }
 
