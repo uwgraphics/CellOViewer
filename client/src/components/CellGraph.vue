@@ -57,6 +57,11 @@ export default {
       let data = await d3.json("./top_abs_10_dict.json");
       this.loadedDictData = data;
     },
+
+    /**
+     * If any of these edge cases nodes are contained,
+     * return true (need to fade the edge in current case)
+     */
     linkArrayEdgeCases(edgeCaseCheck) {
       return (
         edgeCaseCheck === "cell" ||
@@ -64,7 +69,10 @@ export default {
         edgeCaseCheck === "eukaryotic cell"
       );
     },
-    // Show graph
+
+    /**
+     * Draw, layout and show graph on view
+     */
     showGraph() {
       let graph = jsonToGraph(this.cellData);
       analyzeGraph(graph);
@@ -159,29 +167,18 @@ export default {
       curList.push(this.selectedCellName);
       this.$store.dispatch("changeCellSelected", curList);
     },
-    topGeneCellList() {
-      let svgClear = d3.select(this.$refs.graph).select("svg");
-      let svgFade = d3.select(this.$refs.graph).select("svg");
-      // fade all non-related nodes
-      // svgFade.selectAll(".cell")
-    },
+    /**
+     * Fade cell types that does not contain selected gene as top 10
+     */
     geneSelected() {
-      // Change sorting back to default
       let globalThis = this;
-      // Clear both local list and store to receive updated values
-      console.log(this.geneSelected);
-      console.log(this.loadedDictData);
-      console.log(
-        d3
-          .select(this.$refs.graph)
-          .select("svg")
-          .selectAll(".link")
-      );
       let dict = this.loadedDictData;
-      let svgReset = d3.select(this.$refs.graph).select("svg");
-      svgReset = d3.selectAll(".cell").style("opacity", 1);
-      let strokeWidthReset = d3.select(this.$refs.graph).select("svg");
-      strokeWidthReset = d3
+      /* Reset default cell opacity(1) */
+      let cellReset = d3.select(this.$refs.graph).select("svg");
+      cellReset = d3.selectAll(".cell").style("opacity", 1);
+      /* Reset link opacity(1) and width(0.5) */
+      let linkReset = d3.select(this.$refs.graph).select("svg");
+      linkReset = d3
         .selectAll(".link")
         .style("opacity", 1.0)
         .attr("stroke-width", 0.5);
@@ -190,23 +187,30 @@ export default {
         return;
       }
 
-      let geneSpecificCellTypeSet = new Set();
+      let cellTypesThatFitCriteria = new Set();
+
+      /* Determine if each cell type contain selected gene as its top 10 */
       for (const cellType of Object.entries(dict)) {
-        // console.log(cellType);
         let cellName = cellType[0];
         let cellValues = cellType[1];
         let geneExist = false;
         for (const gene of cellValues) {
-          // console.log(gene);
           let geneName = gene[2];
           if (this.geneSelected === geneName) {
             geneExist = true;
             break;
           }
         }
+        /* If a gene is not among a cell type's top 10 */
         if (!geneExist) {
-          // Add cellname to the set if it has the selected gene
-          geneSpecificCellTypeSet.add(
+          /* Fade the cell type on graph */
+          let svgFade = d3.select(this.$refs.graph).select("svg");
+          svgFade
+            .select("#circle-" + util.FORMAT_TO_ID(cellName))
+            .style("opacity", 0.2);
+        } else {
+          /* Add it to the cell type set */
+          cellTypesThatFitCriteria.add(
             cellName
               .replace(/-/g, " ")
               .replace(/\(/g, "")
@@ -214,13 +218,13 @@ export default {
               .replace(/,/, "")
               .replace(/\//g, "-")
           );
-          let svgFade = d3.select(this.$refs.graph).select("svg");
-          svgFade
-            .select("#circle-" + util.FORMAT_TO_ID(cellName))
-            .style("opacity", 0.2);
         }
       }
-      // Currently need to handle these edge cases, need to figure out what happened here
+
+      /**
+       * Current edge cases of nodes that needs to be manually faded,
+       * need to figure out what happened here.
+       */
       let svgEdgeCase1 = d3.select(this.$refs.graph).select("svg");
       svgEdgeCase1
         .select("#circle-" + util.FORMAT_TO_ID("cell"))
@@ -234,6 +238,9 @@ export default {
         .select("#circle-" + util.FORMAT_TO_ID("eukaryotic cell"))
         .style("opacity", 0.2);
 
+      /**
+       * Fade links does not have both nodes contained in our node set
+       */
       d3.select(this.$refs.graph)
         .select("svg")
         .selectAll(".link")
@@ -251,16 +258,14 @@ export default {
               .replace(/\//g, "-");
           }
           if (
-            geneSpecificCellTypeSet.has(linkArray[0]) ||
-            geneSpecificCellTypeSet.has(linkArray[1]) ||
+            !cellTypesThatFitCriteria.has(linkArray[0]) ||
+            !cellTypesThatFitCriteria.has(linkArray[1]) ||
             globalThis.linkArrayEdgeCases(linkArray[0]) ||
             globalThis.linkArrayEdgeCases(linkArray[1])
           ) {
             d3.select(this).style("opacity", 0.2);
           } else {
-            console.log("Here");
-            console.log(linkArray[0]);
-            console.log(linkArray[1]);
+            // Increase the stroke width if fit all the criteria
             d3.select(this).attr("stroke-width", 3);
           }
         });
