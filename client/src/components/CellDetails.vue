@@ -5,14 +5,24 @@
         <v-card-title class="justify-center">
           <h4 class="view-title">Cell Details View</h4>
           <v-spacer></v-spacer>
-          <v-btn medium color="red" justify-right dark @click="removeCellSelected">
+          <v-btn
+            medium
+            color="red"
+            justify-right
+            dark
+            @click="removeCellSelected"
+          >
             <v-icon dark>remove_circle</v-icon>
           </v-btn>
         </v-card-title>
 
         <v-card-text>
           <v-layout row>
-            <v-flex md12 sm12 v-if="cellSelectedExist && geneDataExist(cellSelected[0])">
+            <v-flex
+              md12
+              sm12
+              v-if="cellSelectedExist && geneDataExist(cellSelected[0])"
+            >
               <v-layout>
                 <!-- Search Box -->
                 <v-flex md9 sm12>
@@ -50,7 +60,9 @@
                       @click="setGeneItem(value)"
                       @mouseover="setGeneNameOnHover(value)"
                       @mouseleave="clearGeneNameOnHover()"
-                      :class="[value[2] === geneNameOnHover ? 'highlight-theme' : '']"
+                      :class="[
+                        value[2] === geneNameOnHover ? 'highlight-theme' : ''
+                      ]"
                     >
                       <v-layout>
                         <v-flex md5 sm5>
@@ -61,13 +73,18 @@
                             <v-tooltip top>
                               <template v-slot:activator="{ on }">
                                 <v-progress-linear
-                                  :value="[columnOneIndex1]"
+                                  :value="getGeneIndexValue(`${index}`, 0)"
                                   height="15"
+                                  :color="getGeneIndexColorValue(`${index}`, 0)"
                                   v-on="on"
                                   rounded
                                   striped
                                   reactive
-                                ></v-progress-linear>
+                                >
+                                  <template v-slot="{ value }">
+                                    {{ (value / 1000).toFixed(5) }}
+                                  </template></v-progress-linear
+                                >
                               </template>
                               <span>{{ value[1] }}</span>
                             </v-tooltip>
@@ -77,7 +94,13 @@
                     </v-list-item>
                   </v-list>
                 </v-flex>
-                <v-flex md6 sm6 v-if="cellSelected.length == 2 && geneDataExist(cellSelected[1])">
+                <v-flex
+                  md6
+                  sm6
+                  v-if="
+                    cellSelected.length == 2 && geneDataExist(cellSelected[1])
+                  "
+                >
                   <h3 class="sub-title">{{ cellSelected[1] }}</h3>
                   <v-list class="list">
                     <v-list-item
@@ -85,9 +108,11 @@
                       :key="index"
                       dense
                       @click="setGeneItem(value)"
-                      @mouseover="setGeneNameOnHover(value)"
+                      @mouseover="setGeneNameOnHover(index, value)"
                       @mouseleave="clearGeneNameOnHover()"
-                      :class="[value[2] === geneNameOnHover ? 'highlight-theme' : '']"
+                      :class="[
+                        value[2] === geneNameOnHover ? 'highlight-theme' : ''
+                      ]"
                     >
                       <v-layout>
                         <v-flex md5 sm12>
@@ -98,14 +123,14 @@
                             <v-tooltip top>
                               <template v-slot:activator="{ on }">
                                 <v-progress-linear
-                                  :value="35"
+                                  :value="getGeneIndexValue(`${index}`, 1)"
                                   height="15"
                                   v-on="on"
                                   rounded
                                   striped
                                 >
                                   <template v-slot="{ value }">
-                                    <strong>{{ Math.ceil(value) }}</strong>
+                                    {{ (value / 1000).toFixed(5) }}
                                   </template>
                                 </v-progress-linear>
                               </template>
@@ -143,7 +168,7 @@ export default {
       sortOptions: ["default", "magnitude"],
       geneNameOnHover: "",
 
-      columnOneIndex0: 30,
+      columnOneIndex0: 0,
       columnOneIndex1: 0,
       columnOneIndex2: 0,
       columnOneIndex3: 0,
@@ -152,7 +177,18 @@ export default {
       columnOneIndex6: 0,
       columnOneIndex7: 0,
       columnOneIndex8: 0,
-      columnOneIndex9: 0
+      columnOneIndex9: 0,
+
+      columnTwoIndex0: 0,
+      columnTwoIndex1: 0,
+      columnTwoIndex2: 0,
+      columnTwoIndex3: 0,
+      columnTwoIndex4: 0,
+      columnTwoIndex5: 0,
+      columnTwoIndex6: 0,
+      columnTwoIndex7: 0,
+      columnTwoIndex8: 0,
+      columnTwoIndex9: 0
     };
   },
   methods: {
@@ -201,6 +237,34 @@ export default {
       return geneCellCopy;
     },
 
+    /**
+     * Get gene color by column and gene index, if negative display pink
+     */
+    getGeneIndexColorValue(index, columnIndex) {
+      let indexGeneValue = "";
+      if (columnIndex == 0) {
+        indexGeneValue = `columnOneIndex` + index;
+      } else if (columnIndex == 1) {
+        indexGeneValue = `columnTwoIndex` + index;
+      }
+
+      if (this[indexGeneValue] >= 0) {
+        return "primary";
+      } else {
+        return "pink lighten-1";
+      }
+    },
+
+    getGeneIndexValue(index, columnIndex) {
+      let indexGeneValue = "";
+      if (columnIndex == 0) {
+        indexGeneValue = `columnOneIndex` + index;
+      } else if (columnIndex == 1) {
+        indexGeneValue = `columnTwoIndex` + index;
+      }
+      return Math.abs(this[indexGeneValue]);
+    },
+
     sortCells() {
       let cellArr = this.$store.getters.getCellSelected;
       let geneCellCopy = [];
@@ -227,7 +291,7 @@ export default {
       this.$store.dispatch("changeGeneSelected", value[2]);
     },
 
-    setGeneNameOnHover(value) {
+    setGeneNameOnHover(index, value) {
       this.geneNameOnHover = value[2];
     },
 
@@ -311,7 +375,6 @@ export default {
   watch: {
     cellSelected() {
       let globalThis = this;
-      console.log(globalThis.columnOneIndex0);
 
       let cellArr = this.$store.getters.getCellSelected;
       this.$store.dispatch("changeCellDetails", []);
@@ -329,12 +392,16 @@ export default {
         indexCounter++;
       }
 
-      console.log(this.columnOneIndex0);
-      console.log(this.columnOneIndex1);
-
       if (cellArr.length > 1) {
         this.geneCellCopy2 = this.loadedGeneData[cellArr[1]];
         this.$store.dispatch("addToCellDetails", this.geneCellCopy2);
+
+        let indexCounter2 = 0;
+        for (const geneData of this.geneCellCopy2) {
+          let indexValueToChange2 = `columnTwoIndex${indexCounter2}`;
+          globalThis[indexValueToChange2] = (geneData[1] * 1000).toFixed(5);
+          indexCounter2++;
+        }
       }
     }
   }
