@@ -3,7 +3,12 @@
     <v-app :dark="setTheme">
       <!--Header Section-->
       <v-container fluid>
-        <v-switch color="primary" :label="selectedTheme" v-model="goDark" class="switch"></v-switch>
+        <v-switch
+          color="primary"
+          :label="selectedTheme"
+          v-model="goDark"
+          class="switch"
+        ></v-switch>
         <Header msg="Cell Network Viewer" />
       </v-container>
 
