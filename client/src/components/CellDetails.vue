@@ -60,6 +60,7 @@
                       @click="setGeneItem(value)"
                       @mouseover="setGeneNameOnHover(value)"
                       @mouseleave="clearGeneNameOnHover()"
+                      background-color="black"
                       :class="[
                         value[2] === geneNameOnHover ? 'highlight-theme' : ''
                       ]"
@@ -110,6 +111,7 @@
                       @click="setGeneItem(value)"
                       @mouseover="setGeneNameOnHover(index, value)"
                       @mouseleave="clearGeneNameOnHover()"
+                      
                       :class="[
                         value[2] === geneNameOnHover ? 'highlight-theme' : ''
                       ]"
