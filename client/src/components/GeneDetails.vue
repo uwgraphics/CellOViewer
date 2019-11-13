@@ -5,7 +5,13 @@
         <v-card-title class="justify-center">
           <h4 class="view-title">Gene Details View</h4>
           <v-spacer></v-spacer>
-          <v-btn medium color="red" justify-right dark @click="removeGeneDetails">
+          <v-btn
+            medium
+            color="red"
+            justify-right
+            dark
+            @click="removeGeneDetails"
+          >
             <v-icon dark>remove_circle</v-icon>
           </v-btn>
         </v-card-title>
@@ -33,9 +39,12 @@
           </v-layout>
           <v-layout>
             <v-flex v-if="geneNotEmpty()">
-              <h3 class="sub-title">Gene: {{ geneSelected }}</h3>
+              <h3 class="sub-title">Gene: {{ geneSelectedPresentedName }}</h3>
+              <div class="gene-description">{{ geneSelectedDescription }}</div>
               <div class="gene-web-link">
-                <a target="_blank" @click="navigateToGenePage()">Gene data web link</a>
+                <a target="_blank" @click="navigateToGenePage()"
+                  >Gene data web link</a
+                >
               </div>
               <v-list :class="{ 'max-height': listHeight }" class="list">
                 <v-list-item
@@ -44,8 +53,35 @@
                   @click="setCellSelected(value[0])"
                 >
                   <v-layout>
-                    <v-flex md3 offset-md1 class="index">{{ value[0] }}:&nbsp;</v-flex>
-                    <v-flex md6 offset-md1>{{ value[1] }}</v-flex>
+                    <v-flex md3 offset-md1 class="index"
+                      >{{ value[0] }}:&nbsp;</v-flex
+                    >
+                    <v-flex md6 offset-md1>
+                      <span>
+                        <v-tooltip top>
+                          <template v-slot:activator="{ on }">
+                            <v-progress-linear
+                              :value="setGeneIndexBarChartRatio(value, 0)"
+                              :color="setGeneIndexBarChartColor(value, 1)"
+                              height="15"
+                              v-on="on"
+                              rounded
+                              striped
+                              reactive
+                            >
+                              <template v-slot="{ value }">
+                                {{
+                                  ((value / 100) * maxGeneMagnitude).toFixed(
+                                    fixedGeneDigits
+                                  )
+                                }}
+                              </template>
+                            </v-progress-linear>
+                          </template>
+                          <span>{{ value[1] }}</span>
+                        </v-tooltip>
+                      </span>
+                    </v-flex>
                   </v-layout>
                 </v-list-item>
               </v-list>
@@ -72,15 +108,23 @@ export default {
       cellTypeNames: [],
       filteredList: [],
       fixedGeneDigits: 5,
+      geneSelectedPresentedName: "",
+      geneSelectedDescription: "",
       listHeight: "400px",
       loadedDictData: {},
+      loadedGeneIdToNameDict: {},
+      loadedGeneIdToDescriptionDict: {},
+      maxGeneMagnitude: 0.14907,
       sortOptions: ["default", "strength", "magnitude"]
     };
   },
   methods: {
     async fetchData() {
-      let data = await d3.json("./top_abs_10_dict.json");
-      this.loadedDictData = data;
+      this.loadedDictData = await d3.json("./top_abs_10_dict.json");
+      this.loadedGeneIdToNameDict = await d3.json("./gene_id_to_name.json");
+      this.loadedGeneIdToDescriptionDict = await d3.json(
+        "gene_id_to_description.json"
+      );
     },
     filterBySearchList(list) {
       let globalThis = this;
@@ -147,7 +191,28 @@ export default {
     },
     topGeneDataExist(topGenes, cellTypeName) {
       return typeof topGenes[this.geneSelected] !== "undefined";
-    }
+    },
+
+    setGeneIndexBarChartRatio(geneValues, columnIndex) {
+      let globalThis = this;
+      let value = geneValues[1];
+      if (columnIndex == 0) {
+        return Math.abs(
+          ((value / globalThis.maxGeneMagnitude) * 100).toFixed(
+            globalThis.fixedGeneDigits
+          )
+        );
+      }
+    },
+
+    setGeneIndexBarChartColor(geneValues, columnIndex) {
+      let value = geneValues[1];
+      if (value >= 0) {
+        return "primary";
+      } else {
+        return "pink";
+      }
+    },
   },
   computed: {
     filteredGeneCellList() {
@@ -188,6 +253,12 @@ export default {
       // Clear both local list and store to receive updated values
       globalThis.filteredList = [];
       this.$store.dispatch("changeTopGeneCellList", []);
+      this.geneSelectedPresentedName = this.loadedGeneIdToNameDict[
+        this.geneSelected
+      ];
+      this.geneSelectedDescription = this.loadedGeneIdToDescriptionDict[
+        this.geneSelected
+      ];
 
       for (const [key, value] of Object.entries(this.loadedDictData)) {
         let geneArr = value;
@@ -220,5 +291,12 @@ v-card-title {
   text-align: left;
   margin-top: 10px;
   text-decoration: underline;
+}
+.gene-description {
+  text-align: left;
+  font-weight: normal;
+  font-size: medium;
+  margin-top: 10px;
+  color: "#fff";
 }
 </style>
