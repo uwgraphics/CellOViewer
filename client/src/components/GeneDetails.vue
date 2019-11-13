@@ -212,7 +212,7 @@ export default {
       } else {
         return "pink";
       }
-    },
+    }
   },
   computed: {
     filteredGeneCellList() {
@@ -284,7 +284,7 @@ v-card-title {
   margin: 100px;
 }
 .list {
-  max-height: 395px;
+  max-height: 355px;
   overflow-y: auto;
 }
 .gene-web-link {
