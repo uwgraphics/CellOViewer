@@ -130,7 +130,8 @@ export default {
       let globalThis = this;
       let filterBySearchList = [];
       list.forEach(element => {
-        if (element[0].includes(globalThis.search)) {
+        let lowerCaseElement = element[0].toLowerCase();
+        if (lowerCaseElement.includes(globalThis.search.toLowerCase())) {
           filterBySearchList.push(element);
         }
       });

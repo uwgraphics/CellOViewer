@@ -177,10 +177,14 @@ export default {
         return this.listLocalCopy.filter(cell => {
           let searchResult = this.search.toLowerCase();
           let caseInsesitiveCell0 = cell[0].toLowerCase();
-          let caseInsesitiveCell1 = cell[1].toLowerCase();
+          let caseInsesitiveCellList = cell[1];
+          // Make all cell name in corresponding list to be lowercase
+          for (const cell of caseInsesitiveCellList) {
+            cell = cell.toLowerCase();
+          }
           return (
             caseInsesitiveCell0.includes(searchResult) ||
-            caseInsesitiveCell1.includes(searchResult)
+            caseInsesitiveCellList.includes(searchResult)
           );
         });
       }
