@@ -376,7 +376,7 @@ export default {
         let cell2FilteredArray = [];
         if (cellTypes.length > 1) {
           cellTypes[1].forEach(element => {
-            // Map the gene name to search name before converting to lower case
+            // Map the gene id to name before converting to lower case for search matching
             let lowerCaseElement = globalThis.loadedGeneIdToNameDict[
               element[2]
             ].toLowerCase();
@@ -388,7 +388,7 @@ export default {
         }
         if (cellTypes.length > 0) {
           cellTypes[0].forEach(element => {
-                        // Map the gene name to search name before converting to lower case
+            // Map the gene id to name before converting to lower case for search matching
             let lowerCaseElement = globalThis.loadedGeneIdToNameDict[
               element[2]
             ].toLowerCase();
