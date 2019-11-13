@@ -376,14 +376,23 @@ export default {
         let cell2FilteredArray = [];
         if (cellTypes.length > 1) {
           cellTypes[1].forEach(element => {
-            if (element[2].includes(globalThis.search)) {
+            // Map the gene name to search name before converting to lower case
+            let lowerCaseElement = globalThis.loadedGeneIdToNameDict[
+              element[2]
+            ].toLowerCase();
+
+            if (lowerCaseElement.includes(globalThis.search.toLowerCase())) {
               cell2FilteredArray.push(element);
             }
           });
         }
         if (cellTypes.length > 0) {
           cellTypes[0].forEach(element => {
-            if (element[2].includes(globalThis.search)) {
+                        // Map the gene name to search name before converting to lower case
+            let lowerCaseElement = globalThis.loadedGeneIdToNameDict[
+              element[2]
+            ].toLowerCase();
+            if (lowerCaseElement.includes(globalThis.search.toLowerCase())) {
               cell1FilteredArray.push(element);
             }
           });
