@@ -18,11 +18,7 @@
 
         <v-card-text>
           <v-layout row>
-            <v-flex
-              md12
-              sm12
-              v-if="cellSelectedExist && geneDataExist(cellSelected[0])"
-            >
+            <v-flex md12 sm12>
               <v-layout>
                 <!-- Search Box -->
                 <v-flex md9 sm12>
@@ -49,18 +45,23 @@
                 </v-flex>
               </v-layout>
 
-              <v-layout row wrap v-if="geneDataExist(cellSelected[0])">
-                <v-flex md6 sm6>
+              <v-layout row wrap>
+                <v-flex
+                  md6
+                  sm6
+                  v-if="cellSelectedExist && geneDataExist(cellSelected[0])"
+                >
                   <h3 class="sub-title">{{ cellSelected[0] }}</h3>
                   <v-list class="list">
                     <v-list-item
+                      :color="setOverlapGeneBackgroundColor(index, value, 0)"
+                      input-value="true"
                       v-for="(value, index) in filteredData[0]"
                       :key="index"
                       dense
                       @click="setGeneItem(value)"
-                      @mouseover="setGeneNameOnHover(value)"
+                      @mouseover="setGeneNameOnHover(index, value)"
                       @mouseleave="clearGeneNameOnHover()"
-                      background-color="black"
                       :class="[
                         value[2] === geneNameOnHover ? 'highlight-theme' : ''
                       ]"
@@ -74,16 +75,25 @@
                             <v-tooltip top>
                               <template v-slot:activator="{ on }">
                                 <v-progress-linear
-                                  :value="getGeneIndexValue(`${index}`, 0)"
+                                  :value="
+                                    setGeneIndexBarChartRatio(`${index}`, 0)
+                                  "
+                                  :color="
+                                    setGeneIndexBarChartColor(`${index}`, 0)
+                                  "
                                   height="15"
-                                  :color="getGeneIndexColorValue(`${index}`, 0)"
                                   v-on="on"
                                   rounded
                                   striped
                                   reactive
                                 >
                                   <template v-slot="{ value }">
-                                    {{ (value / 1000).toFixed(5) }}
+                                    {{
+                                      (
+                                        (value / 100) *
+                                        maxGeneMagnitude
+                                      ).toFixed(fixedGeneDigits)
+                                    }}
                                   </template></v-progress-linear
                                 >
                               </template>
@@ -105,13 +115,14 @@
                   <h3 class="sub-title">{{ cellSelected[1] }}</h3>
                   <v-list class="list">
                     <v-list-item
+                      :color="setOverlapGeneBackgroundColor(index, value, 1)"
+                      input-value="true"
                       v-for="(value, index) in filteredData[1]"
                       :key="index"
                       dense
                       @click="setGeneItem(value)"
                       @mouseover="setGeneNameOnHover(index, value)"
                       @mouseleave="clearGeneNameOnHover()"
-                      
                       :class="[
                         value[2] === geneNameOnHover ? 'highlight-theme' : ''
                       ]"
@@ -125,14 +136,24 @@
                             <v-tooltip top>
                               <template v-slot:activator="{ on }">
                                 <v-progress-linear
-                                  :value="getGeneIndexValue(`${index}`, 1)"
+                                  :value="
+                                    setGeneIndexBarChartRatio(`${index}`, 1)
+                                  "
+                                  :color="
+                                    setGeneIndexBarChartColor(`${index}`, 1)
+                                  "
                                   height="15"
                                   v-on="on"
                                   rounded
                                   striped
                                 >
                                   <template v-slot="{ value }">
-                                    {{ (value / 1000).toFixed(5) }}
+                                    {{
+                                      (
+                                        (value / 100) *
+                                        maxGeneMagnitude
+                                      ).toFixed(fixedGeneDigits)
+                                    }}
                                   </template>
                                 </v-progress-linear>
                               </template>
@@ -155,6 +176,7 @@
 
 <script>
 import * as d3 from "d3";
+import { COLOR_RAMP } from "../config";
 
 export default {
   name: "cell-details",
@@ -166,31 +188,12 @@ export default {
     return {
       cardHighlight: false,
       fixedGeneDigits: 5,
+      maxGeneMagnitude: 0.14907,
       loadedGeneData: {},
       sortOptions: ["default", "magnitude"],
       geneNameOnHover: "",
-
-      columnOneIndex0: 0,
-      columnOneIndex1: 0,
-      columnOneIndex2: 0,
-      columnOneIndex3: 0,
-      columnOneIndex4: 0,
-      columnOneIndex5: 0,
-      columnOneIndex6: 0,
-      columnOneIndex7: 0,
-      columnOneIndex8: 0,
-      columnOneIndex9: 0,
-
-      columnTwoIndex0: 0,
-      columnTwoIndex1: 0,
-      columnTwoIndex2: 0,
-      columnTwoIndex3: 0,
-      columnTwoIndex4: 0,
-      columnTwoIndex5: 0,
-      columnTwoIndex6: 0,
-      columnTwoIndex7: 0,
-      columnTwoIndex8: 0,
-      columnTwoIndex9: 0
+      topGenesInColumnOne: [],
+      topGenesInColumnTwo: []
     };
   },
   methods: {
@@ -206,26 +209,9 @@ export default {
           });
       }
     },
-    // Load gene data in this component to avoid latency in the main component
-    cellSelectedExist() {
-      return this.$store.getters.getCellSelected.length !== 0;
-    },
 
     async fetchData() {
-      let data = await d3.json("./top_abs_10_dict.json");
-      for (const cellType of Object.values(data)) {
-        for (const gene of cellType) {
-          gene[1] = gene[1].toFixed(this.fixedGeneDigits);
-        }
-      }
-      this.loadedGeneData = data;
-    },
-
-    geneDataExist(cellTypeName) {
-      if (this.loadedGeneData[cellTypeName] === undefined) {
-        return false;
-      }
-      return true;
+      this.loadedGeneData = await d3.json("./top_abs_10_dict.json");
     },
 
     getDefaultCells() {
@@ -242,29 +228,69 @@ export default {
     /**
      * Get gene color by column and gene index, if negative display pink
      */
-    getGeneIndexColorValue(index, columnIndex) {
-      let indexGeneValue = "";
+    setGeneIndexBarChartColor(index, columnIndex) {
+      let globalThis = this;
+      let indexGeneValue = 0;
       if (columnIndex == 0) {
-        indexGeneValue = `columnOneIndex` + index;
+        indexGeneValue = globalThis.topGenesInColumnOne[index];
       } else if (columnIndex == 1) {
-        indexGeneValue = `columnTwoIndex` + index;
+        indexGeneValue = globalThis.topGenesInColumnTwo[index];
       }
 
-      if (this[indexGeneValue] >= 0) {
+      if (indexGeneValue >= 0) {
         return "primary";
       } else {
-        return "pink lighten-1";
+        return "pink";
       }
     },
 
-    getGeneIndexValue(index, columnIndex) {
-      let indexGeneValue = "";
+    setGeneIndexBarChartRatio(index, columnIndex) {
+      let globalThis = this;
       if (columnIndex == 0) {
-        indexGeneValue = `columnOneIndex` + index;
-      } else if (columnIndex == 1) {
-        indexGeneValue = `columnTwoIndex` + index;
+        return Math.abs(
+          (
+            (globalThis.topGenesInColumnOne[index] /
+              globalThis.maxGeneMagnitude) *
+            100
+          ).toFixed(globalThis.fixedGeneDigits)
+        );
+      } else {
+        return Math.abs(
+          (
+            (globalThis.topGenesInColumnTwo[index] /
+              globalThis.maxGeneMagnitude) *
+            100
+          ).toFixed(globalThis.fixedGeneDigits)
+        );
       }
-      return Math.abs(this[indexGeneValue]);
+    },
+
+    setOverlapGeneBackgroundColor(index, value, columnIndex) {
+      let globalThis = this;
+      let cellName = value[2];
+
+      if (columnIndex == 0) {
+        let filteredDataSecondRow = globalThis.filteredData[1];
+        if (globalThis.filteredData.length > 1) {
+          for (const entry of Object.entries(filteredDataSecondRow)) {
+            let geneValueObject = entry[1];
+            if (geneValueObject[2] === cellName) {
+              return COLOR_RAMP[index];
+            }
+          }
+        }
+      } else if (columnIndex == 1) {
+        let filteredDataFirstRow = globalThis.filteredData[0];
+        for (const entry of Object.entries(filteredDataFirstRow)) {
+          let geneValueObject = entry[1];
+          if (geneValueObject[2] === cellName) {
+            let geneIndexInFirstRow = entry[0];
+            return COLOR_RAMP[geneIndexInFirstRow];
+          }
+        }
+      }
+
+      return "#303030";
     },
 
     sortCells() {
@@ -297,8 +323,19 @@ export default {
       this.geneNameOnHover = value[2];
     },
 
+    cellSelectedExist() {
+      return this.$store.getters.getCellSelected.length !== 0;
+    },
+
     clearGeneNameOnHover() {
       this.geneNameOnHover = "";
+    },
+
+    geneDataExist(cellTypeName) {
+      if (this.loadedGeneData[cellTypeName] === undefined) {
+        return false;
+      }
+      return true;
     }
   },
   computed: {
@@ -376,34 +413,31 @@ export default {
   },
   watch: {
     cellSelected() {
-      let globalThis = this;
-
       let cellArr = this.$store.getters.getCellSelected;
       this.$store.dispatch("changeCellDetails", []);
+      this.topGenesInColumnOne = [];
+      this.topGenesInColumnTwo = [];
 
       if (cellArr.length === 0) {
         return;
       }
       this.geneCellCopy1 = this.loadedGeneData[cellArr[0]];
       this.$store.dispatch("addToCellDetails", this.geneCellCopy1);
-      /* Update Column One Index value to offer dynamic rendering */
-      let indexCounter = 0;
+      let geneDataColumnOne = [];
       for (const geneData of this.geneCellCopy1) {
-        let indexValueToChange = `columnOneIndex${indexCounter}`;
-        globalThis[indexValueToChange] = (geneData[1] * 1000).toFixed(5);
-        indexCounter++;
+        geneDataColumnOne.push(Number(geneData[1]));
       }
+
+      this.topGenesInColumnOne = geneDataColumnOne;
 
       if (cellArr.length > 1) {
         this.geneCellCopy2 = this.loadedGeneData[cellArr[1]];
         this.$store.dispatch("addToCellDetails", this.geneCellCopy2);
-
-        let indexCounter2 = 0;
+        let geneDataColumnTwo = [];
         for (const geneData of this.geneCellCopy2) {
-          let indexValueToChange2 = `columnTwoIndex${indexCounter2}`;
-          globalThis[indexValueToChange2] = (geneData[1] * 1000).toFixed(5);
-          indexCounter2++;
+          geneDataColumnTwo.push(Number(geneData[1]));
         }
+        this.topGenesInColumnTwo = geneDataColumnTwo;
       }
     }
   }

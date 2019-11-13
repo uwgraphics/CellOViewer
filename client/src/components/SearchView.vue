@@ -32,8 +32,13 @@
                   ></v-select>
                 </v-flex>
               </v-layout>
-              <v-layout row wrap class="list" :class="{ 'max-height': listHeight }">
-                <v-flex md12 v-if="loaded&&listLocalCopy">
+              <v-layout
+                row
+                wrap
+                class="list"
+                :class="{ 'max-height': listHeight }"
+              >
+                <v-flex md12 v-if="loaded && listLocalCopy">
                   <v-list>
                     <v-list-item
                       v-for="(keyValuePair, index) in filteredData"
@@ -45,12 +50,19 @@
                         <v-flex
                           md3
                           offset-md1
-                          v-if="keyValuePair[0]&&keyValuePair[1]"
+                          v-if="keyValuePair[0] && keyValuePair[1]"
                           class="index"
-                        >{{ keyValuePair[0] }}:&nbsp;</v-flex>
+                          >{{ keyValuePair[0] }}:&nbsp;</v-flex
+                        >
                         <v-flex md6 offset-md1 v-if="keyValuePair[1]">
-                          <v-list v-for="(neighbor, index) in keyValuePair[1]" :key="index" dense>
-                            <span v-if="index===(keyValuePair[1].length - 1)">{{ neighbor }}</span>
+                          <v-list
+                            v-for="(neighbor, index) in keyValuePair[1]"
+                            :key="index"
+                            dense
+                          >
+                            <span v-if="index === keyValuePair[1].length - 1">{{
+                              neighbor
+                            }}</span>
                             <span v-else>{{ neighbor }},</span>
                           </v-list>
                         </v-flex>
@@ -97,6 +109,7 @@
 <script>
 import * as d3 from "d3";
 import virtualList from "vue-virtual-scroll-list";
+import _ from "lodash";
 
 export default {
   name: "cell-list",
@@ -162,7 +175,13 @@ export default {
         return this.listLocalCopy;
       } else {
         return this.listLocalCopy.filter(cell => {
-          return cell[0].includes(this.search) || cell[1].includes(this.search);
+          let searchResult = this.search.toLowerCase();
+          let caseInsesitiveCell0 = cell[0].toLowerCase();
+          let caseInsesitiveCell1 = cell[1].toLowerCase();
+          return (
+            caseInsesitiveCell0.includes(searchResult) ||
+            caseInsesitiveCell1.includes(searchResult)
+          );
         });
       }
     },

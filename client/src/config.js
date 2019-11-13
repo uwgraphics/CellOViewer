@@ -5,14 +5,14 @@ export const CELL_TYPE_CHANGED_COLOR = "#f33";
 export const NODE_RADIUS_DEFAULT = 5;
 export const NODE_RADIUS_POPPED = 8;
 export const COLOR_RAMP = [
-    "#ffffd9",
-    "#edf8b1",
-    "#c7e9b4",
-    "#7fcdbb",
-    "#41b6c4",
-    "#1d91c0",
-    "#225ea8",
-    "#253494",
-    "#02075d",
-    "#081d58"
+    "#40004b",
+    "#762a83",
+    "#9970ab",
+    "#c2a5cf",
+    "#e7d4e8",
+    "#d9f0d3",
+    "#a6dba0",
+    "#5aae61",
+    "#1b7837",
+    "#00441b",
 ]
