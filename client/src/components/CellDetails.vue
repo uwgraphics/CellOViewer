@@ -68,7 +68,9 @@
                     >
                       <v-layout>
                         <v-flex md5 sm5>
-                          <span class="index">{{ value[2] }}:</span>
+                          <span class="index"
+                            >{{ loadedGeneIdToNameDict[value[2]] }}:</span
+                          >
                         </v-flex>
                         <v-flex md7 sm7>
                           <span>
@@ -129,7 +131,9 @@
                     >
                       <v-layout>
                         <v-flex md5 sm12>
-                          <span class="index">{{ value[2] }}:</span>
+                          <span class="index"
+                            >{{ loadedGeneIdToNameDict[value[2]] }}:</span
+                          >
                         </v-flex>
                         <v-flex md7 sm12>
                           <span>
@@ -190,6 +194,7 @@ export default {
       fixedGeneDigits: 5,
       maxGeneMagnitude: 0.14907,
       loadedGeneData: {},
+      loadedGeneIdToNameDict: {},
       sortOptions: ["default", "magnitude"],
       geneNameOnHover: "",
       topGenesInColumnOne: [],
@@ -212,6 +217,7 @@ export default {
 
     async fetchData() {
       this.loadedGeneData = await d3.json("./top_abs_10_dict.json");
+      this.loadedGeneIdToNameDict = await d3.json("./gene_id_to_name.json");
     },
 
     getDefaultCells() {
