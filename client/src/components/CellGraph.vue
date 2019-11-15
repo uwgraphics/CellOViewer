@@ -1,7 +1,7 @@
 <template>
   <v-layout row wrap>
     <v-flex md12>
-      <v-card :max-height="maxCardHeight">
+      <v-card :max-height="maxCardHeight" :color="$vuetify.theme.themes[this.$store.getters.getCurrentThemeMode].background">
         <v-card-title class="justify-center">
           <h4 class="view-title">Graph View</h4>
           <v-spacer />

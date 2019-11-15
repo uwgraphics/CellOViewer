@@ -7,6 +7,7 @@ const state = {
   cellDetails: [],
   cellSelected: [],
   cellSelectedPrevious: "",
+  currentThemeMode: "dark",
   topGeneCellList: [],
   topGeneCellListPrevious: [],
   geneSearchOption: "default",
@@ -33,6 +34,9 @@ const mutations = {
   },
   POP_FROM_CELL_SELECTED(state) {
     state.cellSelected.pop();
+  },
+  CHANGE_CURRENT_THEME_MODE(state, payload) {
+    state.currentThemeMode = payload;
   },
   ADD_TO_TOP_GENE_CELL_LIST(state, payload) {
     state.topGeneCellList.push(payload);
@@ -85,6 +89,9 @@ const actions = {
   popFromCellSelected(context) {
     context.commit("POP_FROM_CELL_SELECTED");
   },
+  changeCurrentThemeMode(context, mode) {
+    context.commit("CHANGE_CURRENT_THEME_MODE", mode)
+  },
   addToTopGeneCellList(context, topGeneCellList) {
     context.commit("ADD_TO_TOP_GENE_CELL_LIST", topGeneCellList);
   },
@@ -135,6 +142,9 @@ const getters = {
   },
   getCellSelectedPrevious(state) {
     return state.cellSelectedPrevious;
+  },
+  getCurrentThemeMode(state) {
+    return state.currentThemeMode;
   },
   getGeneSearchOption(state) {
     return state.geneSearchOption;

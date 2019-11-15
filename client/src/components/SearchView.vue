@@ -1,16 +1,34 @@
 <template>
   <v-layout row wrap align-center>
     <v-flex md12>
-      <v-card max-height="600">
+      <v-card
+        max-height="600"
+        :color="
+          $vuetify.theme.themes[this.$store.getters.getCurrentThemeMode]
+            .background
+        "
+      >
         <v-card-title class="justify-left">
           <h4 class="view-title">Search View</h4>
         </v-card-title>
 
-        <v-tabs fixed-tabs>
+        <v-tabs
+          fixed-tabs
+          :background-color="
+            $vuetify.theme.themes[this.$store.getters.getCurrentThemeMode]
+              .background
+          "
+        >
           <v-tab>Cell Centric</v-tab>
           <v-tab>Gene Centric</v-tab>
           <v-tab-item>
-            <v-card-text>
+            <v-card-text
+              :style="{
+                background:
+                  $vuetify.theme.themes[this.$store.getters.getCurrentThemeMode]
+                    .background
+              }"
+            >
               <v-layout>
                 <v-flex md9 sm12>
                   <v-text-field
@@ -39,7 +57,13 @@
                 :class="{ 'max-height': listHeight }"
               >
                 <v-flex md12 v-if="loaded && listLocalCopy">
-                  <v-list>
+                  <v-list
+                    :color="
+                      $vuetify.theme.themes[
+                        this.$store.getters.getCurrentThemeMode
+                      ].background
+                    "
+                  >
                     <v-list-item
                       v-for="(keyValuePair, index) in filteredData"
                       :key="index"
@@ -60,10 +84,10 @@
                             :key="index"
                             dense
                           >
-                            <span v-if="index === keyValuePair[1].length - 1">{{
-                              neighbor
-                            }}</span>
-                            <span v-else>{{ neighbor }},</span>
+                            <div v-if="index === keyValuePair[1].length - 1">
+                              {{ neighbor }}
+                            </div>
+                            <div v-else>{{ neighbor }},</div>
                           </v-list>
                         </v-flex>
                       </v-layout>
@@ -94,7 +118,7 @@
                   :key="item.id"
                   @click="setGeneItem(item)"
                 >
-                  {{ item }}:&nbsp;
+                  {{ loadedGeneIdToNameDict[item] }}:&nbsp;
                   <a @click="navigateToGenePage(item)">web link</a>
                 </v-list-item>
               </virtual-list>
@@ -129,15 +153,15 @@ export default {
       loaded: false,
       loadedDictData: {},
       loadedGeneData: [],
+      loadedGeneIdToNameDict: {},
       sortOptions: ["default", "neighbors"]
     };
   },
   methods: {
     async fetchData() {
-      let data = await d3.json("./genes.json");
-      this.loadedGeneData = data;
-      let top10Data = await d3.json("./top_abs_10_dict.json");
-      this.loadedDictData = top10Data;
+      this.loadedGeneData = await d3.json("./genes.json");
+      this.loadedDictData = await d3.json("./top_abs_10_dict.json");
+      this.loadedGeneIdToNameDict = await d3.json("./gene_id_to_name.json");
     },
     setCellSelected(cellName) {
       let curList = this.$store.getters.getCellSelected;
@@ -190,11 +214,18 @@ export default {
       }
     },
     filteredGeneData() {
+      let globalThis = this;
+      
       if (this.$store.getters.getGeneSearchFromSearchView === "") {
         return this.loadedGeneData;
       } else {
         return this.loadedGeneData.filter(gene => {
-          return gene.includes(this.geneSearch);
+          if (globalThis.loadedGeneIdToNameDict[gene] == undefined) {
+            return;
+          }
+          return globalThis.loadedGeneIdToNameDict[gene].includes(
+            this.geneSearch
+          );
         });
       }
     },

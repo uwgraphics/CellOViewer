@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <v-app :dark="setTheme">
+    <v-app :dark="setTheme" :style="{background: $vuetify.theme.themes['dark'].background}">
       <!--Header Section-->
       <v-container fluid>
         <v-switch
@@ -19,7 +19,7 @@
           Search View 
           -->
           <v-flex md5>
-            <SearchView :cellData="this.loadedData" />
+            <SearchView :cellData="this.loadedData"/>
           </v-flex>
           <!-- 
           Graph View 
@@ -88,8 +88,10 @@ export default {
     // Toggle between light and dark theme
     setTheme() {
       if (this.goDark == true) {
+        this.$store.dispatch("changeCurrentThemeMode", 'dark');
         return (this.$vuetify.theme.dark = true);
       } else {
+        this.$store.dispatch("changeCurrentThemeMode", 'light');
         return (this.$vuetify.theme.dark = false);
       }
     }

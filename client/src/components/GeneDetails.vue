@@ -1,7 +1,14 @@
 <template>
   <v-layout row wrap align-center>
     <v-flex md12>
-      <v-card max-height="595">
+      <v-card
+        max-height="595"
+        :style="{
+          background:
+            $vuetify.theme.themes[this.$store.getters.getCurrentThemeMode]
+              .background
+        }"
+      >
         <v-card-title class="justify-center">
           <h4 class="view-title">Gene Details View</h4>
           <v-spacer></v-spacer>
