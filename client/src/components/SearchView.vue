@@ -85,7 +85,7 @@
                             dense
                           >
                             <div v-if="index === keyValuePair[1].length - 1">
-                              {{ neighbor }}
+                              {{ neighbor }} 0
                             </div>
                             <div v-else>{{ neighbor }},</div>
                           </v-list>
@@ -154,7 +154,7 @@ export default {
       loadedDictData: {},
       loadedGeneData: [],
       loadedGeneIdToNameDict: {},
-      sortOptions: ["default", "neighbors"]
+      sortOptions: ["default", "alphabetical"]
     };
   },
   methods: {
@@ -183,13 +183,25 @@ export default {
       this.$store.dispatch("changeGeneSelected", gene);
     },
     sortBasedOnOption(option) {
+      let globalThis = this;
       this.$store.dispatch("changeOption", String(option));
       this.listLocalCopy = this.generateListCopy(this.cellData);
       switch (option) {
-        case "neighbors":
-          return this.listLocalCopy.sort((a, b) =>
-            a[1].length < b[1].length ? 1 : -1
+        case "alphabetical":
+          globalThis.listLocalCopy = _.sortBy(
+            this.listLocalCopy,
+            [
+              function(list) {
+                console.log(list[0]);
+                return list[0];
+              }
+            ],
+            ["asc"]
           );
+          return globalThis.listLocalCopy;
+        // return this.listLocalCopy.sort((a, b) =>
+        //   a[1].length < b[1].length ? 1 : -1
+        // );
       }
     }
   },
@@ -213,9 +225,13 @@ export default {
         });
       }
     },
+
+    /**
+     * Filtered gene data for gene centric view
+     */
     filteredGeneData() {
       let globalThis = this;
-      
+
       if (this.$store.getters.getGeneSearchFromSearchView === "") {
         return this.loadedGeneData;
       } else {
