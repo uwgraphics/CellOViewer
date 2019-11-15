@@ -85,7 +85,7 @@
                             dense
                           >
                             <div v-if="index === keyValuePair[1].length - 1">
-                              {{ neighbor }} 0
+                              {{ neighbor }} 
                             </div>
                             <div v-else>{{ neighbor }},</div>
                           </v-list>
@@ -114,12 +114,24 @@
               </v-layout>
               <virtual-list :size="40" :remain="10" class="list">
                 <v-list-item
+                  three-line
                   v-for="item of filteredGeneData"
                   :key="item.id"
                   @click="setGeneItem(item)"
                 >
-                  {{ loadedGeneIdToNameDict[item] }}:&nbsp;
-                  <a @click="navigateToGenePage(item)">web link</a>
+                  <v-list-item-content class="list-item-box">
+                    <v-list-item-title
+                      >{{ loadedGeneIdToNameDict[item] }}:&nbsp;
+                    </v-list-item-title>
+                    <v-list-item-subtitle>
+                      <a class="web-link" @click="navigateToGenePage(item)">
+                        {{ item }}
+                      </a>
+                    </v-list-item-subtitle>
+                    <v-list-item-subtitle>
+                      {{ loadedGeneIdToDescriptionDict[item] }}
+                    </v-list-item-subtitle>
+                  </v-list-item-content>
                 </v-list-item>
               </virtual-list>
             </v-card-text>
@@ -154,6 +166,7 @@ export default {
       loadedDictData: {},
       loadedGeneData: [],
       loadedGeneIdToNameDict: {},
+      loadedGeneIdToDescriptionDict: {},
       sortOptions: ["default", "alphabetical"]
     };
   },
@@ -162,6 +175,9 @@ export default {
       this.loadedGeneData = await d3.json("./genes.json");
       this.loadedDictData = await d3.json("./top_abs_10_dict.json");
       this.loadedGeneIdToNameDict = await d3.json("./gene_id_to_name.json");
+      this.loadedGeneIdToDescriptionDict = await d3.json(
+        "gene_id_to_description.json"
+      );
     },
     setCellSelected(cellName) {
       let curList = this.$store.getters.getCellSelected;
@@ -199,9 +215,6 @@ export default {
             ["asc"]
           );
           return globalThis.listLocalCopy;
-        // return this.listLocalCopy.sort((a, b) =>
-        //   a[1].length < b[1].length ? 1 : -1
-        // );
       }
     }
   },
@@ -314,5 +327,11 @@ v-card-title {
 }
 .title {
   margin-top: 10px;
+}
+.list-item-box {
+  text-align: left;
+}
+.web-link {
+  text-decoration: underline;
 }
 </style>
