@@ -85,11 +85,20 @@
                               <template v-slot:activator="{ on }">
                                 <v-progress-linear
                                   :value="
-                                    setGeneIndexBarChartRatio(`${index}`, 0)
+                                    setGeneIndexBarChartRatio(
+                                      `${index}`,
+                                      value,
+                                      0
+                                    )
                                   "
                                   :color="
-                                    setGeneIndexBarChartColor(`${index}`, 0)
+                                    setGeneIndexBarChartColor(
+                                      `${index}`,
+                                      value,
+                                      0
+                                    )
                                   "
+                                  :key="index"
                                   height="15"
                                   v-on="on"
                                   rounded
@@ -188,6 +197,7 @@
 <script>
 import * as d3 from "d3";
 import { COLOR_RAMP } from "../config";
+import _ from "lodash";
 
 export default {
   name: "cell-details",
@@ -202,8 +212,10 @@ export default {
       maxGeneMagnitude: 0.14907,
       loadedGeneData: {},
       loadedGeneIdToNameDict: {},
-      sortOptions: ["default", "magnitude"],
+      sortOptions: ["default", "magnitude", "coordinated"],
       geneNameOnHover: "",
+      geneCellCopy1: [],
+      geneCellCopy2: [],
       topGenesInColumnOne: [],
       topGenesInColumnTwo: []
     };
@@ -214,11 +226,34 @@ export default {
         return;
       }
 
+      let globalThis = this;
+
       switch (option) {
         case "magnitude":
-          this.geneCellCopy1 = this.geneCellCopy1.sort((a, b) => {
-            Math.abs(a[1]) < Math.abs(b[1]) ? 1 : -1;
-          });
+          globalThis.filteredData[0] = _.sortBy(
+            globalThis.filteredData[0],
+            [
+              function(geneData) {
+                console.log(geneData[1]);
+                return gene[1];
+              }
+            ],
+            ["asc"]
+          );
+          if (filteredData.length > 1) {
+            globalThis.filteredData[1] = _.sortBy(
+              globalThis.filteredData[1],
+              [
+                function(geneData) {
+                  return gene[1];
+                }
+              ],
+              ["asc"]
+            );
+          }
+          return globalThis.filteredData;
+        case "coordinated":
+          // To be filled
       }
     },
 

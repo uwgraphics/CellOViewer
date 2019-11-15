@@ -48,11 +48,6 @@
             <v-flex v-if="geneNotEmpty()">
               <h3 class="sub-title">Gene: {{ geneSelectedPresentedName }}</h3>
               <div class="gene-description">{{ geneSelectedDescription }}</div>
-              <div class="gene-web-link">
-                <a target="_blank" @click="navigateToGenePage()"
-                  >Gene data web link</a
-                >
-              </div>
               <v-list :class="{ 'max-height': listHeight }" class="list">
                 <v-list-item
                   v-for="(value, index) in filteredGeneCellList"
