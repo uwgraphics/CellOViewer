@@ -126,7 +126,7 @@ export default {
       loadedGeneIdToNameDict: {},
       loadedGeneIdToDescriptionDict: {},
       maxGeneMagnitude: 0.14907,
-      sortOptions: ["default", "strength", "magnitude"]
+      sortOptions: ["default", "strength", "magnitude", "cell type name"]
     };
   },
   methods: {
@@ -199,6 +199,10 @@ export default {
           return this.filterBySearchList(
             this.filteredList.sort((a, b) => (a[1] > b[1] ? -1 : 1))
           );
+        case "cell type name":
+          return this.filterBySearchList(
+            this.filteredList.sort((a,b) => (a[0].toLowerCase() < b[0].toLowerCase() ? -1 : 1))
+          )
       }
     },
     topGeneDataExist(topGenes, cellTypeName) {

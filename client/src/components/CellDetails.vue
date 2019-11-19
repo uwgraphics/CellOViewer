@@ -9,7 +9,7 @@
               .background
         }"
       >
-        <v-card-title class="justify-center">
+        <v-card-title>
           <h4 class="view-title">Cell Details View</h4>
           <v-spacer></v-spacer>
           <v-btn
@@ -39,8 +39,6 @@
                   ></v-text-field>
                 </v-flex>
 
-                <v-spacer />
-
                 <!-- Sort Box -->
                 <v-flex md3 sm12>
                   <v-select
@@ -52,6 +50,7 @@
                 </v-flex>
               </v-layout>
 
+              <!-- Cell Type Top Gene list -->
               <v-layout row wrap>
                 <v-flex
                   md6
@@ -93,10 +92,16 @@
                               <template v-slot:activator="{ on }">
                                 <v-progress-linear
                                   :value="
-                                    setGeneIndexBarChartRatio(`${index}`, 0)
+                                    setGeneIndexBarChartRatio(
+                                      `${index}`,
+                                      `${value}`
+                                    )
                                   "
                                   :color="
-                                    setGeneIndexBarChartColor(`${index}`, 0)
+                                    setGeneIndexBarChartColor(
+                                      `${index}`,
+                                      `${value}`
+                                    )
                                   "
                                   height="15"
                                   v-on="on"
@@ -164,10 +169,16 @@
                               <template v-slot:activator="{ on }">
                                 <v-progress-linear
                                   :value="
-                                    setGeneIndexBarChartRatio(`${index}`, 1)
+                                    setGeneIndexBarChartRatio(
+                                      `${index}`,
+                                      `${value}`
+                                    )
                                   "
                                   :color="
-                                    setGeneIndexBarChartColor(`${index}`, 1)
+                                    setGeneIndexBarChartColor(
+                                      `${index}`,
+                                      `${value}`
+                                    )
                                   "
                                   height="15"
                                   v-on="on"
@@ -203,7 +214,9 @@
 
 <script>
 import * as d3 from "d3";
+import _ from "lodash";
 import { COLOR_RAMP } from "../config";
+
 export default {
   name: "cell-details",
   props: [],
@@ -217,31 +230,68 @@ export default {
       maxGeneMagnitude: 0.14907,
       loadedGeneData: {},
       loadedGeneIdToNameDict: {},
-      sortOptions: ["default", "magnitude"],
-      geneNameOnHover: "",
-      topGenesInColumnOne: [],
-      topGenesInColumnTwo: []
+      sortOptions: ["default", "magnitude", "coordinated"],
+      geneNameOnHover: ""
     };
   },
   methods: {
     sortBasedOnOption(option) {
-      if (this.$store.getters.getCellDetails.length == 0) {
-        return;
-      }
+      let globalThis = this;
+      console.log(this.filteredData[0]);
       switch (option) {
+        case "default":
+          this.filteredData[0] = this.loadedGeneData[cellArr[0]];
+          if (this.filteredData.length > 1) {
+            this.filteredData[1] = this.loadedGeneData[cellArr[0]];
+          }
+          return;
         case "magnitude":
-          this.geneCellCopy1 = this.geneCellCopy1.sort((a, b) => {
-            Math.abs(a[1]) < Math.abs(b[1]) ? 1 : -1;
-          });
+          _.sortBy(globalThis.filteredData[0], (o) => o[1], ['desc'])
+          _.sortBy(globalThis.filteredData[1], (o) => o[1], ['desc'])
+          return;
+        case "coordinated":
+          if (globalThis.filteredData.length <= 1) {
+            return;
+          }
+          let itr = 0;
+          // Dict saves cell type name - index pair
+          let cellTypeNameIndexDict = [];
+          for (let i = 0; i < globalThis.filteredData[0].length; i++) {
+            let cellTypeName = globalThis.filteredData[0][i][2];
+            cellTypeNameIndexDict[cellTypeName] = i;
+          }
+          for (let j = 0; j < globalThis.filteredData[1].length; j++) {
+            let cellTypeNameInColumnTwo = globalThis.filteredData[1][j][2];
+
+            if (cellTypeNameInColumnTwo in cellTypeNameIndexDict) {
+              let overlapCellTypeIndex =
+                cellTypeNameIndexDict[cellTypeNameInColumnTwo];
+              this.swapEntryPositions(
+                globalThis.filteredData[0],
+                overlapCellTypeIndex,
+                itr
+              );
+              this.swapEntryPositions(globalThis.filteredData[1], j, itr);
+              itr++;
+            }
+          }
+
+          return;
       }
+    },
+    swapEntryPositions(list, indexA, indexB) {
+      let temp = list[indexA];
+      list[indexA] = list[indexB];
+      list[indexB] = temp;
     },
     async fetchData() {
       this.loadedGeneData = await d3.json("./top_abs_10_dict.json");
       this.loadedGeneIdToNameDict = await d3.json("./gene_id_to_name.json");
     },
-    getDefaultCells() {
+    getDefaultCellTypes() {
       let cellArr = this.$store.getters.getCellSelected;
       let geneCellCopy = [];
+      console.log(this.loadedGeneData[cellArr[0]]);
       geneCellCopy.push(this.loadedGeneData[cellArr[0]]);
       if (cellArr.length > 1) {
         geneCellCopy.push(this.loadedGeneData[cellArr[1]]);
@@ -251,39 +301,24 @@ export default {
     /**
      * Get gene color by column and gene index, if negative display pink
      */
-    setGeneIndexBarChartColor(index, columnIndex) {
+    setGeneIndexBarChartColor(index, value) {
       let globalThis = this;
-      let indexGeneValue = 0;
-      if (columnIndex == 0) {
-        indexGeneValue = globalThis.topGenesInColumnOne[index];
-      } else if (columnIndex == 1) {
-        indexGeneValue = globalThis.topGenesInColumnTwo[index];
-      }
+      let indexGeneValue = parseFloat(value.split(",")[1]);
+
       if (indexGeneValue >= 0) {
         return "primary";
       } else {
         return "pink";
       }
     },
-    setGeneIndexBarChartRatio(index, columnIndex) {
+    setGeneIndexBarChartRatio(index, value) {
       let globalThis = this;
-      if (columnIndex == 0) {
-        return Math.abs(
-          (
-            (globalThis.topGenesInColumnOne[index] /
-              globalThis.maxGeneMagnitude) *
-            100
-          ).toFixed(globalThis.fixedGeneDigits)
-        );
-      } else {
-        return Math.abs(
-          (
-            (globalThis.topGenesInColumnTwo[index] /
-              globalThis.maxGeneMagnitude) *
-            100
-          ).toFixed(globalThis.fixedGeneDigits)
-        );
-      }
+      let numberValue = parseFloat(value.split(",")[1]);
+      return Math.abs(
+        ((numberValue / globalThis.maxGeneMagnitude) * 100).toFixed(
+          globalThis.fixedGeneDigits
+        )
+      );
     },
     setOverlapGeneBackgroundColor(index, value, columnIndex) {
       let globalThis = this;
@@ -355,9 +390,9 @@ export default {
         return this.$store.getters.getCellSelected;
       }
     },
-    currentCells() {
+    currentCellTypes() {
       return this.$store.getters.getOption === "default"
-        ? this.getDefaultCells()
+        ? this.getDefaultCellTypes()
         : this.sortCells();
     },
     dynamicData() {
@@ -370,10 +405,10 @@ export default {
     filteredData() {
       let globalThis = this;
       if (this.$store.getters.getGeneSearch === "") {
-        return this.currentCells;
+        return this.currentCellTypes;
       } else {
         let resultArr = [];
-        let cellTypes = this.currentCells;
+        let cellTypes = this.currentCellTypes;
         let cell1FilteredArray = [];
         let cell2FilteredArray = [];
         if (cellTypes.length > 1) {
@@ -427,18 +462,17 @@ export default {
     cellSelected() {
       let cellArr = this.$store.getters.getCellSelected;
       this.$store.dispatch("changeCellDetails", []);
-      this.topGenesInColumnOne = [];
-      this.topGenesInColumnTwo = [];
       if (cellArr.length === 0) {
         return;
       }
       this.geneCellCopy1 = this.loadedGeneData[cellArr[0]];
       this.$store.dispatch("addToCellDetails", this.geneCellCopy1);
+
       let geneDataColumnOne = [];
       for (const geneData of this.geneCellCopy1) {
         geneDataColumnOne.push(Number(geneData[1]));
       }
-      this.topGenesInColumnOne = geneDataColumnOne;
+
       if (cellArr.length > 1) {
         this.geneCellCopy2 = this.loadedGeneData[cellArr[1]];
         this.$store.dispatch("addToCellDetails", this.geneCellCopy2);
@@ -446,7 +480,6 @@ export default {
         for (const geneData of this.geneCellCopy2) {
           geneDataColumnTwo.push(Number(geneData[1]));
         }
-        this.topGenesInColumnTwo = geneDataColumnTwo;
       }
     }
   }
