@@ -59,7 +59,15 @@
                   v-if="cellSelectedExist && geneDataExist(cellSelected[0])"
                 >
                   <h3 class="sub-title">{{ cellSelected[0] }}</h3>
-                  <v-list class="list">
+                  <v-list
+                    class="list"
+                    :style="{
+                      background:
+                        $vuetify.theme.themes[
+                          this.$store.getters.getCurrentThemeMode
+                        ].background
+                    }"
+                  >
                     <v-list-item
                       :color="setOverlapGeneBackgroundColor(index, value, 0)"
                       input-value="true"
@@ -122,7 +130,15 @@
                   "
                 >
                   <h3 class="sub-title">{{ cellSelected[1] }}</h3>
-                  <v-list class="list">
+                  <v-list
+                    class="list"
+                    :style="{
+                      background:
+                        $vuetify.theme.themes[
+                          this.$store.getters.getCurrentThemeMode
+                        ].background
+                    }"
+                  >
                     <v-list-item
                       :color="setOverlapGeneBackgroundColor(index, value, 1)"
                       input-value="true"

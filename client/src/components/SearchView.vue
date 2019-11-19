@@ -58,11 +58,12 @@
               >
                 <v-flex md12 v-if="loaded && listLocalCopy">
                   <v-list
-                    :color="
-                      $vuetify.theme.themes[
-                        this.$store.getters.getCurrentThemeMode
-                      ].background
-                    "
+                    :style="{
+                      background:
+                        $vuetify.theme.themes[
+                          this.$store.getters.getCurrentThemeMode
+                        ].background
+                    }"
                   >
                     <v-list-item
                       v-for="(keyValuePair, index) in filteredData"

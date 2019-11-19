@@ -48,7 +48,16 @@
             <v-flex v-if="geneNotEmpty()">
               <h3 class="sub-title">Gene: {{ geneSelectedPresentedName }}</h3>
               <div class="gene-description">{{ geneSelectedDescription }}</div>
-              <v-list :class="{ 'max-height': listHeight }" class="list">
+              <v-list
+                :class="{ 'max-height': listHeight }"
+                class="list"
+                :style="{
+                  background:
+                    $vuetify.theme.themes[
+                      this.$store.getters.getCurrentThemeMode
+                    ].background
+                }"
+              >
                 <v-list-item
                   v-for="(value, index) in filteredGeneCellList"
                   :key="index"
