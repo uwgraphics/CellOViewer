@@ -85,7 +85,7 @@
                             dense
                           >
                             <div v-if="index === keyValuePair[1].length - 1">
-                              {{ neighbor }} 
+                              {{ neighbor }}
                             </div>
                             <div v-else>{{ neighbor }},</div>
                           </v-list>

@@ -1,6 +1,8 @@
 <template>
   <div id="app">
-    <v-app :dark="setTheme" :style="{background: $vuetify.theme.themes['dark'].background}">
+    <v-app
+      :dark="setTheme"
+    >
       <!--Header Section-->
       <v-container fluid>
         <v-switch
@@ -19,13 +21,13 @@
           Search View 
           -->
           <v-flex md5>
-            <SearchView :cellData="this.loadedData"/>
+            <SearchView :cellData="this.$store.getters.getCellTypeGraphData" />
           </v-flex>
           <!-- 
           Graph View 
           -->
           <v-flex md7>
-            <Graph :cellData="this.loadedData" />
+            <Graph :cellData="this.$store.getters.getCellTypeGraphData" />
           </v-flex>
         </v-layout>
         <v-layout row wrap>
@@ -48,36 +50,42 @@
 </template>
 
 <script>
-import CellDetails from "@/components/CellDetails.vue";
+/**
+ * Views
+ */
 import Header from "@/components/TheHeader.vue";
-import GeneDetails from "@/components/GeneDetails.vue";
-import Graph from "@/components/CellGraph.vue";
 import SearchView from "@/components/SearchView.vue";
+import Graph from "@/components/CellGraph.vue";
+import GeneDetails from "@/components/GeneDetails.vue";
+import CellDetails from "@/components/CellDetails.vue";
 
+/**
+ * Packages
+ */
 import * as d3 from "d3";
 
 export default {
   name: "app",
   components: {
     Header,
-    Graph,
     SearchView,
-    CellDetails,
-    GeneDetails
+    Graph,
+    GeneDetails,
+    CellDetails
   },
   mounted() {
     this.fetchData();
   },
   data: function() {
     return {
-      loadedData: {},
       goDark: true
     };
   },
   methods: {
-    // Fetch cell type graph data
+    // Fetch all json data and store it in vuex for children components to use
     async fetchData() {
-      this.loadedData = await d3.json("./cell_type_graph.json");
+      let cellTypeGraphData = await d3.json("./cell_type_graph.json");
+      this.$store.dispatch("changeCellTypeGraphData", cellTypeGraphData);
     }
   },
   computed: {
@@ -88,10 +96,10 @@ export default {
     // Toggle between light and dark theme
     setTheme() {
       if (this.goDark == true) {
-        this.$store.dispatch("changeCurrentThemeMode", 'dark');
+        this.$store.dispatch("changeCurrentThemeMode", "dark");
         return (this.$vuetify.theme.dark = true);
       } else {
-        this.$store.dispatch("changeCurrentThemeMode", 'light');
+        this.$store.dispatch("changeCurrentThemeMode", "light");
         return (this.$vuetify.theme.dark = false);
       }
     }

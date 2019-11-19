@@ -7,9 +7,11 @@ const state = {
   cellDetails: [],
   cellSelected: [],
   cellSelectedPrevious: "",
+  cellTypeGraphData: {},
   currentThemeMode: "dark",
   topGeneCellList: [],
   topGeneCellListPrevious: [],
+  topGeneDictData: {},
   geneSearchOption: "default",
   geneSelected: "",
   optionSelected: "default",
@@ -35,6 +37,9 @@ const mutations = {
   POP_FROM_CELL_SELECTED(state) {
     state.cellSelected.pop();
   },
+  CHANGE_CELL_TYPE_GRAPH_DATA(state, payload) {
+    state.cellTypeGraphData = payload;
+  },
   CHANGE_CURRENT_THEME_MODE(state, payload) {
     state.currentThemeMode = payload;
   },
@@ -49,6 +54,9 @@ const mutations = {
   },
   CHANGE_CELL_SELECTED_PREVIOUS(state, payload) {
     state.cellSelectedPrevious = payload;
+  },
+  CHANGE_TOP_GENE_DICT_DATA(state, payload) {
+    state.topGeneDictData = payload;
   },
   CHANGE_GENE_SEARCH_OPTION(state, payload) {
     state.geneSearchOption = payload;
@@ -89,6 +97,9 @@ const actions = {
   popFromCellSelected(context) {
     context.commit("POP_FROM_CELL_SELECTED");
   },
+  changeCellTypeGraphData(context, data) {
+    context.commit("CHANGE_CELL_TYPE_GRAPH_DATA", data);
+  },
   changeCurrentThemeMode(context, mode) {
     context.commit("CHANGE_CURRENT_THEME_MODE", mode)
   },
@@ -103,6 +114,9 @@ const actions = {
   },
   changeCellSelectedPrevious(context, cellSelectedPrevious) {
     context.commit("CHANGE_CELL_SELECTED_PREVIOUS", cellSelectedPrevious);
+  },
+  changeTopGeneDictData(context, data) {
+    context.commit("CHANGE_TOP_GENE_DICT_DATA", data);
   },
   changeGeneSearchOption(context, geneSearchOption) {
     context.commit("CHANGE_GENE_SEARCH_OPTION", geneSearchOption);
@@ -143,8 +157,14 @@ const getters = {
   getCellSelectedPrevious(state) {
     return state.cellSelectedPrevious;
   },
+  getCellTypeGraphData(state) {
+    return state.cellTypeGraphData;
+  },
   getCurrentThemeMode(state) {
     return state.currentThemeMode;
+  },
+  getTopGeneDictData(state) {
+    return state.topGeneDictData;
   },
   getGeneSearchOption(state) {
     return state.geneSearchOption;

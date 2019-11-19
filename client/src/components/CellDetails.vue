@@ -85,20 +85,11 @@
                               <template v-slot:activator="{ on }">
                                 <v-progress-linear
                                   :value="
-                                    setGeneIndexBarChartRatio(
-                                      `${index}`,
-                                      value,
-                                      0
-                                    )
+                                    setGeneIndexBarChartRatio(`${index}`, 0)
                                   "
                                   :color="
-                                    setGeneIndexBarChartColor(
-                                      `${index}`,
-                                      value,
-                                      0
-                                    )
+                                    setGeneIndexBarChartColor(`${index}`, 0)
                                   "
-                                  :key="index"
                                   height="15"
                                   v-on="on"
                                   rounded
@@ -197,8 +188,6 @@
 <script>
 import * as d3 from "d3";
 import { COLOR_RAMP } from "../config";
-import _ from "lodash";
-
 export default {
   name: "cell-details",
   props: [],
@@ -212,10 +201,8 @@ export default {
       maxGeneMagnitude: 0.14907,
       loadedGeneData: {},
       loadedGeneIdToNameDict: {},
-      sortOptions: ["default", "magnitude", "coordinated"],
+      sortOptions: ["default", "magnitude"],
       geneNameOnHover: "",
-      geneCellCopy1: [],
-      geneCellCopy2: [],
       topGenesInColumnOne: [],
       topGenesInColumnTwo: []
     };
@@ -225,43 +212,17 @@ export default {
       if (this.$store.getters.getCellDetails.length == 0) {
         return;
       }
-
-      let globalThis = this;
-
       switch (option) {
         case "magnitude":
-          globalThis.filteredData[0] = _.sortBy(
-            globalThis.filteredData[0],
-            [
-              function(geneData) {
-                console.log(geneData[1]);
-                return gene[1];
-              }
-            ],
-            ["asc"]
-          );
-          if (filteredData.length > 1) {
-            globalThis.filteredData[1] = _.sortBy(
-              globalThis.filteredData[1],
-              [
-                function(geneData) {
-                  return gene[1];
-                }
-              ],
-              ["asc"]
-            );
-          }
-          return globalThis.filteredData;
-        case "coordinated":
-          // To be filled
+          this.geneCellCopy1 = this.geneCellCopy1.sort((a, b) => {
+            Math.abs(a[1]) < Math.abs(b[1]) ? 1 : -1;
+          });
       }
     },
-
     async fetchData() {
       this.loadedGeneData = await d3.json("./top_abs_10_dict.json");
       this.loadedGeneIdToNameDict = await d3.json("./gene_id_to_name.json");
     },
-
     getDefaultCells() {
       let cellArr = this.$store.getters.getCellSelected;
       let geneCellCopy = [];
@@ -269,10 +230,8 @@ export default {
       if (cellArr.length > 1) {
         geneCellCopy.push(this.loadedGeneData[cellArr[1]]);
       }
-
       return geneCellCopy;
     },
-
     /**
      * Get gene color by column and gene index, if negative display pink
      */
@@ -284,14 +243,12 @@ export default {
       } else if (columnIndex == 1) {
         indexGeneValue = globalThis.topGenesInColumnTwo[index];
       }
-
       if (indexGeneValue >= 0) {
         return "primary";
       } else {
         return "pink";
       }
     },
-
     setGeneIndexBarChartRatio(index, columnIndex) {
       let globalThis = this;
       if (columnIndex == 0) {
@@ -312,11 +269,9 @@ export default {
         );
       }
     },
-
     setOverlapGeneBackgroundColor(index, value, columnIndex) {
       let globalThis = this;
       let cellName = value[2];
-
       if (columnIndex == 0) {
         let filteredDataSecondRow = globalThis.filteredData[1];
         if (globalThis.filteredData.length > 1) {
@@ -337,10 +292,8 @@ export default {
           }
         }
       }
-
       return "#303030";
     },
-
     sortCells() {
       let cellArr = this.$store.getters.getCellSelected;
       let geneCellCopy = [];
@@ -358,27 +311,21 @@ export default {
       }
       return geneCellCopy;
     },
-
     removeCellSelected() {
       this.$store.dispatch("popFromCellSelected");
     },
-
     setGeneItem(value) {
       this.$store.dispatch("changeGeneSelected", value[2]);
     },
-
     setGeneNameOnHover(index, value) {
       this.geneNameOnHover = value[2];
     },
-
     cellSelectedExist() {
       return this.$store.getters.getCellSelected.length !== 0;
     },
-
     clearGeneNameOnHover() {
       this.geneNameOnHover = "";
     },
-
     geneDataExist(cellTypeName) {
       if (this.loadedGeneData[cellTypeName] === undefined) {
         return false;
@@ -392,13 +339,11 @@ export default {
         return this.$store.getters.getCellSelected;
       }
     },
-
     currentCells() {
       return this.$store.getters.getOption === "default"
         ? this.getDefaultCells()
         : this.sortCells();
     },
-
     dynamicData() {
       if (this.geneCellCopy1.length == 0) {
         return;
@@ -406,7 +351,6 @@ export default {
         return this.$store.getters.getCellDetails;
       }
     },
-
     filteredData() {
       let globalThis = this;
       if (this.$store.getters.getGeneSearch === "") {
@@ -422,7 +366,6 @@ export default {
             let lowerCaseElement = globalThis.loadedGeneIdToNameDict[
               element[2]
             ].toLowerCase();
-
             if (lowerCaseElement.includes(globalThis.search.toLowerCase())) {
               cell2FilteredArray.push(element);
             }
@@ -441,11 +384,9 @@ export default {
         }
         resultArr.push(cell1FilteredArray);
         resultArr.push(cell2FilteredArray);
-
         return resultArr;
       }
     },
-
     option: {
       get() {
         return this.$store.getters.getOption;
@@ -454,7 +395,6 @@ export default {
         this.$store.dispatch("changeOption", option);
       }
     },
-
     search: {
       get() {
         return this.$store.getters.getGeneSearch;
@@ -463,7 +403,6 @@ export default {
         this.$store.dispatch("changeGeneSearch", input);
       }
     },
-
     selectedTheme() {
       return this.onHover === true ? "highlight-theme" : "";
     }
@@ -474,7 +413,6 @@ export default {
       this.$store.dispatch("changeCellDetails", []);
       this.topGenesInColumnOne = [];
       this.topGenesInColumnTwo = [];
-
       if (cellArr.length === 0) {
         return;
       }
@@ -484,9 +422,7 @@ export default {
       for (const geneData of this.geneCellCopy1) {
         geneDataColumnOne.push(Number(geneData[1]));
       }
-
       this.topGenesInColumnOne = geneDataColumnOne;
-
       if (cellArr.length > 1) {
         this.geneCellCopy2 = this.loadedGeneData[cellArr[1]];
         this.$store.dispatch("addToCellDetails", this.geneCellCopy2);
