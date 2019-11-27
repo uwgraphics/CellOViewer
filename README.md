@@ -27,3 +27,7 @@ npm run lint
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+### License
+
+Cell Network Viewer is [BSD 3-clause licensed](./LICENSE).
