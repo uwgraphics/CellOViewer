@@ -1,4 +1,5 @@
-# Cell Network Viewer
+# CellNetowrk Viewer &middot; ![BSD 3-Clause License](https://img.shields.io/badge/License-BSD%203--Clause-blue.svg)
+
 
 ## Project setup
 **In client folder**
