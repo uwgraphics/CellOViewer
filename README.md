@@ -1,7 +1,6 @@
 # [Cell Network Viewer](https://uwgraphics.github.io/CellNetworkViewer/) ![License](https://img.shields.io/badge/License-BSD%203--Clause-green.svg)
 
 ## Project setup
-**In client folder**
 ```
 cd client
 npm install
