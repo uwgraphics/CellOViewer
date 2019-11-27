@@ -6,31 +6,41 @@
       <!--Header Section-->
       <v-container fluid>
         <v-switch
+          v-model="goDark"
           color="primary"
           :label="selectedTheme"
-          v-model="goDark"
           class="switch"
-        ></v-switch>
+        />
         <Header msg="Cell Network Viewer" />
       </v-container>
 
       <!--Body Section-->
-      <v-container bg grid-list-md fluid>
-        <v-layout row wrap>
+      <v-container
+        bg
+        grid-list-md
+        fluid
+      >
+        <v-layout
+          row
+          wrap
+        >
           <!-- 
           Search View 
           -->
           <v-flex md5>
-            <SearchView :cellData="this.$store.getters.getCellTypeGraphData" />
+            <SearchView :cell-data="this.$store.getters.getCellTypeGraphData" />
           </v-flex>
           <!-- 
           Graph View 
           -->
           <v-flex md7>
-            <Graph :cellData="this.$store.getters.getCellTypeGraphData" />
+            <Graph :cell-data="this.$store.getters.getCellTypeGraphData" />
           </v-flex>
         </v-layout>
-        <v-layout row wrap>
+        <v-layout
+          row
+          wrap
+        >
           <!-- 
           Gene Details View 
           -->
@@ -65,7 +75,7 @@ import CellDetails from "@/components/CellDetails.vue";
 import * as d3 from "d3";
 
 export default {
-  name: "app",
+  name: "App",
   components: {
     Header,
     SearchView,
@@ -73,20 +83,10 @@ export default {
     GeneDetails,
     CellDetails
   },
-  mounted() {
-    this.fetchData();
-  },
   data: function() {
     return {
       goDark: true
     };
-  },
-  methods: {
-    // Fetch all json data and store it in vuex for children components to use
-    async fetchData() {
-      let cellTypeGraphData = await d3.json("./cell_type_graph.json");
-      this.$store.dispatch("changeCellTypeGraphData", cellTypeGraphData);
-    }
   },
   computed: {
     // Display which theme is currently on
@@ -102,6 +102,16 @@ export default {
         this.$store.dispatch("changeCurrentThemeMode", "light");
         return (this.$vuetify.theme.dark = false);
       }
+    }
+  },
+  mounted() {
+    this.fetchData();
+  },
+  methods: {
+    // Fetch all json data and store it in vuex for children components to use
+    async fetchData() {
+      let cellTypeGraphData = await d3.json("./cell_type_graph.json");
+      this.$store.dispatch("changeCellTypeGraphData", cellTypeGraphData);
     }
   }
 };

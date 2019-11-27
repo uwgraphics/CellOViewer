@@ -9,7 +9,9 @@
         "
       >
         <v-card-title class="justify-left">
-          <h4 class="view-title">Search View</h4>
+          <h4 class="view-title">
+            Search View
+          </h4>
         </v-card-title>
 
         <v-tabs
@@ -38,16 +40,16 @@
                     single-line
                     hide-details
                     hide-no-data
-                  ></v-text-field>
+                  />
                 </v-flex>
                 <v-spacer />
                 <v-flex md3 sm12>
                   <v-select
                     v-model="option"
                     :items="sortOptions"
-                    @input="sortBasedOnOption"
                     label="sort"
-                  ></v-select>
+                    @input="sortBasedOnOption"
+                  />
                 </v-flex>
               </v-layout>
               <v-layout
@@ -56,7 +58,7 @@
                 class="list"
                 :class="{ 'max-height': listHeight }"
               >
-                <v-flex md12 v-if="loaded && listLocalCopy">
+                <v-flex v-if="loaded && listLocalCopy" md12>
                   <v-list
                     :style="{
                       background:
@@ -73,13 +75,14 @@
                     >
                       <v-layout>
                         <v-flex
+                          v-if="keyValuePair[0] && keyValuePair[1]"
                           md3
                           offset-md1
-                          v-if="keyValuePair[0] && keyValuePair[1]"
                           class="index"
-                          >{{ keyValuePair[0] }}:&nbsp;</v-flex
                         >
-                        <v-flex md6 offset-md1 v-if="keyValuePair[1]">
+                          {{ keyValuePair[0] }}:&nbsp;
+                        </v-flex>
+                        <v-flex v-if="keyValuePair[1]" md6 offset-md1>
                           <v-list
                             v-for="(neighbor, index) in keyValuePair[1]"
                             :key="index"
@@ -110,19 +113,19 @@
                     single-line
                     hide-details
                     hide-no-data
-                  ></v-text-field>
+                  />
                 </v-flex>
               </v-layout>
               <virtual-list :size="40" :remain="10" class="list">
                 <v-list-item
-                  three-line
                   v-for="item of filteredGeneData"
                   :key="item.id"
+                  three-line
                   @click="setGeneItem(item)"
                 >
                   <v-list-item-content class="list-item-box">
-                    <v-list-item-title
-                      >{{ loadedGeneIdToNameDict[item] }}:&nbsp;
+                    <v-list-item-title>
+                      {{ loadedGeneIdToNameDict[item] }}:&nbsp;
                     </v-list-item-title>
                     <v-list-item-subtitle>
                       <a class="web-link" @click="navigateToGenePage(item)">
@@ -149,12 +152,17 @@ import virtualList from "vue-virtual-scroll-list";
 import _ from "lodash";
 
 export default {
-  name: "cell-list",
-  props: {
-    cellData: Object
+  name: "CellList",
+  components: {
+    "virtual-list": virtualList
   },
-  mounted() {
-    this.fetchData();
+  props: {
+    cellData: {
+      type: Object,
+      default: function() {
+        return { message: "cell data is here" };
+      }
+    }
   },
   data() {
     return {
@@ -171,54 +179,6 @@ export default {
       sortOptions: ["default", "alphabetical"]
     };
   },
-  methods: {
-    async fetchData() {
-      this.loadedGeneData = await d3.json("./genes.json");
-      this.loadedDictData = await d3.json("./top_abs_10_dict.json");
-      this.loadedGeneIdToNameDict = await d3.json("./gene_id_to_name.json");
-      this.loadedGeneIdToDescriptionDict = await d3.json(
-        "gene_id_to_description.json"
-      );
-    },
-    setCellSelected(cellName) {
-      let curList = this.$store.getters.getCellSelected;
-      while (curList.length >= this.listSize) {
-        curList.pop();
-      }
-      curList.push(cellName);
-      this.$store.dispatch("changeCellSelected", curList);
-    },
-    generateListCopy(originalList) {
-      return Object.entries(_.cloneDeep(originalList));
-    },
-    navigateToGenePage(item) {
-      window.open(
-        "http://useast.ensembl.org/Homo_sapiens/Gene/Summary?g=" + item
-      );
-    },
-    setGeneItem(gene) {
-      this.$store.dispatch("changeGeneSelected", gene);
-    },
-    sortBasedOnOption(option) {
-      let globalThis = this;
-      this.$store.dispatch("changeOption", String(option));
-      this.listLocalCopy = this.generateListCopy(this.cellData);
-      switch (option) {
-        case "alphabetical":
-          globalThis.listLocalCopy = _.sortBy(
-            this.listLocalCopy,
-            [
-              function(list) {
-                console.log(list[0]);
-                return list[0];
-              }
-            ],
-            ["asc"]
-          );
-          return globalThis.listLocalCopy;
-      }
-    }
-  },
   computed: {
     filteredData() {
       if (this.$store.getters.getSearch === "") {
@@ -229,7 +189,7 @@ export default {
           let caseInsesitiveCell0 = cell[0].toLowerCase();
           let caseInsesitiveCellList = cell[1];
           // Make all cell name in corresponding list to be lowercase
-          for (const cell of caseInsesitiveCellList) {
+          for (let cell of caseInsesitiveCellList) {
             cell = cell.toLowerCase();
           }
           return (
@@ -312,8 +272,56 @@ export default {
       }
     }
   },
-  components: {
-    "virtual-list": virtualList
+  mounted() {
+    this.fetchData();
+  },
+  methods: {
+    async fetchData() {
+      this.loadedGeneData = await d3.json("./genes.json");
+      this.loadedDictData = await d3.json("./top_abs_10_dict.json");
+      this.loadedGeneIdToNameDict = await d3.json("./gene_id_to_name.json");
+      this.loadedGeneIdToDescriptionDict = await d3.json(
+        "gene_id_to_description.json"
+      );
+    },
+    setCellSelected(cellName) {
+      let curList = this.$store.getters.getCellSelected;
+      while (curList.length >= this.listSize) {
+        curList.pop();
+      }
+      curList.push(cellName);
+      this.$store.dispatch("changeCellSelected", curList);
+    },
+    generateListCopy(originalList) {
+      return Object.entries(_.cloneDeep(originalList));
+    },
+    navigateToGenePage(item) {
+      window.open(
+        "http://useast.ensembl.org/Homo_sapiens/Gene/Summary?g=" + item
+      );
+    },
+    setGeneItem(gene) {
+      this.$store.dispatch("changeGeneSelected", gene);
+    },
+    sortBasedOnOption(option) {
+      let globalThis = this;
+      this.$store.dispatch("changeOption", String(option));
+      this.listLocalCopy = this.generateListCopy(this.cellData);
+      switch (option) {
+        case "alphabetical":
+          globalThis.listLocalCopy = _.sortBy(
+            this.listLocalCopy,
+            [
+              function(list) {
+                console.log(list[0]);
+                return list[0];
+              }
+            ],
+            ["asc"]
+          );
+          return globalThis.listLocalCopy;
+      }
+    }
   }
 };
 </script>

@@ -1,5 +1,9 @@
 <template>
-  <v-layout row wrap align-center>
+  <v-layout
+    row
+    wrap
+    align-center
+  >
     <v-flex md12>
       <v-card
         max-height="595"
@@ -10,8 +14,10 @@
         }"
       >
         <v-card-title class="justify-center">
-          <h4 class="view-title">Gene Details View</h4>
-          <v-spacer></v-spacer>
+          <h4 class="view-title">
+            Gene Details View
+          </h4>
+          <v-spacer />
           <v-btn
             medium
             color="red"
@@ -19,12 +25,21 @@
             dark
             @click="removeGeneDetails"
           >
-            <v-icon dark>remove_circle</v-icon>
+            <v-icon dark>
+              remove_circle
+            </v-icon>
           </v-btn>
         </v-card-title>
         <v-card-text>
-          <v-layout row wrap>
-            <v-flex md9 sm12 v-if="geneNotEmpty()">
+          <v-layout
+            row
+            wrap
+          >
+            <v-flex
+              v-if="geneNotEmpty()"
+              md9
+              sm12
+            >
               <v-text-field
                 v-model="search"
                 append-icon="search"
@@ -32,22 +47,30 @@
                 single-line
                 hide-details
                 hide-no-data
-              ></v-text-field>
+              />
             </v-flex>
             <v-spacer />
-            <v-flex md3 sm12 v-if="geneNotEmpty()">
+            <v-flex
+              v-if="geneNotEmpty()"
+              md3
+              sm12
+            >
               <v-select
                 v-model="option"
                 :items="sortOptions"
-                @input="sortBasedOnOption"
                 label="sort"
-              ></v-select>
+                @input="sortBasedOnOption"
+              />
             </v-flex>
           </v-layout>
           <v-layout>
             <v-flex v-if="geneNotEmpty()">
-              <h3 class="sub-title">Gene: {{ geneSelectedPresentedName }}</h3>
-              <div class="gene-description">{{ geneSelectedDescription }}</div>
+              <h3 class="sub-title">
+                Gene: {{ geneSelectedPresentedName }}
+              </h3>
+              <div class="gene-description">
+                {{ geneSelectedDescription }}
+              </div>
               <v-list
                 :class="{ 'max-height': listHeight }"
                 class="list"
@@ -64,10 +87,17 @@
                   @click="setCellSelected(value[0])"
                 >
                   <v-layout>
-                    <v-flex md3 offset-md1 class="index"
-                      >{{ value[0] }}:&nbsp;</v-flex
+                    <v-flex
+                      md3
+                      offset-md1
+                      class="index"
                     >
-                    <v-flex md6 offset-md1>
+                      {{ value[0] }}:&nbsp;
+                    </v-flex>
+                    <v-flex
+                      md6
+                      offset-md1
+                    >
                       <span>
                         <v-tooltip top>
                           <template v-slot:activator="{ on }">
@@ -75,10 +105,10 @@
                               :value="setGeneIndexBarChartRatio(value, 0)"
                               :color="setGeneIndexBarChartColor(value, 1)"
                               height="15"
-                              v-on="on"
                               rounded
                               striped
                               reactive
+                              v-on="on"
                             >
                               <template v-slot="{ value }">
                                 {{
@@ -108,12 +138,8 @@
 import * as d3 from "d3";
 
 export default {
-  name: "gene-details",
+  name: "GeneDetails",
   props: [],
-  mounted() {
-    // Fetch gene data once mounted
-    this.fetchData();
-  },
   data() {
     return {
       cellTypeNames: [],
@@ -128,107 +154,6 @@ export default {
       maxGeneMagnitude: 0.14907,
       sortOptions: ["default", "strength", "magnitude", "cell type name"]
     };
-  },
-  methods: {
-    async fetchData() {
-      this.loadedDictData = await d3.json("./top_abs_10_dict.json");
-      this.loadedGeneIdToNameDict = await d3.json("./gene_id_to_name.json");
-      this.loadedGeneIdToDescriptionDict = await d3.json(
-        "gene_id_to_description.json"
-      );
-    },
-    filterBySearchList(list) {
-      let globalThis = this;
-      let filterBySearchList = [];
-      list.forEach(element => {
-        let lowerCaseElement = element[0].toLowerCase();
-        if (lowerCaseElement.includes(globalThis.search.toLowerCase())) {
-          filterBySearchList.push(element);
-        }
-      });
-      return filterBySearchList;
-    },
-    geneNotEmpty() {
-      return this.geneSelected !== "";
-    },
-    navigateToGenePage() {
-      window.open(
-        "http://useast.ensembl.org/Homo_sapiens/Gene/Summary?g=" +
-          this.geneSelected
-      );
-    },
-    removeGeneDetails() {
-      this.$store.dispatch("changeGeneSelected", "");
-    },
-    returnToDefaultList() {
-      let list = [];
-      let globalThis = this;
-      for (const [key, value] of Object.entries(this.loadedDictData)) {
-        let geneArr = value;
-        for (let i = 0; i < geneArr.length; i++) {
-          if (geneArr[i][2] === globalThis.geneSelected) {
-            let cellName = key;
-            let geneValue = value[i][1].toFixed(this.fixedGeneDigits);
-            list.push([cellName, geneValue]);
-          }
-        }
-      }
-
-      return this.filterBySearchList(list);
-    },
-    setCellSelected(cellName) {
-      let curList = this.$store.getters.getCellSelected;
-      if (curList.length > 1) {
-        curList.pop();
-      }
-      curList.push(cellName);
-      this.$store.dispatch("changeCellSelected", curList);
-    },
-    sortBasedOnOption(option) {
-      let globalThis = this;
-      switch (option) {
-        case "default":
-          return this.filterBySearchList(this.filteredList);
-        case "strength":
-          return this.filterBySearchList(
-            this.filteredList.sort((a, b) =>
-              Math.abs(a[1]) > Math.abs(b[1]) ? -1 : 1
-            )
-          );
-        case "magnitude":
-          return this.filterBySearchList(
-            this.filteredList.sort((a, b) => (a[1] > b[1] ? -1 : 1))
-          );
-        case "cell type name":
-          return this.filterBySearchList(
-            this.filteredList.sort((a,b) => (a[0].toLowerCase() < b[0].toLowerCase() ? -1 : 1))
-          )
-      }
-    },
-    topGeneDataExist(topGenes, cellTypeName) {
-      return typeof topGenes[this.geneSelected] !== "undefined";
-    },
-
-    setGeneIndexBarChartRatio(geneValues, columnIndex) {
-      let globalThis = this;
-      let value = geneValues[1];
-      if (columnIndex == 0) {
-        return Math.abs(
-          ((value / globalThis.maxGeneMagnitude) * 100).toFixed(
-            globalThis.fixedGeneDigits
-          )
-        );
-      }
-    },
-
-    setGeneIndexBarChartColor(geneValues, columnIndex) {
-      let value = geneValues[1];
-      if (value >= 0) {
-        return "primary";
-      } else {
-        return "pink";
-      }
-    }
   },
   computed: {
     filteredGeneCellList() {
@@ -289,6 +214,110 @@ export default {
             ]);
           }
         }
+      }
+    }
+  },
+  mounted() {
+    // Fetch gene data once mounted
+    this.fetchData();
+  },
+  methods: {
+    async fetchData() {
+      this.loadedDictData = await d3.json("./top_abs_10_dict.json");
+      this.loadedGeneIdToNameDict = await d3.json("./gene_id_to_name.json");
+      this.loadedGeneIdToDescriptionDict = await d3.json(
+        "gene_id_to_description.json"
+      );
+    },
+    filterBySearchList(list) {
+      let globalThis = this;
+      let filterBySearchList = [];
+      list.forEach(element => {
+        let lowerCaseElement = element[0].toLowerCase();
+        if (lowerCaseElement.includes(globalThis.search.toLowerCase())) {
+          filterBySearchList.push(element);
+        }
+      });
+      return filterBySearchList;
+    },
+    geneNotEmpty() {
+      return this.geneSelected !== "";
+    },
+    navigateToGenePage() {
+      window.open(
+        "http://useast.ensembl.org/Homo_sapiens/Gene/Summary?g=" +
+          this.geneSelected
+      );
+    },
+    removeGeneDetails() {
+      this.$store.dispatch("changeGeneSelected", "");
+    },
+    returnToDefaultList() {
+      let list = [];
+      let globalThis = this;
+      for (const [key, value] of Object.entries(this.loadedDictData)) {
+        let geneArr = value;
+        for (let i = 0; i < geneArr.length; i++) {
+          if (geneArr[i][2] === globalThis.geneSelected) {
+            let cellName = key;
+            let geneValue = value[i][1].toFixed(this.fixedGeneDigits);
+            list.push([cellName, geneValue]);
+          }
+        }
+      }
+
+      return this.filterBySearchList(list);
+    },
+    setCellSelected(cellName) {
+      let curList = this.$store.getters.getCellSelected;
+      if (curList.length > 1) {
+        curList.pop();
+      }
+      curList.push(cellName);
+      this.$store.dispatch("changeCellSelected", curList);
+    },
+    sortBasedOnOption(option) {
+      switch (option) {
+        case "default":
+          return this.filterBySearchList(this.filteredList);
+        case "strength":
+          return this.filterBySearchList(
+            this.filteredList.sort((a, b) =>
+              Math.abs(a[1]) > Math.abs(b[1]) ? -1 : 1
+            )
+          );
+        case "magnitude":
+          return this.filterBySearchList(
+            this.filteredList.sort((a, b) => (a[1] > b[1] ? -1 : 1))
+          );
+        case "cell type name":
+          return this.filterBySearchList(
+            this.filteredList.sort((a,b) => (a[0].toLowerCase() < b[0].toLowerCase() ? -1 : 1))
+          )
+      }
+    },
+    topGeneDataExist(topGenes) {
+      return typeof topGenes[this.geneSelected] !== "undefined";
+    },
+
+    setGeneIndexBarChartRatio(geneValues, columnIndex) {
+      let globalThis = this;
+      let value = geneValues[1];
+      if (columnIndex == 0) {
+        return Math.abs(
+          ((value / globalThis.maxGeneMagnitude) * 100).toFixed(
+            globalThis.fixedGeneDigits
+          )
+        );
+      }
+    },
+
+    setGeneIndexBarChartColor(geneValues) {
+      let value = geneValues[1];
+      if (value >= 0) {
+        return "primary";
+      } else {
+        return "pink";
       }
     }
   }

@@ -1,8 +1,4 @@
 /*jshint esversion: 6 */
-// @ts-check
-// eslint-disable-next-line no-unused-vars
-// @ts-ignore
-import { Vertex } from "./graph.js";
 /**
  *
  * @param {number[]} lst

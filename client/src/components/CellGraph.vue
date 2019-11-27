@@ -1,15 +1,39 @@
 <template>
-  <v-layout row wrap>
+  <v-layout
+    row
+    wrap
+  >
     <v-flex md12>
-      <v-card :max-height="maxCardHeight" :color="$vuetify.theme.themes[this.$store.getters.getCurrentThemeMode].background">
+      <v-card
+        :max-height="maxCardHeight"
+        :color="
+          $vuetify.theme.themes[this.$store.getters.getCurrentThemeMode]
+            .background
+        "
+      >
         <v-card-title class="justify-center">
-          <h4 class="view-title">Graph View</h4>
+          <h4 class="view-title">
+            Graph View
+          </h4>
           <v-spacer />
-          <v-chip v-if="cellType1" class="ma-2">{{ cellType1 }}</v-chip>
-          <v-chip v-if="cellType2" class="ma-2">{{ cellType2 }}</v-chip>
+          <v-chip
+            v-if="cellType1"
+            class="ma-2"
+          >
+            {{ cellType1 }}
+          </v-chip>
+          <v-chip
+            v-if="cellType2"
+            class="ma-2"
+          >
+            {{ cellType2 }}
+          </v-chip>
         </v-card-title>
         <v-card-text>
-          <div ref="graph" id="graph"></div>
+          <div
+            id="graph"
+            ref="graph"
+          />
         </v-card-text>
       </v-card>
     </v-flex>
@@ -18,25 +42,26 @@
 
 <script>
 import * as d3 from "d3";
-import _ from "lodash";
 
 import * as config from "@/config";
 import * as util from "@/util";
 
 import { analyzeGraph } from "@/apis/graph.js";
-import { average, countCrossingsGraph, simpleSorter } from "@/apis/utils.js";
+import { simpleSorter } from "@/apis/utils.js";
 import { drawGraph } from "@/apis/draw.js";
 import { jsonToGraph } from "@/apis/structure.js";
 import { primaryParent } from "@/apis/tangler.js";
 import { treeLayout } from "@/apis/layout.js";
 
 export default {
-  name: "cell-graph",
+  name: "CellGraph",
   props: {
-    cellData: Object
-  },
-  mounted() {
-    this.fetchData();
+    cellData: {
+      type: Object,
+      default: function() {
+        return { message: "cell data is here" };
+      }
+    }
   },
   data() {
     return {
@@ -51,43 +76,6 @@ export default {
       selectedCellName: "",
       pathsDict: {}
     };
-  },
-  methods: {
-    async fetchData() {
-      let data = await d3.json("./top_abs_10_dict.json");
-      this.loadedDictData = data;
-    },
-
-    /**
-     * If any of these edge cases nodes are contained,
-     * return true (need to fade the edge in current case)
-     */
-    linkArrayEdgeCases(edgeCaseCheck) {
-      return (
-        edgeCaseCheck === "cell" ||
-        edgeCaseCheck === "native cell" ||
-        edgeCaseCheck === "eukaryotic cell"
-      );
-    },
-
-    /**
-     * Draw, layout and show graph on view
-     */
-    showGraph() {
-      let graph = jsonToGraph(this.cellData);
-      analyzeGraph(graph);
-      primaryParent(graph);
-      for (let i = 0; i < 20; i++) {
-        simpleSorter(graph, 3, i);
-      }
-      graph.links.forEach(
-        link =>
-          (link.color =
-            link.target.primaryParent == link.source ? "#42b983" : "#42b983")
-      );
-      treeLayout(graph);
-      drawGraph(graph, this.$refs.graph, this);
-    }
   },
   computed: {
     geneSelected: {
@@ -174,12 +162,11 @@ export default {
       let globalThis = this;
       let dict = this.loadedDictData;
       /* Reset default cell opacity(1) */
-      let cellReset = d3.select(this.$refs.graph).select("svg");
-      cellReset = d3.selectAll(".cell").style("opacity", 1);
+      d3.select(this.$refs.graph).select("svg");
+      d3.selectAll(".cell").style("opacity", 1);
       /* Reset link opacity(1) and width(0.5) */
-      let linkReset = d3.select(this.$refs.graph).select("svg");
-      linkReset = d3
-        .selectAll(".link")
+      d3.select(this.$refs.graph).select("svg");
+      d3.selectAll(".link")
         .style("opacity", 1.0)
         .attr("stroke-width", 0.5);
 
@@ -244,7 +231,7 @@ export default {
       d3.select(this.$refs.graph)
         .select("svg")
         .selectAll(".link")
-        .each(function(d) {
+        .each(function() {
           let linkArray = d3
             .select(this)
             .attr("id")
@@ -270,9 +257,48 @@ export default {
           }
         });
     }
+  },
+  mounted() {
+    this.fetchData();
+  },
+  methods: {
+    async fetchData() {
+      let data = await d3.json("./top_abs_10_dict.json");
+      this.loadedDictData = data;
+    },
+
+    /**
+     * If any of these edge cases nodes are contained,
+     * return true (need to fade the edge in current case)
+     */
+    linkArrayEdgeCases(edgeCaseCheck) {
+      return (
+        edgeCaseCheck === "cell" ||
+        edgeCaseCheck === "native cell" ||
+        edgeCaseCheck === "eukaryotic cell"
+      );
+    },
+
+    /**
+     * Draw, layout and show graph on view
+     */
+    showGraph() {
+      let graph = jsonToGraph(this.cellData);
+      analyzeGraph(graph);
+      primaryParent(graph);
+      for (let i = 0; i < 20; i++) {
+        simpleSorter(graph, 3, i);
+      }
+      graph.links.forEach(
+        link =>
+          (link.color =
+            link.target.primaryParent == link.source ? "#42b983" : "#42b983")
+      );
+      treeLayout(graph);
+      drawGraph(graph, this.$refs.graph, this);
+    }
   }
 };
 </script>
 
-<style scoped>
-</style>
+<style scoped></style>
