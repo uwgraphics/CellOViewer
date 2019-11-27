@@ -1,31 +1,26 @@
 # Cell Network Viewer
 
 ## Project setup
-**client:**
+**In client folder**
 ```
+cd client
 npm install
 ```
 
 ### Compiles and hot-reloads for development
-**client:**
+**In client folder**
 ```
 npm run serve
 ```
 
 ### Compiles and minifies for production
-**client:**
+**In client folder**
 ```
 npm run build
 ```
 
-### Run your tests
-**client:**
-```
-npm run test
-```
-
 ### Lints and fixes files
-**client:**
+**In client folder**
 ```
 npm run lint
 ```
