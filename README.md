@@ -1,4 +1,4 @@
-# [Cell Network Viewer](https://uwgraphics.github.io/CellNetworkViewer/) ![License](https://img.shields.io/badge/License-BSD%203--Clause-green.svg)
+# [CellO Viewer](https://uwgraphics.github.io/CellNetworkViewer/) ![License](https://img.shields.io/badge/License-BSD%203--Clause-green.svg)
 
 ## Description
 Explore gene expression across the Cell Ontology.

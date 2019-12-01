@@ -11,7 +11,7 @@
           :label="selectedTheme"
           class="switch"
         />
-        <Header msg="Cell Network Viewer" />
+        <Header msg="CellO Viewer" />
       </v-container>
 
       <!--Body Section-->
