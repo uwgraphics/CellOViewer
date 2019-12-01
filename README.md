@@ -1,5 +1,8 @@
 # [Cell Network Viewer](https://uwgraphics.github.io/CellNetworkViewer/) ![License](https://img.shields.io/badge/License-BSD%203--Clause-green.svg)
 
+## Description
+Explore gene expression across the Cell Ontology.
+
 ## Project setup
 ```
 cd client
@@ -27,7 +30,7 @@ npm run lint
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
 
-## Documentations
+## Usage
 Coming soon.
 
 ## License
