@@ -1,34 +1,32 @@
-# Cell Network Viewer
+# [Cell Network Viewer](https://uwgraphics.github.io/CellNetworkViewer/) ![License](https://img.shields.io/badge/License-BSD%203--Clause-green.svg)
 
 ## Project setup
-**client:**
 ```
+cd client
 npm install
 ```
 
 ### Compiles and hot-reloads for development
-**client:**
+**In client folder**
 ```
 npm run serve
 ```
 
 ### Compiles and minifies for production
-**client:**
+**In client folder**
 ```
 npm run build
 ```
 
-### Run your tests
-**client:**
-```
-npm run test
-```
-
 ### Lints and fixes files
-**client:**
+**In client folder**
 ```
 npm run lint
 ```
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
+
+### License
+
+Cell Network Viewer is [BSD 3-clause licensed](./LICENSE).
