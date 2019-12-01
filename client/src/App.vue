@@ -1,29 +1,24 @@
 <template>
   <div id="app">
-    <v-app
-      :dark="setTheme"
-    >
+    <v-app :dark="setTheme">
       <!--Header Section-->
       <v-container fluid>
-        <v-switch
-          v-model="goDark"
-          color="primary"
-          :label="selectedTheme"
-          class="switch"
-        />
+        <v-layout>
+          <img class="logo" color="primary" src="../public/cello.svg" />
+          <v-spacer></v-spacer>
+          <v-switch
+            v-model="goDark"
+            color="primary"
+            :label="selectedTheme"
+            class="switch"
+          />
+        </v-layout>
         <Header msg="CellO Viewer" />
       </v-container>
 
       <!--Body Section-->
-      <v-container
-        bg
-        grid-list-md
-        fluid
-      >
-        <v-layout
-          row
-          wrap
-        >
+      <v-container bg grid-list-md fluid>
+        <v-layout row wrap>
           <!-- 
           Search View 
           -->
@@ -37,10 +32,7 @@
             <Graph :cell-data="this.$store.getters.getCellTypeGraphData" />
           </v-flex>
         </v-layout>
-        <v-layout
-          row
-          wrap
-        >
+        <v-layout row wrap>
           <!-- 
           Gene Details View 
           -->
@@ -123,6 +115,11 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
+}
+.logo {
+  margin: 10px;
+  height: 48px;
+  width: 48px;
 }
 .switch {
   margin: 20px;
