@@ -117,12 +117,12 @@ export default {
   text-align: center;
 }
 .logo {
-  margin: 10px;
+  margin: 5px;
   height: 48px;
   width: 48px;
 }
 .switch {
-  margin: 20px;
+  margin: 10px;
 }
 a,
 h3 {

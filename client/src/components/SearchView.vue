@@ -1,5 +1,9 @@
 <template>
-  <v-layout row wrap align-center>
+  <v-layout
+    row
+    wrap
+    align-center
+  >
     <v-flex md12>
       <v-card
         max-height="600"
@@ -32,7 +36,10 @@
               }"
             >
               <v-layout>
-                <v-flex md9 sm12>
+                <v-flex
+                  md9
+                  sm12
+                >
                   <v-text-field
                     v-model="search"
                     append-icon="search"
@@ -43,7 +50,10 @@
                   />
                 </v-flex>
                 <v-spacer />
-                <v-flex md3 sm12>
+                <v-flex
+                  md3
+                  sm12
+                >
                   <v-select
                     v-model="option"
                     :items="sortOptions"
@@ -58,7 +68,10 @@
                 class="list"
                 :class="{ 'max-height': listHeight }"
               >
-                <v-flex v-if="loaded && listLocalCopy" md12>
+                <v-flex
+                  v-if="loaded && listLocalCopy"
+                  md12
+                >
                   <v-list
                     :style="{
                       background:
@@ -82,16 +95,23 @@
                         >
                           {{ keyValuePair[0] }}:&nbsp;
                         </v-flex>
-                        <v-flex v-if="keyValuePair[1]" md6 offset-md1>
+                        <v-flex
+                          v-if="keyValuePair[1]"
+                          md6
+                          offset-md1
+                        >
+                          <!-- Neighboring values -->
                           <v-list
                             v-for="(neighbor, index) in keyValuePair[1]"
                             :key="index"
                             dense
                           >
-                            <div v-if="index === keyValuePair[1].length - 1">
+                            <div v-if="keyValuePair[1].length == 0">
                               {{ neighbor }}
                             </div>
-                            <div v-else>{{ neighbor }},</div>
+                            <div v-else>
+                              {{ neighbor }},
+                            </div>
                           </v-list>
                         </v-flex>
                       </v-layout>
@@ -105,7 +125,10 @@
           <v-tab-item>
             <v-card-text>
               <v-layout>
-                <v-flex md12 sm12>
+                <v-flex
+                  md12
+                  sm12
+                >
                   <v-text-field
                     v-model="geneSearch"
                     append-icon="search"
@@ -116,7 +139,11 @@
                   />
                 </v-flex>
               </v-layout>
-              <virtual-list :size="40" :remain="10" class="list">
+              <virtual-list
+                :size="40"
+                :remain="10"
+                class="list"
+              >
                 <v-list-item
                   v-for="item of filteredGeneData"
                   :key="item.id"
@@ -128,7 +155,10 @@
                       {{ loadedGeneIdToNameDict[item] }}:&nbsp;
                     </v-list-item-title>
                     <v-list-item-subtitle>
-                      <a class="web-link" @click="navigateToGenePage(item)">
+                      <a
+                        class="web-link"
+                        @click="navigateToGenePage(item)"
+                      >
                         {{ item }}
                       </a>
                     </v-list-item-subtitle>

@@ -30,13 +30,12 @@
             </v-icon>
           </v-btn>
         </v-card-title>
-        <v-card-text>
+        <v-card-text v-if="geneNotEmpty()">
           <v-layout
             row
             wrap
           >
             <v-flex
-              v-if="geneNotEmpty()"
               md9
               sm12
             >

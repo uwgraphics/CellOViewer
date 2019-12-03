@@ -31,7 +31,7 @@
           </v-btn>
         </v-card-title>
 
-        <v-card-text>
+        <v-card-text v-if="cellSelectedExist && geneDataExist(cellSelected[0])">
           <v-layout row>
             <v-flex
               md12
@@ -73,7 +73,6 @@
                 wrap
               >
                 <v-flex
-                  v-if="cellSelectedExist && geneDataExist(cellSelected[0])"
                   md6
                   sm6
                 >
@@ -426,7 +425,7 @@ export default {
     getDefaultCellTypes() {
       let cellArr = this.$store.getters.getCellSelected;
       let geneCellCopy = [];
-      console.log(this.loadedGeneData[cellArr[0]]);
+
       geneCellCopy.push(this.loadedGeneData[cellArr[0]]);
       if (cellArr.length > 1) {
         geneCellCopy.push(this.loadedGeneData[cellArr[1]]);
