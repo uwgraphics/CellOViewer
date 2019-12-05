@@ -41,7 +41,7 @@
                   sm12
                 >
                   <v-text-field
-                    v-model="search"
+                    v-model="cellTypeSearchEntry"
                     append-icon="search"
                     label="search"
                     single-line
@@ -84,7 +84,7 @@
                       v-for="(keyValuePair, index) in filteredData"
                       :key="index"
                       class="list"
-                      @click="setCellSelected(keyValuePair[0])"
+                      @click="setSelectedCellTypeList(keyValuePair[0])"
                     >
                       <v-layout>
                         <v-flex
@@ -130,7 +130,7 @@
                   sm12
                 >
                   <v-text-field
-                    v-model="geneSearch"
+                    v-model="geneSearchEntry"
                     append-icon="search"
                     label="search"
                     single-line
@@ -215,7 +215,7 @@ export default {
         return this.listLocalCopy;
       } else {
         return this.listLocalCopy.filter(cell => {
-          let searchResult = this.search.toLowerCase();
+          let searchResult = this.cellTypeSearchEntry.toLowerCase();
           let caseInsesitiveCell0 = cell[0].toLowerCase();
           let caseInsesitiveCellList = cell[1];
           // Make all cell name in corresponding list to be lowercase
@@ -236,7 +236,7 @@ export default {
     filteredGeneData() {
       let globalThis = this;
 
-      if (this.$store.getters.getGeneSearchFromSearchView === "") {
+      if (this.$store.getters.getGeneSearchEntry === "") {
         return this.loadedGeneData;
       } else {
         return this.loadedGeneData.filter(gene => {
@@ -244,7 +244,7 @@ export default {
             return;
           }
           return globalThis.loadedGeneIdToNameDict[gene].includes(
-            this.geneSearch
+            this.geneSearchEntry
           );
         });
       }
@@ -262,20 +262,20 @@ export default {
         this.$store.dispatch("changeOption", option);
       }
     },
-    search: {
+    cellTypeSearchEntry: {
       get() {
-        return this.$store.getters.getSearch;
+        return this.$store.getters.getCellTypeSearchEntry;
       },
       set(input) {
-        this.$store.dispatch("changeSearch", input);
+        this.$store.dispatch("changeCellTypeSearchEntry", input);
       }
     },
-    geneSearch: {
+    geneSearchEntry: {
       get() {
-        return this.$store.getters.getGeneSearchFromSearchView;
+        return this.$store.getters.getGeneSearchEntry;
       },
       set(input) {
-        this.$store.dispatch("changeGeneSearchFromSearchView", input);
+        this.$store.dispatch("changeGeneSearchEntry", input);
       }
     }
   },
@@ -286,14 +286,14 @@ export default {
     },
     geneSelected() {
       let globalThis = this;
-      this.$store.dispatch("changeTopGeneCellList", []);
+      this.$store.dispatch("changeCellTypesThatHaveSelectedGeneAsTopValue", []);
       for (const [key, value] of Object.entries(this.loadedDictData)) {
         let geneArr = value;
         for (let i = 0; i < geneArr.length; i++) {
           if (geneArr[i][2] === globalThis.geneSelected) {
             let cellName = key;
             let geneValue = value[i][1];
-            globalThis.$store.dispatch("addToTopGeneCellList", [
+            globalThis.$store.dispatch("addToCellTypesThatHaveSelectedGeneAsTopValue", [
               cellName,
               geneValue
             ]);
@@ -314,13 +314,13 @@ export default {
         "gene_id_to_description.json"
       );
     },
-    setCellSelected(cellName) {
-      let curList = this.$store.getters.getCellSelected;
+    setSelectedCellTypeList(cellName) {
+      let curList = this.$store.getters.getSelectedCellTypeList;
       while (curList.length >= this.listSize) {
         curList.pop();
       }
       curList.push(cellName);
-      this.$store.dispatch("changeCellSelected", curList);
+      this.$store.dispatch("changeSelectedCellTypeList", curList);
     },
     generateListCopy(originalList) {
       return Object.entries(_.cloneDeep(originalList));
@@ -331,7 +331,7 @@ export default {
       );
     },
     setGeneItem(gene) {
-      this.$store.dispatch("changeGeneSelected", gene);
+      this.$store.dispatch("changeSelectedGene", gene);
     },
     sortBasedOnOption(option) {
       let globalThis = this;

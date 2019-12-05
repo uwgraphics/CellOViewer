@@ -83,14 +83,14 @@ export default {
         return this.$store.getters.getGeneSelected;
       }
     },
-    cellSelected: {
+    selectedCellTypeList: {
       get() {
-        return this.$store.getters.getCellSelected;
+        return this.$store.getters.getSelectedCellTypeList;
       }
     },
-    topGeneCellList: {
+    cellTypesThatHaveSelectedGeneAsTopValue: {
       get() {
-        return this.$store.getters.getTopGeneCellList;
+        return this.$store.getters.getCellTypesThatHaveSelectedGeneAsTopValue;
       }
     },
     search: {
@@ -118,8 +118,8 @@ export default {
       }
       this.showGraph();
     },
-    cellSelected() {
-      let curList = this.cellSelected;
+    selectedCellTypeList() {
+      let curList = this.selectedCellTypeList;
       this.cellType1 = "";
       this.cellType2 = "";
 
@@ -148,12 +148,12 @@ export default {
     },
     // Maintain selected cell type in display list
     selectedCellName() {
-      let curList = this.cellSelected;
+      let curList = this.selectedCellTypeList;
       while (curList.length >= this.listSize) {
         curList.pop();
       }
       curList.push(this.selectedCellName);
-      this.$store.dispatch("changeCellSelected", curList);
+      this.$store.dispatch("changeSelectedCellTypeList", curList);
     },
     /**
      * Fade cell types that does not contain selected gene as top 10

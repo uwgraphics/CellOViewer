@@ -23,7 +23,7 @@
             color="red"
             justify-right
             dark
-            @click="removeCellSelected"
+            @click="popFromSelectedCellTypeList"
           >
             <v-icon dark>
               remove_circle
@@ -31,7 +31,7 @@
           </v-btn>
         </v-card-title>
 
-        <v-card-text v-if="cellSelectedExist && geneDataExist(cellSelected[0])">
+        <v-card-text v-if="selectedCellTypeListNotEmpty() && geneDataExist(selectedCellTypeList[0])">
           <v-layout row>
             <v-flex
               md12
@@ -77,7 +77,7 @@
                   sm6
                 >
                   <h3 class="sub-title">
-                    {{ cellSelected[0] }}
+                    {{ selectedCellTypeList[0] }}
                   </h3>
                   <v-list
                     class="list"
@@ -155,13 +155,13 @@
                 </v-flex>
                 <v-flex
                   v-if="
-                    cellSelected.length == 2 && geneDataExist(cellSelected[1])
+                    selectedCellTypeList.length == 2 && geneDataExist(selectedCellTypeList[1])
                   "
                   md6
                   sm6
                 >
                   <h3 class="sub-title">
-                    {{ cellSelected[1] }}
+                    {{ selectedCellTypeList[1] }}
                   </h3>
                   <v-list
                     class="list"
@@ -266,9 +266,9 @@ export default {
     };
   },
   computed: {
-    cellSelected: {
+    selectedCellTypeList: {
       get() {
-        return this.$store.getters.getCellSelected;
+        return this.$store.getters.getSelectedCellTypeList;
       }
     },
     currentCellTypes() {
@@ -285,7 +285,7 @@ export default {
     },
     filteredData() {
       let globalThis = this;
-      if (this.$store.getters.getGeneSearch === "") {
+      if (this.$store.getters.getGeneSearchEntry === "") {
         return this.currentCellTypes;
       } else {
         let resultArr = [];
@@ -329,10 +329,10 @@ export default {
     },
     search: {
       get() {
-        return this.$store.getters.getGeneSearch;
+        return this.$store.getters.getGeneSearchEntry;
       },
       set(input) {
-        this.$store.dispatch("changeGeneSearch", input);
+        this.$store.dispatch("changeGeneSearchEntry", input);
       }
     },
     selectedTheme() {
@@ -340,14 +340,14 @@ export default {
     }
   },
   watch: {
-    cellSelected() {
-      let cellArr = this.$store.getters.getCellSelected;
-      this.$store.dispatch("changeCellDetails", []);
+    selectedCellTypeList() {
+      let cellArr = this.$store.getters.getSelectedCellTypeList;
+      this.$store.dispatch("changeCellTypeDetailsList", []);
       if (cellArr.length === 0) {
         return;
       }
       this.geneCellCopy1 = this.loadedGeneData[cellArr[0]];
-      this.$store.dispatch("addToCellDetails", this.geneCellCopy1);
+      this.$store.dispatch("addToCellTypeDetailsList", this.geneCellCopy1);
 
       let geneDataColumnOne = [];
       for (const geneData of this.geneCellCopy1) {
@@ -356,7 +356,7 @@ export default {
 
       if (cellArr.length > 1) {
         this.geneCellCopy2 = this.loadedGeneData[cellArr[1]];
-        this.$store.dispatch("addToCellDetails", this.geneCellCopy2);
+        this.$store.dispatch("addToCellTypeDetailsList", this.geneCellCopy2);
         let geneDataColumnTwo = [];
         for (const geneData of this.geneCellCopy2) {
           geneDataColumnTwo.push(Number(geneData[1]));
@@ -377,9 +377,9 @@ export default {
       
       switch (option) {
         case "default":
-          this.filteredData[0] = this.loadedGeneData[this.$store.getters.getCellSelected[0]];
+          this.filteredData[0] = this.loadedGeneData[this.$store.getters.getSelectedCellTypeList[0]];
           if (this.filteredData.length > 1) {
-            this.filteredData[1] = this.loadedGeneData[this.$store.getters.getCellSelected[1]];
+            this.filteredData[1] = this.loadedGeneData[this.$store.getters.getSelectedCellTypeList[1]];
           }
           return;
         case "magnitude":
@@ -423,7 +423,7 @@ export default {
       this.loadedGeneIdToNameDict = await d3.json("./gene_id_to_name.json");
     },
     getDefaultCellTypes() {
-      let cellArr = this.$store.getters.getCellSelected;
+      let cellArr = this.$store.getters.getSelectedCellTypeList;
       let geneCellCopy = [];
 
       geneCellCopy.push(this.loadedGeneData[cellArr[0]]);
@@ -479,7 +479,7 @@ export default {
       return "#303030";
     },
     sortCells() {
-      let cellArr = this.$store.getters.getCellSelected;
+      let cellArr = this.$store.getters.getSelectedCellTypeList;
       let geneCellCopy = [];
       geneCellCopy.push(
         this.loadedGeneData[cellArr[0]]
@@ -495,17 +495,17 @@ export default {
       }
       return geneCellCopy;
     },
-    removeCellSelected() {
-      this.$store.dispatch("popFromCellSelected");
+    popFromSelectedCellTypeList() {
+      this.$store.dispatch("popFromSelectedCellTypeList");
     },
     setGeneItem(value) {
-      this.$store.dispatch("changeGeneSelected", value[2]);
+      this.$store.dispatch("changeSelectedGene", value[2]);
     },
     setGeneNameOnHover(index, value) {
       this.geneNameOnHover = value[2];
     },
-    cellSelectedExist() {
-      return this.$store.getters.getCellSelected.length !== 0;
+    selectedCellTypeListNotEmpty() {
+      return this.$store.getters.getSelectedCellTypeList.length != 0;
     },
     clearGeneNameOnHover() {
       this.geneNameOnHover = "";

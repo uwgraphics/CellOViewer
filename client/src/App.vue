@@ -23,13 +23,13 @@
           Search View 
           -->
           <v-flex md5>
-            <SearchView :cell-data="this.$store.getters.getCellTypeGraphData" />
+            <SearchView :cell-data="this.$store.getters.getCellTypeGraphStructureData" />
           </v-flex>
           <!-- 
           Graph View 
           -->
           <v-flex md7>
-            <Graph :cell-data="this.$store.getters.getCellTypeGraphData" />
+            <Graph :cell-data="this.$store.getters.getCellTypeGraphStructureData" />
           </v-flex>
         </v-layout>
         <v-layout row wrap>
@@ -102,8 +102,8 @@ export default {
   methods: {
     // Fetch all json data and store it in vuex for children components to use
     async fetchData() {
-      let cellTypeGraphData = await d3.json("./cell_type_graph.json");
-      this.$store.dispatch("changeCellTypeGraphData", cellTypeGraphData);
+      let cellTypeGraphStructureData = await d3.json("./cell_type_graph.json");
+      this.$store.dispatch("changeCellTypeGraphStructureData", cellTypeGraphStructureData);
     }
   }
 };
