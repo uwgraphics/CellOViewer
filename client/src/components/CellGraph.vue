@@ -1,8 +1,5 @@
 <template>
-  <v-layout
-    row
-    wrap
-  >
+  <v-layout row wrap>
     <v-flex md12>
       <v-card
         :max-height="maxCardHeight"
@@ -16,24 +13,15 @@
             Graph View
           </h4>
           <v-spacer />
-          <v-chip
-            v-if="cellType1"
-            class="ma-2"
-          >
+          <v-chip v-if="cellType1" class="ma-2">
             {{ cellType1 }}
           </v-chip>
-          <v-chip
-            v-if="cellType2"
-            class="ma-2"
-          >
+          <v-chip v-if="cellType2" class="ma-2">
             {{ cellType2 }}
           </v-chip>
         </v-card-title>
         <v-card-text>
-          <div
-            id="graph"
-            ref="graph"
-          />
+          <div id="graph" ref="graph" />
         </v-card-text>
       </v-card>
     </v-flex>
@@ -55,6 +43,7 @@ import { treeLayout } from "@/apis/layout.js";
 
 export default {
   name: "CellGraph",
+
   props: {
     cellData: {
       type: Object,
@@ -63,6 +52,7 @@ export default {
       }
     }
   },
+
   data() {
     return {
       cellType1: "",
@@ -77,22 +67,26 @@ export default {
       pathsDict: {}
     };
   },
+
   computed: {
     geneSelected: {
       get() {
         return this.$store.getters.getGeneSelected;
       }
     },
+
     selectedCellTypeList: {
       get() {
         return this.$store.getters.getSelectedCellTypeList;
       }
     },
+
     cellTypesThatHaveSelectedGeneAsTopValue: {
       get() {
         return this.$store.getters.getCellTypesThatHaveSelectedGeneAsTopValue;
       }
     },
+
     search: {
       get() {
         return this.$store.getters.getSearch;
@@ -102,6 +96,7 @@ export default {
       }
     }
   },
+
   watch: {
     // This is entry point of where the graph starts rendering
     cellData() {
@@ -118,6 +113,7 @@ export default {
       }
       this.showGraph();
     },
+
     selectedCellTypeList() {
       let curList = this.selectedCellTypeList;
       this.cellType1 = "";
@@ -146,6 +142,7 @@ export default {
           .style("fill", config.CELL_TYPE_CHANGED_COLOR);
       }
     },
+
     // Maintain selected cell type in display list
     selectedCellName() {
       let curList = this.selectedCellTypeList;
@@ -155,6 +152,7 @@ export default {
       curList.push(this.selectedCellName);
       this.$store.dispatch("changeSelectedCellTypeList", curList);
     },
+
     /**
      * Fade cell types that does not contain selected gene as top 10
      */
@@ -258,9 +256,11 @@ export default {
         });
     }
   },
+  
   mounted() {
     this.fetchData();
   },
+  
   methods: {
     async fetchData() {
       let data = await d3.json("./top_abs_10_dict.json");

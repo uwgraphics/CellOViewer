@@ -23,13 +23,17 @@
           Search View 
           -->
           <v-flex md5>
-            <SearchView :cell-data="this.$store.getters.getCellTypeGraphStructureData" />
+            <SearchView
+              :cell-data="this.$store.getters.getCellTypeGraphStructureData"
+            />
           </v-flex>
           <!-- 
           Graph View 
           -->
           <v-flex md7>
-            <Graph :cell-data="this.$store.getters.getCellTypeGraphStructureData" />
+            <Graph
+              :cell-data="this.$store.getters.getCellTypeGraphStructureData"
+            />
           </v-flex>
         </v-layout>
         <v-layout row wrap>
@@ -68,6 +72,7 @@ import * as d3 from "d3";
 
 export default {
   name: "App",
+
   components: {
     Header,
     SearchView,
@@ -75,11 +80,13 @@ export default {
     GeneDetails,
     CellDetails
   },
+
   data: function() {
     return {
       goDark: true
     };
   },
+
   computed: {
     // Display which theme is currently on
     selectedTheme() {
@@ -96,14 +103,19 @@ export default {
       }
     }
   },
+
   mounted() {
     this.fetchData();
   },
+
   methods: {
     // Fetch all json data and store it in vuex for children components to use
     async fetchData() {
       let cellTypeGraphStructureData = await d3.json("./cell_type_graph.json");
-      this.$store.dispatch("changeCellTypeGraphStructureData", cellTypeGraphStructureData);
+      this.$store.dispatch(
+        "changeCellTypeGraphStructureData",
+        cellTypeGraphStructureData
+      );
     }
   }
 };

@@ -229,7 +229,9 @@ import { COLOR_RAMP } from "../config";
 
 export default {
   name: "CellDetails",
+
   props: [],
+
   data() {
     return {
       cardHighlight: false,
@@ -241,6 +243,7 @@ export default {
       geneNameOnHover: ""
     };
   },
+
   computed: {
     selectedCellTypeList: {
       get() {
@@ -320,6 +323,7 @@ export default {
       return this.onHover === true ? "highlight-theme" : "";
     }
   },
+
   watch: {
     selectedCellTypeList() {
       let cellArr = this.$store.getters.getSelectedCellTypeList;
@@ -345,9 +349,11 @@ export default {
       }
     }
   },
+
   mounted() {
     this.fetchData();
   },
+
   methods: {
     sortBasedOnOption(option) {
       let globalThis = this;
@@ -398,15 +404,18 @@ export default {
           return;
       }
     },
+
     swapEntryPositions(list, indexA, indexB) {
       let temp = list[indexA];
       list[indexA] = list[indexB];
       list[indexB] = temp;
     },
+
     async fetchData() {
       this.loadedGeneData = await d3.json("./top_abs_10_dict.json");
       this.loadedGeneIdToNameDict = await d3.json("./gene_id_to_name.json");
     },
+
     getDefaultCellTypes() {
       let cellArr = this.$store.getters.getSelectedCellTypeList;
       let geneCellCopy = [];
@@ -417,6 +426,7 @@ export default {
       }
       return geneCellCopy;
     },
+
     /**
      * Get gene color by column and gene index, if negative display pink
      */
@@ -429,6 +439,7 @@ export default {
         return "pink";
       }
     },
+
     setGeneIndexBarChartRatio(index, value) {
       let globalThis = this;
       let numberValue = parseFloat(value.split(",")[1]);
@@ -438,6 +449,7 @@ export default {
         )
       );
     },
+
     setOverlapGeneBackgroundColor(index, value, columnIndex) {
       let globalThis = this;
       let cellName = value[2];
@@ -463,6 +475,7 @@ export default {
       }
       return "#303030";
     },
+
     sortCells() {
       let cellArr = this.$store.getters.getSelectedCellTypeList;
       let geneCellCopy = [];
@@ -480,21 +493,27 @@ export default {
       }
       return geneCellCopy;
     },
+
     popFromSelectedCellTypeList() {
       this.$store.dispatch("popFromSelectedCellTypeList");
     },
+
     setGeneItem(value) {
       this.$store.dispatch("changeSelectedGene", value[2]);
     },
+
     setGeneNameOnHover(index, value) {
       this.geneNameOnHover = value[2];
     },
+
     selectedCellTypeListNotEmpty() {
       return this.$store.getters.getSelectedCellTypeList.length != 0;
     },
+
     clearGeneNameOnHover() {
       this.geneNameOnHover = "";
     },
+
     geneDataExist(cellTypeName) {
       if (this.loadedGeneData[cellTypeName] === undefined) {
         return false;

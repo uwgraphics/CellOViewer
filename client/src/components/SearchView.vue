@@ -183,9 +183,11 @@ import _ from "lodash";
 
 export default {
   name: "CellList",
+  
   components: {
     "virtual-list": virtualList
   },
+
   props: {
     cellData: {
       type: Object,
@@ -194,6 +196,7 @@ export default {
       }
     }
   },
+
   data() {
     return {
       cardHeight: this.$store.getters.getCardHeight,
@@ -209,6 +212,7 @@ export default {
       sortOptions: ["default", "alphabetical"]
     };
   },
+
   computed: {
     filteredData() {
       if (this.$store.getters.getSearch === "") {
@@ -273,6 +277,7 @@ export default {
         this.$store.dispatch("changeCellTypeSearchEntryInSearchView", input);
       }
     },
+
     geneSearchEntry: {
       get() {
         return this.$store.getters.getGeneSearchEntry;

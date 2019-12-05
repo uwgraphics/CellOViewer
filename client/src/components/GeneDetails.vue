@@ -138,7 +138,9 @@ import * as d3 from "d3";
 
 export default {
   name: "GeneDetails",
+
   props: [],
+  
   data() {
     return {
       cellTypeNames: [],
@@ -154,12 +156,14 @@ export default {
       sortOptions: ["default", "strength", "magnitude", "cell type name"]
     };
   },
+
   computed: {
     filteredGeneCellList() {
       return this.$store.getters.getGeneSortOption === "default"
         ? this.returnToDefaultList()
         : this.sortBasedOnOption(this.$store.getters.getGeneSortOption);
     },
+
     geneSelected: {
       get() {
         return this.$store.getters.getSelectedGene;
@@ -168,6 +172,7 @@ export default {
         this.$store.dispatch("changeSelectedGene", option);
       }
     },
+
     option: {
       get() {
         return this.$store.getters.getGeneSortOption;
@@ -176,6 +181,7 @@ export default {
         this.$store.dispatch("changeGeneSortOption", option);
       }
     },
+
     search: {
       get() {
         return this.$store.getters.getCellTypeSearchEntryInGeneDetailsView;
@@ -185,6 +191,7 @@ export default {
       }
     }
   },
+
   watch: {
     geneSelected() {
       // Change sorting back to default
@@ -228,6 +235,7 @@ export default {
         "gene_id_to_description.json"
       );
     },
+
     filterBySearchList(list) {
       let globalThis = this;
       let filterBySearchList = [];
@@ -239,18 +247,22 @@ export default {
       });
       return filterBySearchList;
     },
+
     geneNotEmpty() {
       return this.geneSelected !== "";
     },
+
     navigateToGenePage() {
       window.open(
         "http://useast.ensembl.org/Homo_sapiens/Gene/Summary?g=" +
           this.geneSelected
       );
     },
+
     removeGeneDetails() {
       this.$store.dispatch("changeSelectedGene", "");
     },
+
     returnToDefaultList() {
       let list = [];
       let globalThis = this;
@@ -267,6 +279,7 @@ export default {
 
       return this.filterBySearchList(list);
     },
+
     setSelectedCellTypeList(cellName) {
       let curList = this.$store.getters.getSelectedCellTypeList;
       if (curList.length > 1) {
@@ -275,6 +288,7 @@ export default {
       curList.push(cellName);
       this.$store.dispatch("changeSelectedCellTypeList", curList);
     },
+
     sortBasedOnOption(option) {
       switch (option) {
         case "default":
@@ -295,6 +309,7 @@ export default {
           )
       }
     },
+
     topGeneDataExist(topGenes) {
       return typeof topGenes[this.geneSelected] !== "undefined";
     },
