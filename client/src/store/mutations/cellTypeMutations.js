@@ -20,8 +20,8 @@ let cellTypeMutations = {
     state.cell_type_graph_structure_data = payload;
   },
 
-  CHANGE_CELL_TYPE_SEARCH_ENTRY(state, payload) {
-    state.cell_type_search_entry = payload;
+  CHANGE_CELL_TYPE_SEARCH_ENTRY_IN_SEARCH_VIEW(state, payload) {
+    state.cell_type_search_entry_in_search_view = payload;
   },
 
   CHANGE_CELL_TYPE_SEARCH_ENTRY_IN_GENE_DETAILS_VIEW(state, payload) {

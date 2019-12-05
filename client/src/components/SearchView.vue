@@ -41,7 +41,7 @@
                   sm12
                 >
                   <v-text-field
-                    v-model="cellTypeSearchEntry"
+                    v-model="search"
                     append-icon="search"
                     label="search"
                     single-line
@@ -215,7 +215,7 @@ export default {
         return this.listLocalCopy;
       } else {
         return this.listLocalCopy.filter(cell => {
-          let searchResult = this.cellTypeSearchEntry.toLowerCase();
+          let searchResult = this.search.toLowerCase();
           let caseInsesitiveCell0 = cell[0].toLowerCase();
           let caseInsesitiveCellList = cell[1];
           // Make all cell name in corresponding list to be lowercase
@@ -265,12 +265,12 @@ export default {
       }
     },
 
-    cellTypeSearchEntry: {
+    search: {
       get() {
-        return this.$store.getters.getCellTypeSearchEntry;
+        return this.$store.getters.getCellTypeSearchEntryInSearchView;
       },
       set(input) {
-        this.$store.dispatch("changeCellTypeSearchEntry", input);
+        this.$store.dispatch("changeCellTypeSearchEntryInSearchView", input);
       }
     },
     geneSearchEntry: {

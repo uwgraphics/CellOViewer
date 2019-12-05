@@ -1,9 +1,5 @@
 <template>
-  <v-layout
-    row
-    wrap
-    align-center
-  >
+  <v-layout row wrap align-center>
     <v-flex md12>
       <v-card
         max-height="1300"
@@ -31,18 +27,17 @@
           </v-btn>
         </v-card-title>
 
-        <v-card-text v-if="selectedCellTypeListNotEmpty() && geneDataExist(selectedCellTypeList[0])">
+        <v-card-text
+          v-if="
+            selectedCellTypeListNotEmpty() &&
+              geneDataExist(selectedCellTypeList[0])
+          "
+        >
           <v-layout row>
-            <v-flex
-              md12
-              sm12
-            >
+            <v-flex md12 sm12>
               <v-layout>
                 <!-- Search Box -->
-                <v-flex
-                  md9
-                  sm12
-                >
+                <v-flex md9 sm12>
                   <v-text-field
                     v-model="search"
                     append-icon="search"
@@ -54,10 +49,7 @@
                 </v-flex>
 
                 <!-- Sort Box -->
-                <v-flex
-                  md3
-                  sm12
-                >
+                <v-flex md3 sm12>
                   <v-select
                     v-model="option"
                     :items="sortOptions"
@@ -68,14 +60,8 @@
               </v-layout>
 
               <!-- Cell Type Top Gene list -->
-              <v-layout
-                row
-                wrap
-              >
-                <v-flex
-                  md6
-                  sm6
-                >
+              <v-layout row wrap>
+                <v-flex md6 sm6>
                   <h3 class="sub-title">
                     {{ selectedCellTypeList[0] }}
                   </h3>
@@ -102,18 +88,12 @@
                       @mouseleave="clearGeneNameOnHover()"
                     >
                       <v-layout>
-                        <v-flex
-                          md5
-                          sm5
-                        >
-                          <span
-                            class="index"
-                          >{{ loadedGeneIdToNameDict[value[2]] }}:</span>
+                        <v-flex md5 sm5>
+                          <span class="index"
+                            >{{ loadedGeneIdToNameDict[value[2]] }}:</span
+                          >
                         </v-flex>
-                        <v-flex
-                          md7
-                          sm7
-                        >
+                        <v-flex md7 sm7>
                           <span>
                             <v-tooltip top>
                               <template v-slot:activator="{ on }">
@@ -143,7 +123,8 @@
                                         maxGeneMagnitude
                                       ).toFixed(fixedGeneDigits)
                                     }}
-                                  </template></v-progress-linear>
+                                  </template></v-progress-linear
+                                >
                               </template>
                               <span>{{ value[1] }}</span>
                             </v-tooltip>
@@ -155,7 +136,8 @@
                 </v-flex>
                 <v-flex
                   v-if="
-                    selectedCellTypeList.length == 2 && geneDataExist(selectedCellTypeList[1])
+                    selectedCellTypeList.length == 2 &&
+                      geneDataExist(selectedCellTypeList[1])
                   "
                   md6
                   sm6
@@ -186,18 +168,12 @@
                       @mouseleave="clearGeneNameOnHover()"
                     >
                       <v-layout>
-                        <v-flex
-                          md5
-                          sm12
-                        >
-                          <span
-                            class="index"
-                          >{{ loadedGeneIdToNameDict[value[2]] }}:</span>
+                        <v-flex md5 sm12>
+                          <span class="index"
+                            >{{ loadedGeneIdToNameDict[value[2]] }}:</span
+                          >
                         </v-flex>
-                        <v-flex
-                          md7
-                          sm12
-                        >
+                        <v-flex md7 sm12>
                           <span>
                             <v-tooltip top>
                               <template v-slot:activator="{ on }">
@@ -271,11 +247,13 @@ export default {
         return this.$store.getters.getSelectedCellTypeList;
       }
     },
+
     currentCellTypes() {
       return this.$store.getters.getOption === "default"
         ? this.getDefaultCellTypes()
         : this.sortCells();
     },
+
     dynamicData() {
       if (this.geneCellCopy1.length == 0) {
         return;
@@ -283,6 +261,7 @@ export default {
         return this.$store.getters.getCellDetails;
       }
     },
+
     filteredData() {
       let globalThis = this;
       if (this.$store.getters.getGeneSearchEntry === "") {
@@ -319,14 +298,16 @@ export default {
         return resultArr;
       }
     },
+
     option: {
       get() {
-        return this.$store.getters.getOption;
+        return this.$store.getters.getCellTypeSortOption;
       },
       set(option) {
-        this.$store.dispatch("changeOption", option);
+        this.$store.dispatch("changeCellTypeSortOption", option);
       }
     },
+
     search: {
       get() {
         return this.$store.getters.getGeneSearchEntry;
@@ -374,12 +355,16 @@ export default {
       let itr = 0;
       // Dict saves cell type name - index pair
       let cellTypeNameIndexDict = [];
-      
+
       switch (option) {
         case "default":
-          this.filteredData[0] = this.loadedGeneData[this.$store.getters.getSelectedCellTypeList[0]];
+          this.filteredData[0] = this.loadedGeneData[
+            this.$store.getters.getSelectedCellTypeList[0]
+          ];
           if (this.filteredData.length > 1) {
-            this.filteredData[1] = this.loadedGeneData[this.$store.getters.getSelectedCellTypeList[1]];
+            this.filteredData[1] = this.loadedGeneData[
+              this.$store.getters.getSelectedCellTypeList[1]
+            ];
           }
           return;
         case "magnitude":

@@ -20,8 +20,8 @@ let cellTypeActions = {
     context.commit("CHANGE_CELL_TYPE_GRAPH_STRUCTURE_DATA", data);
   },
 
-  changeCellTypeSearchEntry(context, searchContent) {
-    context.commit("CHANGE_CELL_TYPE_SEARCH_ENTRY", searchContent);
+  changeCellTypeSearchEntryInSearchView(context, searchContent) {
+    context.commit("CHANGE_CELL_TYPE_SEARCH_ENTRY_IN_SEARCH_VIEW", searchContent);
   },
 
   changeCellTypeSearchEntryInGeneDetailsView(context, searchContent) {
