@@ -28,6 +28,10 @@ let cellTypeMutations = {
     state.cell_type_search_entry_in_gene_details_view = payload;
   },
 
+  CHANGE_CELL_TYPE_SORT_OPTION(state, payload) {
+    state.cell_type_sort_option = payload;
+  },
+
   ADD_TO_CELL_TYPES_THAT_HAVE_SELECTED_GENE_AS_TOP_VALUE(state, payload) {
     state.cell_types_that_have_selected_gene_as_top_value.push(payload);
   },

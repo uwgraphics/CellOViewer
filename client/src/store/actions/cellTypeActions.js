@@ -28,6 +28,10 @@ let cellTypeActions = {
     context.commit("CHANGE_CELL_TYPE_SEARCH_ENTRY_IN_GENE_DETAILS_VIEW", searchContent);
   },
 
+  changeCellTypeSortOption(context, cellTypeSortOption) {
+    context.commit("CHANGE_CELL_TYPE_SORT_OPTION", cellTypeSortOption);
+  },
+
   addToCellTypesThatHaveSelectedGeneAsTopValue(context, cell_types_that_have_selected_gene_as_top_value) {
     context.commit("ADD_TO_CELL_TYPES_THAT_HAVE_SELECTED_GENE_AS_TOP_VALUE", cell_types_that_have_selected_gene_as_top_value);
   },

@@ -249,19 +249,22 @@ export default {
         });
       }
     },
+
     geneSelected: {
       get() {
         return this.$store.getters.getGeneSelected;
       }
     },
+
     option: {
       get() {
-        return this.$store.getters.getOption;
+        return this.$store.getters.getCellTypeSortOption;
       },
       set(option) {
-        this.$store.dispatch("changeOption", option);
+        this.$store.dispatch("changeCellTypeSortOption", option);
       }
     },
+
     cellTypeSearchEntry: {
       get() {
         return this.$store.getters.getCellTypeSearchEntry;
@@ -335,7 +338,7 @@ export default {
     },
     sortBasedOnOption(option) {
       let globalThis = this;
-      this.$store.dispatch("changeOption", String(option));
+      this.$store.dispatch("changeCellTypeSortOption", String(option));
       this.listLocalCopy = this.generateListCopy(this.cellData);
       switch (option) {
         case "alphabetical":
@@ -343,7 +346,6 @@ export default {
             this.listLocalCopy,
             [
               function(list) {
-                console.log(list[0]);
                 return list[0];
               }
             ],
