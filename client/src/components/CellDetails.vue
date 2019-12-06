@@ -252,9 +252,9 @@ export default {
     },
 
     currentCellTypes() {
-      return this.$store.getters.getOption === "default"
+      return this.$store.getters.getCellTypeSortOption === "default"
         ? this.getDefaultCellTypes()
-        : this.sortCells();
+        : this.sortCellTypeList();
     },
 
     dynamicData() {
@@ -267,6 +267,7 @@ export default {
 
     filteredData() {
       let globalThis = this;
+
       if (this.$store.getters.getGeneSearchEntry === "") {
         return this.currentCellTypes;
       } else {
@@ -476,8 +477,9 @@ export default {
       return "#303030";
     },
 
-    sortCells() {
-      let cellArr = this.$store.getters.getSelectedCellTypeList;
+    sortCellTypeList() {
+      let cellArr = this.selectedCellTypeList;
+      
       let geneCellCopy = [];
       geneCellCopy.push(
         this.loadedGeneData[cellArr[0]]
