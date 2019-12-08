@@ -7,7 +7,8 @@ import VueLodash from 'vue-lodash';
 import Vuetify from 'vuetify';
 import store from './store/index.js';
 
-Vue.config.productionTip = false;
+Vue.config.productionTip = true;
+Vue.config.performance = true;
 
 const options = { name: 'lodash' }; // customize the way you want to call it
 Vue.use(VueLodash, options);
