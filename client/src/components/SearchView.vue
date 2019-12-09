@@ -90,7 +90,7 @@
                           md6
                           offset-md1
                         >
-                          <div class="fade values">No Direct Children</div>
+                          <div class="fade values">No direct children</div>
                         </v-flex>
 
                         <!-- Case of Only One Children -->
@@ -228,10 +228,11 @@ export default {
       if (this.$store.getters.getSearch === "") {
         return this.listLocalCopy;
       } else {
-        return this.listLocalCopy.filter(cell => {
-          let searchEntry = this.search.toLowerCase();
-          let caseInsesitiveCell = cell[0].toLowerCase();
+        let searchEntry = this.search.toLowerCase();
 
+        return this.listLocalCopy.filter(cell => {
+          let caseInsesitiveCell = cell[0].toLowerCase();
+          
           return caseInsesitiveCell.includes(searchEntry);
         });
       }
