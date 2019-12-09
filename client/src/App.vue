@@ -136,13 +136,14 @@ export default {
 .switch {
   margin: 10px;
 }
+.index {
+  color: var(--v-primary-base);
+  font-weight: bold;
+  margin: 10px;
+}
 a,
 h3 {
-  color: #42b983;
-}
-.index {
-  color: #42b983;
-  font-weight: bold;
+  color: var(--v-primary-base);
 }
 @import url("https://fonts.googleapis.com/css?family=BioRhyme&display=swap");
 .view-title {

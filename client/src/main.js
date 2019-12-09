@@ -31,6 +31,9 @@ const vuetifyOptions = {
         error: '#b71c1c',
         background: '#fbf9f0',
       }
+    },
+    options: {
+      customProperties: true,
     }
   }
 };

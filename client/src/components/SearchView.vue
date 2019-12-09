@@ -1,9 +1,5 @@
 <template>
-  <v-layout
-    row
-    wrap
-    align-center
-  >
+  <v-layout row wrap align-center>
     <v-flex md12>
       <v-card
         max-height="600"
@@ -27,6 +23,7 @@
         >
           <v-tab>Cell Centric</v-tab>
           <v-tab>Gene Centric</v-tab>
+          <!-- Cell Centric -->
           <v-tab-item>
             <v-card-text
               :style="{
@@ -36,10 +33,7 @@
               }"
             >
               <v-layout>
-                <v-flex
-                  md9
-                  sm12
-                >
+                <v-flex md9 sm12>
                   <v-text-field
                     v-model="search"
                     append-icon="search"
@@ -50,10 +44,7 @@
                   />
                 </v-flex>
                 <v-spacer />
-                <v-flex
-                  md3
-                  sm12
-                >
+                <v-flex md3 sm12>
                   <v-select
                     v-model="option"
                     :items="sortOptions"
@@ -68,10 +59,7 @@
                 class="list"
                 :class="{ 'max-height': listHeight }"
               >
-                <v-flex
-                  v-if="loaded && listLocalCopy"
-                  md12
-                >
+                <v-flex v-if="loaded && listLocalCopy" md12>
                   <v-list
                     :style="{
                       background:
@@ -83,36 +71,68 @@
                     <v-list-item
                       v-for="(keyValuePair, index) in filteredData"
                       :key="index"
-                      class="list"
                       @click="setSelectedCellTypeList(keyValuePair[0])"
                     >
                       <v-layout>
+                        <!-- Cell Type Keyword -->
                         <v-flex
-                          v-if="keyValuePair[0] && keyValuePair[1]"
+                          v-if="keyValuePair[0] != null"
                           md3
                           offset-md1
                           class="index"
                         >
                           {{ keyValuePair[0] }}:&nbsp;
                         </v-flex>
+
+                        <!-- Case of No Children -->
                         <v-flex
-                          v-if="keyValuePair[1]"
+                          v-if="keyValuePair[1].length == 0"
                           md6
                           offset-md1
                         >
-                          <!-- Neighboring values -->
-                          <v-list
-                            v-for="(neighbor, index) in keyValuePair[1]"
-                            :key="index"
-                            dense
-                          >
-                            <div v-if="keyValuePair[1].length == 0">
-                              {{ neighbor }}
-                            </div>
-                            <div v-else>
-                              {{ neighbor }},
-                            </div>
-                          </v-list>
+                          <div class="fade values">No Direct Children</div>
+                        </v-flex>
+
+                        <!-- Case of Only One Children -->
+                        <v-flex
+                          v-else-if="keyValuePair[1].length == 1"
+                          md6
+                          offset-md1
+                        >
+                          <div class="values">{{ keyValuePair[1][0] }}</div>
+                        </v-flex>
+
+                        <!-- Case of More Than One Children -->
+                        <v-flex v-else md6 offset-md1>
+                          <v-expansion-panels class="values" @click.native.stop>
+                            <v-expansion-panel color="primary">
+                              <v-expansion-panel-header>
+                                {{
+                                  keyValuePair[1].length + " direct children"
+                                }}
+                              </v-expansion-panel-header>
+                              <v-expansion-panel-content>
+                                <v-list
+                                  v-for="(neighbor, index) in keyValuePair[1]"
+                                  :key="index"
+                                  dense
+                                >
+                                  <v-list-item
+                                    v-if="index == keyValuePair[1].length - 1"
+                                    @click="setSelectedCellTypeList(neighbor)"
+                                  >
+                                    {{ neighbor }}
+                                  </v-list-item>
+                                  <div v-else>
+                                    <v-list-item
+                                      @click="setSelectedCellTypeList(neighbor)"
+                                      >{{ neighbor }},</v-list-item
+                                    >
+                                  </div>
+                                </v-list>
+                              </v-expansion-panel-content>
+                            </v-expansion-panel>
+                          </v-expansion-panels>
                         </v-flex>
                       </v-layout>
                     </v-list-item>
@@ -125,10 +145,7 @@
           <v-tab-item>
             <v-card-text>
               <v-layout>
-                <v-flex
-                  md12
-                  sm12
-                >
+                <v-flex md12 sm12>
                   <v-text-field
                     v-model="geneSearchEntry"
                     append-icon="search"
@@ -139,11 +156,7 @@
                   />
                 </v-flex>
               </v-layout>
-              <virtual-list
-                :size="40"
-                :remain="10"
-                class="list"
-              >
+              <virtual-list :size="40" :remain="10" class="list">
                 <v-list-item
                   v-for="item of filteredGeneData"
                   :key="item.id"
@@ -155,10 +168,7 @@
                       {{ loadedGeneIdToNameDict[item] }}:&nbsp;
                     </v-list-item-title>
                     <v-list-item-subtitle>
-                      <a
-                        class="web-link"
-                        @click="navigateToGenePage(item)"
-                      >
+                      <a class="web-link" @click="navigateToGenePage(item)">
                         {{ item }}
                       </a>
                     </v-list-item-subtitle>
@@ -183,7 +193,7 @@ import _ from "lodash";
 
 export default {
   name: "CellList",
-  
+
   components: {
     "virtual-list": virtualList
   },
@@ -301,10 +311,10 @@ export default {
           if (geneArr[i][2] === globalThis.geneSelected) {
             let cellName = key;
             let geneValue = value[i][1];
-            globalThis.$store.dispatch("addToCellTypesThatHaveSelectedGeneAsTopValue", [
-              cellName,
-              geneValue
-            ]);
+            globalThis.$store.dispatch(
+              "addToCellTypesThatHaveSelectedGeneAsTopValue",
+              [cellName, geneValue]
+            );
           }
         }
       }
@@ -379,5 +389,11 @@ v-card-title {
 }
 .web-link {
   text-decoration: underline;
+}
+.fade {
+  color: grey;
+}
+.values {
+  margin: 10px;
 }
 </style>
