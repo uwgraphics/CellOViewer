@@ -229,17 +229,10 @@ export default {
         return this.listLocalCopy;
       } else {
         return this.listLocalCopy.filter(cell => {
-          let searchResult = this.search.toLowerCase();
-          let caseInsesitiveCell0 = cell[0].toLowerCase();
-          let caseInsesitiveCellList = cell[1];
-          // Make all cell name in corresponding list to be lowercase
-          for (let cell of caseInsesitiveCellList) {
-            cell = cell.toLowerCase();
-          }
-          return (
-            caseInsesitiveCell0.includes(searchResult) ||
-            caseInsesitiveCellList.includes(searchResult)
-          );
+          let searchEntry = this.search.toLowerCase();
+          let caseInsesitiveCell = cell[0].toLowerCase();
+
+          return caseInsesitiveCell.includes(searchEntry);
         });
       }
     },
