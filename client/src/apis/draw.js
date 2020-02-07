@@ -169,7 +169,7 @@ export function drawGraph(graph, selector = "body", vueThis, params = {}) {
     });
 
   paths.style("stroke", link => link.color).attr("class", "link");
-  paths.on("mouseover", function handle(d) {
+  paths.on("mouseover", function handle() {
     // @ts-ignore
     let link = d3.select(this);
     link.style("stroke", "#FF6F61");

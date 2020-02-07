@@ -185,7 +185,6 @@ export default {
       this.$store.dispatch("changeCellSelected", curList);
     },
     sortBasedOnOption(option) {
-      let globalThis = this;
       switch (option) {
         case "default":
           return this.filterBySearchList(this.filteredList);
@@ -205,7 +204,7 @@ export default {
           )
       }
     },
-    topGeneDataExist(topGenes, cellTypeName) {
+    topGeneDataExist(topGenes) {
       return typeof topGenes[this.geneSelected] !== "undefined";
     },
 
@@ -221,7 +220,7 @@ export default {
       }
     },
 
-    setGeneIndexBarChartColor(geneValues, columnIndex) {
+    setGeneIndexBarChartColor(geneValues) {
       let value = geneValues[1];
       if (value >= 0) {
         return "primary";

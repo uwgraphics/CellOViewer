@@ -302,7 +302,6 @@ export default {
      * Get gene color by column and gene index, if negative display pink
      */
     setGeneIndexBarChartColor(index, value) {
-      let globalThis = this;
       let indexGeneValue = parseFloat(value.split(",")[1]);
 
       if (indexGeneValue >= 0) {
