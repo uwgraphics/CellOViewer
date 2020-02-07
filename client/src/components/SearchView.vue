@@ -2,7 +2,7 @@
   <v-layout row wrap align-center>
     <v-flex md12>
       <v-card
-        max-height="600"
+        :max-height="cardHeight"
         :color="
           $vuetify.theme.themes[this.$store.getters.getCurrentThemeMode]
             .background
@@ -23,7 +23,8 @@
         >
           <v-tab>Cell Centric</v-tab>
           <v-tab>Gene Centric</v-tab>
-          <!-- Cell Centric -->
+
+          <!-- Cell Centric Search View -->
           <v-tab-item>
             <v-card-text
               :style="{
@@ -33,9 +34,10 @@
               }"
             >
               <v-layout>
+                <!-- Search Box -->
                 <v-flex md9 sm12>
                   <v-text-field
-                    v-model="search"
+                    v-model="cellTypeSearchEntry"
                     append-icon="search"
                     label="search"
                     single-line
@@ -44,6 +46,7 @@
                   />
                 </v-flex>
                 <v-spacer />
+                <!-- Sort Box -->
                 <v-flex md3 sm12>
                   <v-select
                     v-model="option"
@@ -53,6 +56,7 @@
                   />
                 </v-flex>
               </v-layout>
+
               <v-layout
                 row
                 wrap
@@ -139,8 +143,10 @@
                   </v-list>
                 </v-flex>
               </v-layout>
+
             </v-card-text>
           </v-tab-item>
+
           <!-- Gene Centric Search View -->
           <v-tab-item>
             <v-card-text>
@@ -192,7 +198,7 @@ import virtualList from "vue-virtual-scroll-list";
 import _ from "lodash";
 
 export default {
-  name: "CellList",
+  name: "CellListView",
 
   components: {
     "virtual-list": virtualList
@@ -209,7 +215,7 @@ export default {
 
   data() {
     return {
-      cardHeight: this.$store.getters.getCardHeight,
+      cardHeight: "600",
       detailItem: [],
       listHeight: "500px",
       listLocalCopy: [],
@@ -273,7 +279,7 @@ export default {
       }
     },
 
-    search: {
+    cellTypeSearchEntry: {
       get() {
         return this.$store.getters.getCellTypeSearchEntryInSearchView;
       },
@@ -314,18 +320,21 @@ export default {
       }
     }
   },
+
   mounted() {
     this.fetchData();
   },
+
   methods: {
     async fetchData() {
-      this.loadedGeneData = await d3.json("./genes.json");
+      this.loadedGeneData = d3.json("./genes.json");
       this.loadedDictData = await d3.json("./top_abs_10_dict.json");
-      this.loadedGeneIdToNameDict = await d3.json("./gene_id_to_name.json");
-      this.loadedGeneIdToDescriptionDict = await d3.json(
+      this.loadedGeneIdToNameDict = d3.json("./gene_id_to_name.json");
+      this.loadedGeneIdToDescriptionDict = d3.json(
         "gene_id_to_description.json"
       );
     },
+
     setSelectedCellTypeList(cellName) {
       let curList = this.$store.getters.getSelectedCellTypeList;
       while (curList.length >= this.listSize) {
@@ -334,17 +343,21 @@ export default {
       curList.push(cellName);
       this.$store.dispatch("changeSelectedCellTypeList", curList);
     },
+
     generateListCopy(originalList) {
       return Object.entries(_.cloneDeep(originalList));
     },
+
     navigateToGenePage(item) {
       window.open(
         "http://useast.ensembl.org/Homo_sapiens/Gene/Summary?g=" + item
       );
     },
+
     setGeneItem(gene) {
       this.$store.dispatch("changeSelectedGene", gene);
     },
+
     sortBasedOnOption(option) {
       let globalThis = this;
       this.$store.dispatch("changeCellTypeSortOption", String(option));

@@ -62,6 +62,7 @@
               />
             </v-flex>
           </v-layout>
+
           <v-layout>
             <v-flex v-if="geneNotEmpty()">
               <h3 class="sub-title">
@@ -70,7 +71,9 @@
               <div class="gene-description">
                 {{ geneSelectedDescription }}
               </div>
+
               <v-list
+                v-if="filteredGeneCellList.length != 0"
                 :class="{ 'max-height': listHeight }"
                 class="list"
                 :style="{
@@ -125,6 +128,9 @@
                   </v-layout>
                 </v-list-item>
               </v-list>
+              <!-- <div v-else class="empty-prompt-message">
+                No cell types include this gene as their top values.
+              </div> -->
             </v-flex>
           </v-layout>
         </v-card-text>
@@ -355,7 +361,11 @@ v-card-title {
   text-align: left;
   font-weight: normal;
   font-size: medium;
-  margin-top: 10px;
-  color: "#fff";
+  margin: 10px;
+  color: var(--v-primary-lighten1);
+}
+.empty-prompt-message {
+  text-align: left;
+  margin: 10px;
 }
 </style>

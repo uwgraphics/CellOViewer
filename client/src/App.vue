@@ -31,23 +31,24 @@
           Graph View 
           -->
           <v-flex md7>
-            <Graph
+            <GraphView
               :cell-data="this.$store.getters.getCellTypeGraphStructureData"
             />
           </v-flex>
         </v-layout>
+
         <v-layout row wrap>
           <!-- 
           Gene Details View 
           -->
           <v-flex md5>
-            <GeneDetails />
+            <GeneDetailsView />
           </v-flex>
           <!-- 
           Cell Details View 
           -->
           <v-flex md7>
-            <CellDetails />
+            <CellDetailsView />
           </v-flex>
         </v-layout>
       </v-container>
@@ -61,9 +62,9 @@
  */
 import Header from "@/components/TheHeader.vue";
 import SearchView from "@/components/SearchView.vue";
-import Graph from "@/components/CellGraph.vue";
-import GeneDetails from "@/components/GeneDetails.vue";
-import CellDetails from "@/components/CellDetails.vue";
+import GraphView from "@/components/GraphView.vue";
+import GeneDetailsView from "@/components/GeneDetailsView.vue";
+import CellDetailsView from "@/components/CellDetailsView.vue";
 
 /**
  * Packages
@@ -76,9 +77,9 @@ export default {
   components: {
     Header,
     SearchView,
-    Graph,
-    GeneDetails,
-    CellDetails
+    GraphView,
+    GeneDetailsView,
+    CellDetailsView
   },
 
   data: function() {
