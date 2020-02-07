@@ -1,22 +1,19 @@
 <template>
   <v-layout row wrap align-center>
     <v-flex md12 center>
-      <h1 class="view-title">&#x1F9A0;&nbsp;{{ msg }}&nbsp;&#x1F9EC;</h1>
+      <h1 class="view-title">&#x1F9A0;{{ msg }}&#x1F9EC;</h1>
     </v-flex>
   </v-layout>
 </template>
 
 <script>
 export default {
-  name: "AppHeader",
-
+  name: "app-header",
   props: {
-    msg: {
-      type: String,
-      default: "Welcome"
-    }
+    msg: String
   }
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+</style>

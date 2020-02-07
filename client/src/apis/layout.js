@@ -1,4 +1,6 @@
 /*jshint esversion: 6 */
+// @ts-check
+import { Graph } from "./graph.js";
 import { average, sum } from "./utils.js";
 
 import * as d3 from "d3";
@@ -70,6 +72,9 @@ export function layout(graph) {
   }
 
   const levels = graph.getLevels();
+  // @ts-ignore
+  // @ts-ignore
+  const links = graph.links;
 
   // assign indecies based on levels
   // this means creating a new node list
@@ -80,7 +85,12 @@ export function layout(graph) {
   // make initial positions
   levels.forEach(function(level, li) {
     let left = 0;
-    level.forEach(function(n) {
+    // @ts-ignore
+    // @ts-ignore
+    level.forEach(function(n, ni) {
+      // @ts-ignore
+      // @ts-ignore
+      let px = n.parents.length ? Math.min(...n.parents.map(m => m.x)) : 0;
       n.x = left + space(n); // Math.max(px, left+space(n));
       n.y = topmargin + li * levelSep;
       left = n.x + space(n);
@@ -89,32 +99,43 @@ export function layout(graph) {
   console.log(`Initial Lengths = ${xLength(graph)}`);
 
   // adjust initial positions to the right
-  // need to go bottom to top
-  // levels.forEach( function(level,li)
-  for (let li = levels.length - 1; li >= 0; li--) {
-    const level = levels[li];
-    let right = width;
-    // go from right to left shifting things right if they can
-    for (let ni = level.length - 1; ni >= 0; ni--) {
-      let n = level[ni];
+  if (1) {
+    // need to go bottom to top
+    // levels.forEach( function(level,li)
+    for (let li = levels.length - 1; li >= 0; li--) {
+      const level = levels[li];
+      let right = width;
+      // go from right to left shifting things right if they can
+      for (let ni = level.length - 1; ni >= 0; ni--) {
+        let n = level[ni];
 
-      // if the rightmost thing is a leaf, we might want to move it to
-      // make space for other things
-      let rightLeaf = width;
+        // if the rightmost thing is a leaf, we might want to move it to
+        // make space for other things
+        let rightLeaf = width;
 
-      // 4 different heuristics as to where to move to - purely aesthetics
-      let na = n.children.length
-        ? average(n.children.map(m => m.x))
-        : rightLeaf;
+        // 4 different heuristics as to where to move to - purely aesthetics
+        let nx1 = n.children.length
+          ? Math.min(...n.children.map(m => m.x))
+          : rightLeaf;
+        let nx3 = n.children.length
+          ? Math.max(...n.children.map(m => m.x))
+          : rightLeaf;
+        // @ts-ignore
+        // @ts-ignore
+        let nx2 = (nx1 + nx3) / 2;
+        let na = n.children.length
+          ? average(n.children.map(m => m.x))
+          : rightLeaf;
 
-      if (n.index in examine) {
-        console.log(`right: n.x:${n.x} na:${na} right:${right}`);
+        if (n.index in examine) {
+          console.log(`right: n.x:${n.x} na:${na} right:${right}`);
+        }
+
+        let nx = Math.max(na, n.x);
+        n.x = Math.min(nx, right - space(n));
+        right = n.x - space(n);
       }
-
-      let nx = Math.max(na, n.x);
-      n.x = Math.min(nx, right - space(n));
-      right = n.x - space(n);
-    }
+    } // );
   }
 
   function argmax(lst) {

@@ -1,9 +1,80 @@
+/* eslint-disable no-console */
 /*jshint esversion: 6 */
+// @ts-check
 
-import { strifyNodes } from "./graph.js";
+// eslint-disable-next-line no-unused-vars
+import { Graph, strifyNodes } from "./graph.js";
+// @ts-ignore
+// @ts-ignore
 import * as d3 from "d3";
 import * as util from "../util";
-import * as d3plusTooltip from "d3plus-tooltip";
+
+// /**
+//  *
+//  * @param {Graph} graph
+//  * @param {string} selector="body"
+//  * @param {Object} params={}
+//  * @param {number} [params.height = 800]
+//  * @param {number} [params.nodeRadius = 4]
+//  * @param {?Boolean} [params.drawPhantoms]
+//  * @param {number} [params.bezierVert = 25]
+//  */
+// export function drawGraphLab(graph, selector = "body", vueThis, params = {}) {
+
+//   let linkType = "paths";
+//   let paths;
+
+//   /**
+//    * Where the vanilla JavaScript pass the click event to Vue
+//    */
+//   function update() {
+//     switch (linkType) {
+//       case "arrows":
+//         // draw directed edges with proper padding from node centers
+//         paths.attr("d", function(d) {
+//           let deltaX = d.target.x - d.source.x,
+//             deltaY = d.target.y - d.source.y,
+//             dist = Math.sqrt(deltaX * deltaX + deltaY * deltaY),
+//             normX = deltaX / dist,
+//             normY = deltaY / dist,
+//             sourcePadding = d.source.phantom ? 1 : nodeRadius,
+//             targetPadding = d.target.phantom ? 1 : nodeRadius + 2,
+//             sourceX = d.source.x + sourcePadding * normX,
+//             sourceY = d.source.y + sourcePadding * normY,
+//             targetX = d.target.x - targetPadding * normX,
+//             targetY = d.target.y - targetPadding * normY;
+//           return "M" + sourceX + "," + sourceY + "L" + targetX + "," + targetY;
+//         });
+//         break; // end arrow update
+//       case "lines":
+//         paths.attr("x1", d => d.source.x);
+//         paths.attr("y1", d => d.source.y);
+//         paths.attr("x2", d => d.target.x);
+//         paths.attr("y2", d => d.target.y);
+//         break;
+//       case "paths":
+//         paths.attr("d", function(d) {
+//           let x1 = d.source.x;
+//           let y1 = d.source.y + radius(d.source);
+//           let x2 = d.target.x;
+//           let y2 = d.target.y - radius(d.target);
+//           //return `M${x1},${y1}L${x2},${y2}`;
+//           return `M${x1},${y1}C${x1},${y1 + 15},${x2},${y2 - 15},${x2},${y2}`;
+//         });
+//         break;
+//     }
+
+//     // update node positions
+//     node
+//       .attr("cx", function(d) {
+//         return d.x;
+//       })
+//       .attr("cy", function(d) {
+//         return d.y;
+//       });
+//   }
+//   update();
+// }
 
 /**
  * New drawwing code - only does Beziers
@@ -98,7 +169,7 @@ export function drawGraph(graph, selector = "body", vueThis, params = {}) {
     });
 
   paths.style("stroke", link => link.color).attr("class", "link");
-  paths.on("mouseover", function handle() {
+  paths.on("mouseover", function handle(d) {
     // @ts-ignore
     let link = d3.select(this);
     link.style("stroke", "#FF6F61");
@@ -138,8 +209,10 @@ export function drawGraph(graph, selector = "body", vueThis, params = {}) {
     let node = d3.select(this);
     node.attr("r", nodeRadius * 2);
 
+    // @ts-ignore
+    let d3plus = require("d3plus-tooltip");
     // @ts-ignore: This is a notation that d3plus-tooltip uses
-    new d3plusTooltip.Tooltip()
+    new d3plus.Tooltip()
       .data([{ name: node.attr("name") }])
       .thead([
         function(node) {

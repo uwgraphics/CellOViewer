@@ -1,4 +1,6 @@
 /*jshint esversion: 6 */
+// @ts-check
+import { Graph } from "./graph.js";
 
 /**
  * @param {Graph} graph

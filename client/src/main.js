@@ -5,10 +5,9 @@ import Vue from 'vue';
 import App from './App.vue';
 import VueLodash from 'vue-lodash';
 import Vuetify from 'vuetify';
-import store from './store/index.js';
+import store from './store.js';
 
-Vue.config.productionTip = true;
-Vue.config.performance = true;
+Vue.config.productionTip = false;
 
 const options = { name: 'lodash' }; // customize the way you want to call it
 Vue.use(VueLodash, options);
@@ -31,9 +30,6 @@ const vuetifyOptions = {
         error: '#b71c1c',
         background: '#fbf9f0',
       }
-    },
-    options: {
-      customProperties: true,
     }
   }
 };
