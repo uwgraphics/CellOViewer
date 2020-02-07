@@ -4,7 +4,6 @@
       <!--Header Section-->
       <v-container fluid>
         <v-layout>
-          <img class="logo" color="primary" src="../public/cello.svg" />
           <v-spacer></v-spacer>
           <v-switch
             v-model="goDark"
@@ -13,7 +12,7 @@
             class="switch"
           />
         </v-layout>
-        <Header msg="CellO Viewer" />
+        <TheHeader msg="CellO Viewer" />
       </v-container>
 
       <!--Body Section-->
@@ -60,11 +59,11 @@
 /**
  * Views
  */
-import Header from "@/components/TheHeader.vue";
-import SearchView from "@/components/SearchView.vue";
-import GraphView from "@/components/GraphView.vue";
-import GeneDetailsView from "@/components/GeneDetailsView.vue";
-import CellDetailsView from "@/components/CellDetailsView.vue";
+import TheHeader from "@/components/TheHeader.vue";
+import SearchView from "@/views/SearchView.vue";
+import GraphView from "@/views/GraphView.vue";
+import GeneDetailsView from "@/views/GeneDetailsView.vue";
+import CellDetailsView from "@/views/CellDetailsView.vue";
 
 /**
  * Packages
@@ -75,7 +74,7 @@ export default {
   name: "App",
 
   components: {
-    Header,
+    TheHeader,
     SearchView,
     GraphView,
     GeneDetailsView,
@@ -129,29 +128,41 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
 }
+
+@import url("https://fonts.googleapis.com/css?family=BioRhyme&display=swap");
+.view-title {
+  font-family: "BioRhyme", serif;
+}
+
 .logo {
   margin: 5px;
   height: 48px;
   width: 48px;
 }
+
 .switch {
   margin: 10px;
 }
+
+a,
+h3 {
+  color: var(--v-primary-base);
+}
+
 .index {
   color: var(--v-primary-base);
   font-weight: bold;
   margin: 10px;
 }
-a,
-h3 {
-  color: var(--v-primary-base);
-}
-@import url("https://fonts.googleapis.com/css?family=BioRhyme&display=swap");
-.view-title {
-  font-family: "BioRhyme", serif;
-}
+
 .sub-title {
   font-weight: bold;
   text-align: left;
+}
+
+.fade {
+  margin: 10px;
+  text-align: left;
+  color: grey;
 }
 </style>

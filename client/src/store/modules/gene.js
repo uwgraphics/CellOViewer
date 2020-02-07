@@ -1,12 +1,16 @@
 let geneStates = {
-  gene_search_entry: "",
+  gene_search_entry_in_search_view: "",
+  gene_search_entry_in_cell_details_view: "",
   gene_sort_option: "default",
   selected_gene: "",
 };
 
 let geneGetters = {
-  getGeneSearchEntry(state) {
-    return state.gene_search_entry;
+  getGeneSearchEntryInSearchView(state) {
+    return state.gene_search_entry_in_search_view;
+  },
+  getGeneSearchEntryInCellDetailsView(state) {
+    return state.gene_search_entry_in_cell_details_view;
   },
   getGeneSortOption(state) {
     return state.gene_sort_option;

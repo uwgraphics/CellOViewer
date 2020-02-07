@@ -30,6 +30,7 @@
             </v-icon>
           </v-btn>
         </v-card-title>
+
         <v-card-text v-if="geneNotEmpty()">
           <v-layout
             row
@@ -96,6 +97,7 @@
                     >
                       {{ value[0] }}:&nbsp;
                     </v-flex>
+
                     <v-flex
                       md6
                       offset-md1
@@ -128,9 +130,10 @@
                   </v-layout>
                 </v-list-item>
               </v-list>
-              <!-- <div v-else class="empty-prompt-message">
+              
+              <div v-else class="empty-prompt-message">
                 No cell types include this gene as their top values.
-              </div> -->
+              </div>
             </v-flex>
           </v-layout>
         </v-card-text>
@@ -143,7 +146,7 @@
 import * as d3 from "d3";
 
 export default {
-  name: "GeneDetails",
+  name: "GeneDetailsView",
 
   props: [],
   
@@ -345,11 +348,8 @@ export default {
 </script>
 
 <style scoped>
-v-card-title {
-  margin: 100px;
-}
 .list {
-  max-height: 355px;
+  max-height: 300px;
   overflow-y: auto;
 }
 .gene-web-link {

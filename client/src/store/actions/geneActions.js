@@ -1,6 +1,9 @@
 let geneActions = {
-  changeGeneSearchEntry(context, searchContent) {
-    context.commit("CHANGE_GENE_SEARCH_ENTRY", searchContent);
+  changeGeneSearchEntryInSearchView(context, searchContent) {
+    context.commit("CHANGE_GENE_SEARCH_ENTRY_IN_SEARCH_VIEW", searchContent);
+  },
+  changeGeneSearchEntryInCellDetailsView(context, searchContent) {
+    context.commit("CHANGE_GENE_SEARCH_ENTRY_IN_CELL_DETAILS_VIEW", searchContent);
   },
   changeGeneSortOption(context, geneSortOption) {
     context.commit("CHANGE_GENE_SORT_OPTION", geneSortOption);

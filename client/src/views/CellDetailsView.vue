@@ -65,7 +65,9 @@
                   <h3 class="sub-title">
                     {{ selectedCellTypeList[0] }}
                   </h3>
+
                   <v-list
+                    v-if="filteredData[0].length != 0"
                     class="list"
                     :style="{
                       background:
@@ -93,6 +95,7 @@
                             >{{ loadedGeneIdToNameDict[value[2]] }}:</span
                           >
                         </v-flex>
+
                         <v-flex md7 sm7>
                           <span>
                             <v-tooltip top>
@@ -133,7 +136,12 @@
                       </v-layout>
                     </v-list-item>
                   </v-list>
+                  
+                  <div v-else class="fade">
+                    No search results
+                  </div>
                 </v-flex>
+
                 <v-flex
                   v-if="
                     selectedCellTypeList.length == 2 &&
@@ -145,7 +153,9 @@
                   <h3 class="sub-title">
                     {{ selectedCellTypeList[1] }}
                   </h3>
+
                   <v-list
+                    v-if="filteredData[1].length != 0"
                     class="list"
                     :style="{
                       background:
@@ -173,6 +183,7 @@
                             >{{ loadedGeneIdToNameDict[value[2]] }}:</span
                           >
                         </v-flex>
+
                         <v-flex md7 sm12>
                           <span>
                             <v-tooltip top>
@@ -210,8 +221,13 @@
                           </span>
                         </v-flex>
                       </v-layout>
+
                     </v-list-item>
                   </v-list>
+
+                  <div v-else class="fade">
+                    No search results
+                  </div>
                 </v-flex>
               </v-layout>
             </v-flex>
@@ -228,7 +244,7 @@ import _ from "lodash";
 import { COLOR_RAMP } from "../config";
 
 export default {
-  name: "CellDetails",
+  name: "CellDetailsView",
 
   props: [],
 
@@ -268,7 +284,7 @@ export default {
     filteredData() {
       let globalThis = this;
 
-      if (this.$store.getters.getGeneSearchEntry === "") {
+      if (this.$store.getters.getGeneSearchEntryInCellDetailsView === "") {
         return this.currentCellTypes;
       } else {
         let resultArr = [];
@@ -314,10 +330,10 @@ export default {
 
     search: {
       get() {
-        return this.$store.getters.getGeneSearchEntry;
+        return this.$store.getters.getGeneSearchEntryInCellDetailsView;
       },
       set(input) {
-        this.$store.dispatch("changeGeneSearchEntry", input);
+        this.$store.dispatch("changeGeneSearchEntryInCellDetailsView", input);
       }
     },
     selectedTheme() {
@@ -444,6 +460,7 @@ export default {
     setGeneIndexBarChartRatio(index, value) {
       let globalThis = this;
       let numberValue = parseFloat(value.split(",")[1]);
+
       return Math.abs(
         ((numberValue / globalThis.maxGeneMagnitude) * 100).toFixed(
           globalThis.fixedGeneDigits
@@ -454,6 +471,7 @@ export default {
     setOverlapGeneBackgroundColor(index, value, columnIndex) {
       let globalThis = this;
       let cellName = value[2];
+
       if (columnIndex == 0) {
         let filteredDataSecondRow = globalThis.filteredData[1];
         if (globalThis.filteredData.length > 1) {
@@ -479,13 +497,14 @@ export default {
 
     sortCellTypeList() {
       let cellArr = this.selectedCellTypeList;
-      
       let geneCellCopy = [];
+
       geneCellCopy.push(
         this.loadedGeneData[cellArr[0]]
           .concat()
           .sort((a, b) => (a[1] < b[1] ? 1 : -1))
       );
+
       if (cellArr.length > 1) {
         geneCellCopy.push(
           this.loadedGeneData[cellArr[1]]
@@ -520,6 +539,7 @@ export default {
       if (this.loadedGeneData[cellTypeName] === undefined) {
         return false;
       }
+
       return true;
     }
   }
@@ -527,13 +547,6 @@ export default {
 </script>
 
 <style scoped>
-.message {
-  color: red;
-  text-align: left;
-}
-.geneName {
-  color: #c5050c;
-}
 .highlight-theme {
   background: #34495e;
 }

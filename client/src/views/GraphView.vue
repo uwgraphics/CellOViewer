@@ -42,7 +42,7 @@ import { primaryParent } from "@/apis/tangler.js";
 import { treeLayout } from "@/apis/layout.js";
 
 export default {
-  name: "CellGraph",
+  name: "CellTypeGraphView",
 
   props: {
     cellData: {
@@ -86,15 +86,6 @@ export default {
         return this.$store.getters.getCellTypesThatHaveSelectedGeneAsTopValue;
       }
     },
-
-    search: {
-      get() {
-        return this.$store.getters.getSearch;
-      },
-      set(value) {
-        return this.$store.dispatch("changeSearch", value);
-      }
-    }
   },
 
   watch: {
