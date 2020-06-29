@@ -144,6 +144,7 @@
 </template>
 
 <script>
+/* eslint-disable */
 import * as d3 from "d3";
 import virtualList from "vue-virtual-scroll-list";
 import _ from "lodash";

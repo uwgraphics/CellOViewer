@@ -1,5 +1,6 @@
 /*jshint esversion: 6 */
 // @ts-check
+/* eslint-disable */
 import { Graph } from "./graph.js";
 import { average, sum } from "./utils.js";
 

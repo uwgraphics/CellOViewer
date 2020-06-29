@@ -2,6 +2,7 @@
 // @ts-check
 // eslint-disable-next-line no-unused-vars
 // @ts-ignore
+/* eslint-disable */
 import { Vertex } from "./graph.js";
 /**
  *

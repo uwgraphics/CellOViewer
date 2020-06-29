@@ -213,6 +213,7 @@
 </template>
 
 <script>
+/* eslint-disable */
 import * as d3 from "d3";
 import _ from "lodash";
 import { COLOR_RAMP } from "../config";
