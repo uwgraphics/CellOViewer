@@ -8,21 +8,19 @@ Explore gene expression across the Cell Ontology.
 cd client
 npm install
 ```
+**Note**: all the frontend files are in the `client` folder, make sure you go into the `client` folder by `cd client` before doing anything npm related.
 
-### Compiles and hot-reloads for development
-**In client folder**
+### Compiles and hot-reloads for development, AKA start the app
 ```
 npm run serve
 ```
 
 ### Compiles and minifies for production
-**In client folder**
 ```
 npm run build
 ```
 
 ### Lints and fixes files
-**In client folder**
 ```
 npm run lint
 ```
