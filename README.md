@@ -33,4 +33,4 @@ Coming soon.
 
 ## License
 
-Cell Network Viewer is [BSD 3-clause licensed](./LICENSE).
+CellO Viewer is [BSD 3-clause licensed](./LICENSE).

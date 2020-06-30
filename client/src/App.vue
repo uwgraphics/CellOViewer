@@ -9,7 +9,7 @@
           v-model="goDark"
           class="switch"
         ></v-switch>
-        <Header msg="Cell Network Viewer" />
+        <Header msg="CellO Viewer" />
       </v-container>
 
       <!--Body Section-->
