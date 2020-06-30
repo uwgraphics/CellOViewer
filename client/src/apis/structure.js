@@ -29,8 +29,8 @@ export function jsonToGraph(data) {
     data[sourceName].forEach(function(targetName) {
       const source = node[sourceName];
       const target = node[targetName];
-      if (!source) console.log(`Bad node ${sourceName} as source`);
-      if (!target) console.log(`Bad node ${targetName} as target`);
+      // if (!source) console.log(`Bad node ${sourceName} as source`);
+      // if (!target) console.log(`Bad node ${targetName} as target`);
       if (source && target) {
         let link = new Link(source, target);
         links.push(link);

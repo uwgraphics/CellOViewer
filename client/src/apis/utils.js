@@ -83,9 +83,9 @@ export function simpleSorter(graph, hlevel = 3, pass = 0) {
   // compare two nodes
   function cmp(a, b) {
     // heuristic one - stick to your primary parent
-    if (!a.primaryParent) {
-      console.log(`node ${a.index} ${a.name} no primary parent`);
-    }
+    // if (!a.primaryParent) {
+    //   console.log(`node ${a.index} ${a.name} no primary parent`);
+    // }
     let ai = a.primaryParent.levelIdx;
     let bi = b.primaryParent.levelIdx;
     if (ai != bi) return ai - bi;

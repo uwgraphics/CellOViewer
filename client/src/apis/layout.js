@@ -97,7 +97,7 @@ export function layout(graph) {
       left = n.x + space(n);
     });
   });
-  console.log(`Initial Lengths = ${xLength(graph)}`);
+  // console.log(`Initial Lengths = ${xLength(graph)}`);
 
   // adjust initial positions to the right
   if (1) {
@@ -129,7 +129,7 @@ export function layout(graph) {
           : rightLeaf;
 
         if (n.index in examine) {
-          console.log(`right: n.x:${n.x} na:${na} right:${right}`);
+          // console.log(`right: n.x:${n.x} na:${na} right:${right}`);
         }
 
         let nx = Math.max(na, n.x);
@@ -193,13 +193,13 @@ export function layout(graph) {
     });
   });
 
-  console.log(`Final Lengths = ${xLength(graph)}`);
+  // console.log(`Final Lengths = ${xLength(graph)}`);
 
   // Report Out
-  console.log(
-    `${graph.nodes.length} nodes (w/phantoms), ${graph.links.length} links (w/phantoms)`
-  );
-  console.log(`${graph.constraints.length} constraints`);
+  // console.log(
+  //   `${graph.nodes.length} nodes (w/phantoms), ${graph.links.length} links (w/phantoms)`
+  // );
+  // console.log(`${graph.constraints.length} constraints`);
 }
 
 /**
