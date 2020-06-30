@@ -9,19 +9,8 @@
         "
       >
         <v-card-title class="justify-left">
-          <h4 class="view-title">Search View</h4>
+          <h4 class="view-title">Cell Type Search View</h4>
         </v-card-title>
-
-        <v-tabs
-          fixed-tabs
-          :background-color="
-            $vuetify.theme.themes[this.$store.getters.getCurrentThemeMode]
-              .background
-          "
-        >
-          <v-tab>Cell Centric</v-tab>
-          <v-tab>Gene Centric</v-tab>
-          <v-tab-item>
             <v-card-text
               :style="{
                 background:
@@ -97,9 +86,8 @@
                 </v-flex>
               </v-layout>
             </v-card-text>
-          </v-tab-item>
           <!-- Gene Centric Search View -->
-          <v-tab-item>
+          <!-- <v-tab-item>
             <v-card-text>
               <v-layout>
                 <v-flex md12 sm12>
@@ -136,8 +124,8 @@
                 </v-list-item>
               </virtual-list>
             </v-card-text>
-          </v-tab-item>
-        </v-tabs>
+          </v-tab-item> -->
+        <!-- </v-tabs> -->
       </v-card>
     </v-flex>
   </v-layout>
