@@ -254,8 +254,9 @@ export default {
           if (globalThis.loadedGeneIdToNameDict[gene] == undefined) {
             return;
           }
+          console.log("TEST123");
           return globalThis.loadedGeneIdToNameDict[gene].includes(
-            this.geneSearch
+            this.geneSearch.toUpperCase()
           );
         });
       }
