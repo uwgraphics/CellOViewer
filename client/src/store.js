@@ -1,6 +1,7 @@
 import Vue from "vue";
 import Vuex from "vuex";
 
+
 Vue.use(Vuex);
 
 const state = {
@@ -18,10 +19,18 @@ const state = {
   cellInGeneSearch: "",
   geneSearchFromSearchView: "",
   geneSearch: "",
-  search: ""
+  search: "",
+  loadedGeneIdToNameDict: { },
+  loadedGeneIdToDescriptionDict: { },
 };
 
 const mutations = {
+  ADD_GENE_ID_TO_NAME_DICT(state, payload) {
+    state.loadedGeneIdToNameDict = payload;
+  },
+  ADD_GENE_ID_TO_DISCRIPTION(state, payload) {
+    state.loadedGeneIdToDescriptionDict = payload;
+  },
   ADD_TO_CELL_DETAILS(state, payload) {
     state.cellDetails.push(payload);
   },
@@ -82,6 +91,12 @@ const mutations = {
 };
 
 const actions = {
+  addGeneIdToNameDict(context, dict) {
+    context.commit("ADD_GENE_ID_TO_NAME_DICT", dict);
+  },
+  addGeneIdToDiscriptionDict(context, dict) {
+    context.commit("ADD_GENE_ID_TO_DISCRIPTION", dict);
+  },
   addToCellDetails(context, cellDetails) {
     context.commit("ADD_TO_CELL_DETAILS", cellDetails);
   },

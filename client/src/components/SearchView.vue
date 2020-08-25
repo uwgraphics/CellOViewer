@@ -113,28 +113,11 @@
                   ></v-text-field>
                 </v-flex>
               </v-layout>
-              <virtual-list :size="40" :remain="10" class="list">
-                <v-list-item
-                  three-line
-                  v-for="item of filteredGeneData"
-                  :key="item.id"
-                  @click="setGeneItem(item)"
-                >
-                  <v-list-item-content class="list-item-box">
-                    <v-list-item-title
-                      >{{ loadedGeneIdToNameDict[item] }}:&nbsp;
-                    </v-list-item-title>
-                    <v-list-item-subtitle>
-                      <a class="web-link" @click="navigateToGenePage(item)">
-                        {{ item }}
-                      </a>
-                    </v-list-item-subtitle>
-                    <v-list-item-subtitle>
-                      {{ loadedGeneIdToDescriptionDict[item] }}
-                    </v-list-item-subtitle>
-                  </v-list-item-content>
-                </v-list-item>
-              </virtual-list>
+              <virtual-list style="height: 360px; overflow-y: auto;"
+                :data-key="'id'"
+                :data-sources="filteredGeneData"
+                :data-component="itemComponent"
+              />
             </v-card-text>
           </v-tab-item>
         </v-tabs>
@@ -146,15 +129,18 @@
 <script>
 /* eslint-disable */
 import * as d3 from "d3";
-import virtualList from "vue-virtual-scroll-list";
+import VirtualList from "vue-virtual-scroll-list";
 import _ from "lodash";
+import GeneListItem from "./GeneListItem";
 
 export default {
   name: "cell-list",
+  components: { VirtualList, GeneListItem },
   props: {
     cellData: Object
   },
   mounted() {
+    console.log("SearchView mounted");
     this.fetchData();
   },
   data() {
@@ -167,19 +153,19 @@ export default {
       loaded: false,
       loadedDictData: {},
       loadedGeneData: [],
-      loadedGeneIdToNameDict: {},
-      loadedGeneIdToDescriptionDict: {},
-      sortOptions: ["default", "alphabetical"]
+      sortOptions: ["default", "alphabetical"],
+      itemComponent: GeneListItem
     };
   },
   methods: {
+    getKey(item) {
+      return item;
+    },
     async fetchData() {
       this.loadedGeneData = await d3.json("./genes.json");
       this.loadedDictData = await d3.json("./top_abs_10_dict.json");
-      this.loadedGeneIdToNameDict = await d3.json("./gene_id_to_name.json");
-      this.loadedGeneIdToDescriptionDict = await d3.json(
-        "gene_id_to_description.json"
-      );
+      this.$store.dispatch("addGeneIdToNameDict", await d3.json("./gene_id_to_name.json"));
+      this.$store.dispatch("addGeneIdToDiscriptionDict", await d3.json("gene_id_to_description.json"));
     },
     setCellSelected(cellName) {
       let curList = this.$store.getters.getCellSelected;
@@ -191,14 +177,6 @@ export default {
     },
     generateListCopy(originalList) {
       return Object.entries(_.cloneDeep(originalList));
-    },
-    navigateToGenePage(item) {
-      window.open(
-        "http://useast.ensembl.org/Homo_sapiens/Gene/Summary?g=" + item
-      );
-    },
-    setGeneItem(gene) {
-      this.$store.dispatch("changeGeneSelected", gene);
     },
     sortBasedOnOption(option) {
       let globalThis = this;
@@ -248,17 +226,17 @@ export default {
       let globalThis = this;
 
       if (this.$store.getters.getGeneSearchFromSearchView === "") {
-        return this.loadedGeneData;
+        return this.loadedGeneData.map((id) => { return { id: id } });
       } else {
         return this.loadedGeneData.filter(gene => {
-          if (globalThis.loadedGeneIdToNameDict[gene] == undefined) {
+          if (globalThis.$store.state.loadedGeneIdToNameDict[gene] == undefined) {
             return;
           }
           let upperGeneSearch = globalThis.geneSearch.toUpperCase();
-          return globalThis.loadedGeneIdToNameDict[gene].includes(
+          return globalThis.$store.state.loadedGeneIdToNameDict[gene].includes(
             globalThis.geneSearch.toUpperCase()
           );
-        });
+        }).map((id) => { return { id: id } });
       }
     },
     geneSelected: {
@@ -313,9 +291,6 @@ export default {
         }
       }
     }
-  },
-  components: {
-    "virtual-list": virtualList
   }
 };
 </script>
