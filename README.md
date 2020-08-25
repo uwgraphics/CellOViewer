@@ -15,10 +15,17 @@ npm install
 npm run serve
 ```
 
-### Compiles and minifies for production
+### Deployment
+
+To deploy the website, run the following commands:
+
 ```
+cd client
 npm run build
+bash deploy.sh
 ```
+
+The ``np run build`` command will compile the website. Github Pages requires that the website's files be located in the ``docs`` directory.  The command  ``bash deploy.sh`` copies the relevant files from ``client/dist`` (i.e. the location where the compiled files are written to by npm) to ``docs``.  Once the ``docs`` directory stores the latest version of the website, pushing the code to Github will trigger Github Pages to serve the new website. 
 
 ### Lints and fixes files
 ```
