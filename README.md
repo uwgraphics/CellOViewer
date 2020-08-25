@@ -1,7 +1,10 @@
 # [CellO Viewer](https://uwgraphics.github.io/CellNetworkViewer/) ![License](https://img.shields.io/badge/License-BSD%203--Clause-green.svg)
 
 ## Description
-Explore gene expression across the Cell Ontology.
+
+[CellO](https://github.com/deweylab/CellO) is a tool for classifying [single-cell](https://en.wikipedia.org/wiki/Single_cell_sequencing) [RNA-seq](https://en.wikipedia.org/wiki/RNA-Seq) data against the graph-structured [Cell Ontology](http://www.obofoundry.org/ontology/cl.html).  Each cell type in the Cell Ontology is associated with a binary classifier for classifying cells for the given cell type. These binary classifiers are [linear models](https://en.wikipedia.org/wiki/Generalized_linear_model) and thus, each gene's coefficient provides a description of the gene's importance for classifying the given cell type.  The CellO Viewer is a web application for exploring these gene-wise model coefficients across the Cell Ontology.  Each model's largest coefficients can be interpreted as a cell type-specific expression signature.
+
+For more details, see the manuscript: [Bernstein, M.N., Ma, J., Gleicher, M., Dewey, C.N. (2020).CellO: Comprehensive and hierarchical cell type classification of human cellswith the Cell Ontology. bioRxiv](https://www.biorxiv.org/content/10.1101/634097v2)
 
 ## Project setup
 ```
