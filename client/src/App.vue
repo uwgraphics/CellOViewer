@@ -3,13 +3,14 @@
     <v-app>
       <!--Header Section-->
       <v-container fluid>
-        <v-switch
+        <!-- <v-switch
           color="primary"
           :label="selectedTheme"
           v-model="goDark"
           class="switch"
-        ></v-switch>
+        ></v-switch> -->
         <Header msg="CellO Viewer" />
+        <div>The CellO Viewer enables exploration fo cell type-specific expression signatures across cell types encoded within the graph-structured <a href='http://www.obofoundry.org/ontology/cl.html'>Cell Ontology</a>. These expression signatures were derived from <a href='https://www.biorxiv.org/content/10.1101/634097v2'>supervised classification models</a></div>
       </v-container>
 
       <!--Body Section-->
