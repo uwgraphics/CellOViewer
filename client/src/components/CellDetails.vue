@@ -13,7 +13,7 @@
           <h4 class="view-title">Cell Details View</h4>
           <v-tooltip right max-width="250px">
             <template v-slot:activator="{ on, attrs }">
-              <img src="https://raw.githubusercontent.com/deweylab/MetaSRA-website-frontend/master/src/assets/icons/question.svg" v-bind="attrs" v-on="on" width="22" height="22" style="margin: 4px"/>
+              <img src="https://raw.githubusercontent.com/uwgraphics/CellOViewer/master/client/static/question.svg" v-bind="attrs" v-on="on" width="22" height="22" style="margin: 4px"/>
             </template>
             <span>This view displays the top 10 genes for discriminating the selected cell types.  Specifically these are the 10 genes whose model coefficients have the largest magnitude within each cell type's corresponding logistic regression classifier. Each gene is listed along with the value of its model coefficient. Genes in green have positively valued coefficients (i.e. higher expression is associated with the selected cell type). Genes in red have negatively valued coefficients (i.e. lower expression is associated with the selected cell type). If two cell types are selected, then genes that are common between the two cell types will be highlighted with the same color.</span>
           </v-tooltip>

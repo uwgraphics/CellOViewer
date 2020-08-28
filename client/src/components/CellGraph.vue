@@ -6,9 +6,9 @@
           <h4 class="view-title">Cell Ontology View</h4>
           <v-tooltip right max-width="250px">
             <template v-slot:activator="{ on, attrs }">
-              <img src="https://raw.githubusercontent.com/deweylab/MetaSRA-website-frontend/master/src/assets/icons/question.svg" v-bind="attrs" v-on="on" width="22" height="22" style="margin: 4px"/>
+              <img src="https://raw.githubusercontent.com/uwgraphics/CellOViewer/master/client/static/question.svg" v-bind="attrs" v-on="on" width="22" height="22" style="margin: 4px"/>
             </template>
-            <span>Select cell types by clicking a node within the Cell Ontology graph. Selected cell type are highlighted in red.  Cell types that can be discriminated by currently selected genes are highlighted against phaded cell types that cannot be discriminated by the currently selected gene.</span>
+            <span>Select cell types by clicking a node within the Cell Ontology graph. Selected cell type are highlighted in red.  Cell types that can be discriminated by the currently selected gene are highlighted against faded cell types that cannot be discriminated by the currently selected gene.</span>
           </v-tooltip>
           <v-spacer />
           <v-chip v-if="cellType1" class="ma-2">{{ cellType1 }}</v-chip>
