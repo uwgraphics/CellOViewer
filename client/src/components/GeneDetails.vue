@@ -11,6 +11,12 @@
       >
         <v-card-title class="justify-center">
           <h4 class="view-title">Gene Details View</h4>
+          <v-tooltip right max-width="250px">
+            <template v-slot:activator="{ on, attrs }">
+              <img src="https://raw.githubusercontent.com/deweylab/MetaSRA-website-frontend/master/src/assets/icons/question.svg" v-bind="attrs" v-on="on" width="22" height="22" style="margin: 4px"/>
+            </template>
+            <span>This view displays cell types that can be discriminated by the currently selected gene.</span>
+          </v-tooltip>
           <v-spacer></v-spacer>
           <v-btn
             medium

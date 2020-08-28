@@ -9,9 +9,18 @@
         "
       >
         <v-card-title class="justify-left">
-          <h4 class="view-title">Cell Type Search View</h4>
+          <h4 class="view-title" v-bind="attrs" v-on="on">Search View</h4>
+          <v-tooltip right max-width="250px">
+            <template v-slot:activator="{ on, attrs }">
+              <img src="https://raw.githubusercontent.com/deweylab/MetaSRA-website-frontend/master/src/assets/icons/question.svg" v-bind="attrs" v-on="on" width="22" height="22" style="margin: 4px"/>
+            </template>
+            <span>
+              <p>In the <i>Cell Centric</i> tab, select a cell type to view genes that are important for discriminating that cell type. Up to two cell types can be selected at a given time. Selected cell types will be highlighted in red within the <i>Cell Ontology View</i> and will also appear within the <i>Cell Details View</i></p>
+              <p>In the <i>Gene Centric</i> tab, select a gene for viewing all cell types that can be discriminated by that gene. Cells that can be discriminated by expression of the selected gene will be highlighted within the <i>Cell Ontology View</i> and will also appear within the <i>Gene Details View</i>.</p></span>
+          </v-tooltip>
+          
+         <!-- <h4 class="view-title">Search View</h4> -->
         </v-card-title>
-
             <v-tabs		
            fixed-tabs		
            :background-color="		
