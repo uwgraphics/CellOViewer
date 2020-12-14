@@ -6,6 +6,8 @@
 
 For more details, see the manuscript: [Bernstein, M.N., Ma, J., Gleicher, M., Dewey, C.N. (2020).CellO: Comprehensive and hierarchical cell type classification of human cellswith the Cell Ontology. bioRxiv](https://www.biorxiv.org/content/10.1101/634097v2)
 
+The tool runs online at [https://uwgraphics.github.io/CellOViewer/](https://uwgraphics.github.io/CellOViewer/)
+
 ## Project setup
 ```
 cd client
