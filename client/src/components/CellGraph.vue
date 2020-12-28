@@ -247,6 +247,12 @@ export default {
 
       /**
        * Fade links does not have both nodes contained in our node set
+       * 
+       * MG - a warning...
+       * all we know about the actual graph edge is encoded into the ID property
+       * so we should be careful to get those correct...
+       * 
+       * See pathId in draw.js
        */
       d3.select(this.$refs.graph)
         .select("svg")

@@ -125,20 +125,35 @@ export function drawGraph(graph, selector = "body", vueThis, params = {}) {
       bv},${x2},${y2 - nodeRadius}`;
   }
 
-  // @ts-ignore
-  function pathId(links) {
-    return (
-      util.FORMAT_TO_ID(links["source"]["name"]) +
-      "---" +
-      util.FORMAT_TO_ID(links["target"]["name"])
-    );
-  }
+    // @ts-ignore
+    function pathId(links) {
+        /**
+         * builds an ID for a link - we need to be careful since this will be used later
+         * (in CellGraph.vue) to identify selected nodes
+         */
+        // put in a variable so we can examine these...
+        const src = links["source"];
+        let dst = links["target"];
+        let nlinks = 0;
+
+        // if the target is a phantom node, advance
+        while(dst.phantom) {
+            dst = dst.children[0];
+            nlinks += 1;
+        }
+
+        // build a name from source to destination
+        const idName = 
+            util.FORMAT_TO_ID(src["name"]) + "---" + util.FORMAT_TO_ID(dst["name"]) + "---" + String(nlinks);
+        
+        return (idName);    
+    }
 
   // we only create links for the non-phantom source nodes
   // we then trace through the phantom nodes
   paths = svg
     .selectAll(".link")
-    .data(graph.links.filter(link => !link.source.phantom))
+    .data(graph.links.filter(link => !link.source.phantom ))
     .enter()
     .append("svg:path")
     .attr("id", pathId)
