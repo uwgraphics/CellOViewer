@@ -125,6 +125,15 @@ export function drawGraph(graph, selector = "body", vueThis, params = {}) {
       bv},${x2},${y2 - nodeRadius}`;
   }
 
+    // clean a name according to the needs of CellGraph.vue for name matching
+    function cleanName(name) {
+        return name.replace(/-/g, " ")
+        .replace(/\(/g, "")
+        .replace(/\)/g, "")
+        .replace(/,/, "")
+        .replace(/\//g, "-");
+    }
+
     // @ts-ignore
     function pathId(links) {
         /**
@@ -142,9 +151,11 @@ export function drawGraph(graph, selector = "body", vueThis, params = {}) {
             nlinks += 1;
         }
 
+        let srcName = cleanName(util.FORMAT_TO_ID(src["name"]));
+        let dstName = cleanName(util.FORMAT_TO_ID(dst["name"]));
+
         // build a name from source to destination
-        const idName = 
-            util.FORMAT_TO_ID(src["name"]) + "---" + util.FORMAT_TO_ID(dst["name"]) + "---" + String(nlinks);
+        const idName = srcName + "---" + dstName + "---" + String(nlinks);
         
         return (idName);    
     }

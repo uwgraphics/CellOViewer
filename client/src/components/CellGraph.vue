@@ -253,6 +253,8 @@ export default {
        * so we should be careful to get those correct...
        * 
        * See pathId in draw.js
+       * 
+       * We assume that the names have been "cleaned up" in draw.js
        */
       d3.select(this.$refs.graph)
         .select("svg")
@@ -262,14 +264,7 @@ export default {
             .select(this)
             .attr("id")
             .split("---");
-          for (let i = 0; i < linkArray.length; i++) {
-            linkArray[i] = linkArray[i]
-              .replace(/-/g, " ")
-              .replace(/\(/g, "")
-              .replace(/\)/g, "")
-              .replace(/,/, "")
-              .replace(/\//g, "-");
-          }
+          //name cleanup code moved to draw.js
           if (
             !cellTypesThatFitCriteria.has(linkArray[0]) ||
             !cellTypesThatFitCriteria.has(linkArray[1]) ||
